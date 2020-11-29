@@ -6,17 +6,19 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Config-Server" />
-        <module name="Gateway" />
         <module name="Card-Payment-Service" />
-        <module name="Service-Registry" />
+        <module name="Literary-Association-Application" />
+        <module name="Gateway" />
         <module name="Payment-Concentrator" />
+        <module name="Config-Server" />
+        <module name="Service-Registry" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Card-Payment-Service" target="1.8" />
       <module name="Config-Server" target="1.8" />
       <module name="Gateway" target="1.8" />
+      <module name="Literary-Association-Application" target="1.8" />
       <module name="Payment-Concentrator" target="1.8" />
       <module name="Service-Registry" target="1.8" />
     </bytecodeTargetLevel>
@@ -26,6 +28,7 @@
       <module name="Card-Payment-Service" options="-parameters" />
       <module name="Config-Server" options="-parameters" />
       <module name="Gateway" options="-parameters" />
+      <module name="Literary-Association-Application" options="-parameters" />
       <module name="Payment-Concentrator" options="-parameters" />
       <module name="Service-Registry" options="-parameters" />
     </option>
