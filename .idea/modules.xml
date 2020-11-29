@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Card-Payment-Service/Card-Payment-Service.iml" filepath="$PROJECT_DIR$/Card-Payment-Service/Card-Payment-Service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Config-Server/Config-Server.iml" filepath="$PROJECT_DIR$/Config-Server/Config-Server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Gateway/Gateway.iml" filepath="$PROJECT_DIR$/Gateway/Gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Payment-Concentrator/Payment-Concentrator.iml" filepath="$PROJECT_DIR$/Payment-Concentrator/Payment-Concentrator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Service-Registry/Service-Registry.iml" filepath="$PROJECT_DIR$/Service-Registry/Service-Registry.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/literary-association.iml" filepath="$PROJECT_DIR$/.idea/literary-association.iml" />
+    </modules>
+  </component>
+</project>
