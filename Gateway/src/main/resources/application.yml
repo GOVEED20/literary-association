@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: payment-concentrator
+          uri: lb://payment-concentrator
+          predicates:
+            - Path=/payment-concentrator/**
+          filters:
+            - RewritePath=/payment-concentrator/(?<path>.*), /$\{path}
+
+logging.level.com.netflix: DEBUG
+
+management:
+  security:
+    enabled: false
