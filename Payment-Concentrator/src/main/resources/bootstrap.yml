@@ -1,6 +1,3 @@
 spring:
   application:
-    name: Payment-Concentrator
-  cloud:
-    config:
-      uri: http://localhost:8888
+    name: payment-concentrator

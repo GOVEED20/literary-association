@@ -1,6 +1,33 @@
 spring:
   application:
-    name: Gateway
+    name: gateway-service
   cloud:
-    config:
-      uri: http://localhost:8888
+    consul:
+      host: localhost
+      port: 8500
+
+---
+spring:
+  profiles: zone1
+  cloud:
+    consul:
+      discovery:
+        instanceZone: zone1
+        register: false
+        registerHealthCheck: false
+        tags: zone=zone1
+server:
+  port: ${PORT:8080}
+
+---
+spring:
+  profiles: zone2
+  cloud:
+    consul:
+      discovery:
+        instanceZone: zone2
+        register: false
+        registerHealthCheck: false
+        tags: zone=zone2
+server:
+  port: ${PORT:9080}
