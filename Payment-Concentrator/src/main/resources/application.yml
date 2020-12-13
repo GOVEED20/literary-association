@@ -3,6 +3,15 @@ spring:
     consul:
       discovery:
         instance-id: "${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}"
+  data:
+    mongodb:
+      database: PCDatabase
+      uri: mongodb+srv://PeroNikic:${spring.data.mongodb.password}@paymentconcentrator.04yzc.mongodb.net/PCDatabase?retryWrites=true&w=majority
+      password: ENC(+DYa9tr+/nAlfpg2ze+ak6Gubk7a42K1MsO2spCDxx8=)
+
+jasypt:
+  encryptor:
+    password: goveed20
 
 server:
   port: 0

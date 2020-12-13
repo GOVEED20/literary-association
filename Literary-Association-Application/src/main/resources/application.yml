@@ -1,9 +1,6 @@
 spring:
   application:
-    name: payment-concentrator
-  cloud:
-    consul:
-      enabled: 'true'
+    name: literary-association
   zipkin:
     base-url: http://localhost:9411
   sleuth:
