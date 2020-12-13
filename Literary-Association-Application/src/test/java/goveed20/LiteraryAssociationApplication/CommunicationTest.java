@@ -22,7 +22,7 @@ class CommunicationTest {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> request = new HttpEntity<>("Card payment");
         ResponseEntity<String> response = restTemplate
-                .exchange("http://localhost:8082/api/payment", HttpMethod.POST, request, String.class);
+                .exchange("http://localhost:8080/payment-concentrator/test", HttpMethod.GET, request, String.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
