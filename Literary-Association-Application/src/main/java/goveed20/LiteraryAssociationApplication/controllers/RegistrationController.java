@@ -32,6 +32,6 @@ public class RegistrationController {
     @GetMapping("/verification/{pID}")
     public ResponseEntity<?> verify(@RequestParam("token") String disHash, @PathVariable String pID) throws Exception {
         registrationService.verify(disHash, pID);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("Your account is successfully verified", HttpStatus.OK);
     }
 }
