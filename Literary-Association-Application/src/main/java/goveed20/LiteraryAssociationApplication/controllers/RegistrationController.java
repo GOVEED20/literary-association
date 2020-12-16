@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.PathParam;
 import java.util.List;
 
 @RestController
@@ -28,9 +29,9 @@ public class RegistrationController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("/verification")
-    public ResponseEntity<?> verify() {
-        registrationService.verify();
+    @GetMapping("/verification/{pID}")
+    public ResponseEntity<?> verify(@RequestParam("token") String disHash, @PathVariable String pID) throws Exception {
+        registrationService.verify(disHash, pID);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

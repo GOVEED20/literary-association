@@ -17,6 +17,3 @@ jasypt:
   encryptor:
     password: goveed20
 
-server:
-  port: 9090
-
