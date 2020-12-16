@@ -5,6 +5,7 @@ import goveed20.LiteraryAssociationApplication.model.User;
 import goveed20.LiteraryAssociationApplication.model.VerificationToken;
 import goveed20.LiteraryAssociationApplication.repositories.UserRepository;
 import goveed20.LiteraryAssociationApplication.repositories.VerificationTokenRepository;
+import goveed20.LiteraryAssociationApplication.utils.UtilService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -53,15 +53,18 @@ public class RegistrationDelegate implements JavaDelegate {
                 case "email":
                     reader.setEmail(formField.getFieldValue());
                     break;
+                case "genres":
+                    reader.setGenres(UtilService.parseGenres(formField.getFieldValue()));
+                    break;
                 case "beta_reader":
                     reader.setBetaReader(Boolean.parseBoolean(formField.getFieldValue()));
                     break;
-                default:
-                    reader.setGenres(new HashSet<>());
-                    reader.setBetaGenres(new HashSet<>());
-                    reader.setVerified(false);
+                case "beta_genres":
+                    reader.setBetaGenres(UtilService.parseGenres(formField.getFieldValue()));
+                    break;
             }
         }
+        reader.setVerified(false);
 
         VerificationToken vt = new VerificationToken(reader);
         userRepository.save(reader);

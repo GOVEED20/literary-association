@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RegistrationService {
@@ -44,7 +43,6 @@ public class RegistrationService {
     public FormFieldsDTO getFormFields() {
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("Reader_registration");
         Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).list().get(0);
-        assert(taskService.createTaskQuery().active().list().size() == 0);
 
         TaskFormData tfd = formService.getTaskFormData(task.getId());
         List<FormField> properties = tfd.getFormFields();

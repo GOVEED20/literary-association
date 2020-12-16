@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/register")
+@CrossOrigin
 public class RegistrationController {
 
     @Autowired

@@ -1,9 +1,11 @@
 import React from 'react';
+import {AppRouter} from './components/Router/AppRouter';
 
 const App = () => {
     return (
-        <p>Hello Radjul</p>
+        <AppRouter>
+        </AppRouter>
     );
-}
+};
 
 export default App;

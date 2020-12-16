@@ -16,7 +16,7 @@
           </camunda:formField>
           <camunda:formField id="password" label="Password" type="string">
             <camunda:properties>
-              <camunda:property id="pattern" value="/^(?=.\d)(?=.[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/" />
+              <camunda:property id="pattern" value="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#38;])[A-Za-z\d@$!%*?&#38;]{8,}$" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
@@ -44,25 +44,13 @@
           </camunda:formField>
           <camunda:formField id="email" label="Email" type="string">
             <camunda:properties>
-              <camunda:property id="pattern" value="/^(([^&#60;&#62;()[].,;:\s@&#34;]+(.[^&#60;&#62;()[].,;:\s@&#34;]+)*)|(&#34;.+&#34;))@(([^&#60;&#62;()[].,;:\s@&#34;]+.)+[^&#60;&#62;()[].,;:\s@&#34;]{2,})$/" />
+              <camunda:property id="pattern" value="^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="genres" label="Genres" type="enum">
-            <camunda:value id="ADVENTURE" name="Adventure" />
-            <camunda:value id="FANTASY" name="Fantasy" />
-            <camunda:value id="MYSTERY" name="Mystery" />
-            <camunda:value id="HISTORICAL" name="Historical" />
-            <camunda:value id="HORROR" name="Horror" />
-            <camunda:value id="ROMANCE" name="Romance" />
-            <camunda:value id="SCIFI" name="Sci-Fi" />
-            <camunda:value id="THRILLER" name="Thriller" />
-            <camunda:value id="COOKBOOKS" name="Cookbooks" />
-            <camunda:value id="CRIME" name="Crime" />
-            <camunda:value id="EROTIC" name="Erotic" />
-          </camunda:formField>
+          <camunda:formField id="genres" label="Genres" type="string" />
           <camunda:formField id="beta_reader" label="Beta reader" type="boolean" defaultValue="false">
             <camunda:validation>
               <camunda:constraint name="required" />
@@ -88,19 +76,7 @@
     <bpmn:userTask id="Select_beta_genres" name="Select beta genres" camunda:formKey="registration_data">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="beta_genres" label="Beta genres" type="enum">
-            <camunda:value id="ADVENTURE" name="Adventure" />
-            <camunda:value id="FANTASY" name="Fantasy" />
-            <camunda:value id="MYSTERY" name="Mystery" />
-            <camunda:value id="HISTORICAL" name="Historical" />
-            <camunda:value id="HORROR" name="Horror" />
-            <camunda:value id="ROMANCE" name="Romance" />
-            <camunda:value id="SCIFI" name="Sci-Fi" />
-            <camunda:value id="THRILLER" name="Thriller" />
-            <camunda:value id="COOKBOOKS" name="Cookbooks" />
-            <camunda:value id="CRIME" name="Crime" />
-            <camunda:value id="EROTIC" name="Erotic" />
-          </camunda:formField>
+          <camunda:formField id="beta_genres" label="Beta genres" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_01frtpj</bpmn:incoming>
@@ -122,21 +98,16 @@
       <bpmn:outgoing>Flow_1gvwvq7</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1mw5wlc" sourceRef="Create_user" targetRef="Send_email_with_activation_link" />
-    <bpmn:sequenceFlow id="Flow_1wghk4b" sourceRef="Confirmation_link_event" targetRef="Activity_0nj5wn5" />
-    <bpmn:serviceTask id="Activity_0nj5wn5" name="Test servis" camunda:class="goveed20.LiteraryAssociationApplication.delegates.TestDelegate">
-      <bpmn:incoming>Flow_1wghk4b</bpmn:incoming>
-      <bpmn:outgoing>Flow_0uk2rtq</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:endEvent id="Event_18glsro">
-      <bpmn:incoming>Flow_0uk2rtq</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0uk2rtq" sourceRef="Activity_0nj5wn5" targetRef="Event_18glsro" />
     <bpmn:intermediateCatchEvent id="Confirmation_link_event" name="Confirmation link event">
       <bpmn:incoming>Flow_1gvwvq7</bpmn:incoming>
-      <bpmn:outgoing>Flow_1wghk4b</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1mjuzcx</bpmn:outgoing>
       <bpmn:signalEventDefinition id="SignalEventDefinition_02vht15" signalRef="Signal_189vto0" />
     </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="Flow_1gvwvq7" sourceRef="Send_email_with_activation_link" targetRef="Confirmation_link_event" />
+    <bpmn:endEvent id="Event_1gbr2p2">
+      <bpmn:incoming>Flow_1mjuzcx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1mjuzcx" sourceRef="Confirmation_link_event" targetRef="Event_1gbr2p2" />
     <bpmn:textAnnotation id="TextAnnotation_0jvc97f">
       <bpmn:text>Namestiti zanrove</bpmn:text>
     </bpmn:textAnnotation>
@@ -179,20 +150,15 @@
         <di:waypoint x="215" y="207" />
         <di:waypoint x="310" y="207" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1wghk4b_di" bpmnElement="Flow_1wghk4b">
-        <di:waypoint x="1138" y="230" />
-        <di:waypoint x="1220" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0uk2rtq_di" bpmnElement="Flow_0uk2rtq">
-        <di:waypoint x="1270" y="270" />
-        <di:waypoint x="1270" y="380" />
-        <di:waypoint x="1312" y="380" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1gvwvq7_di" bpmnElement="Flow_1gvwvq7">
         <di:waypoint x="1030" y="207" />
         <di:waypoint x="1051" y="207" />
         <di:waypoint x="1051" y="230" />
         <di:waypoint x="1102" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mjuzcx_di" bpmnElement="Flow_1mjuzcx">
+        <di:waypoint x="1138" y="230" />
+        <di:waypoint x="1212" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="189" width="36" height="36" />
@@ -221,17 +187,14 @@
       <bpmndi:BPMNShape id="TextAnnotation_1rjf5dn_di" bpmnElement="TextAnnotation_1rjf5dn">
         <dc:Bounds x="840" y="80" width="100" height="30" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0cnvxcq_di" bpmnElement="Activity_0nj5wn5">
-        <dc:Bounds x="1220" y="190" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_18glsro_di" bpmnElement="Event_18glsro">
-        <dc:Bounds x="1312" y="362" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_191zgey_di" bpmnElement="Confirmation_link_event">
         <dc:Bounds x="1102" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1081" y="255" width="83" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gbr2p2_di" bpmnElement="Event_1gbr2p2">
+        <dc:Bounds x="1212" y="212" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1q3ubie_di" bpmnElement="Association_1q3ubie">
         <di:waypoint x="399" y="167" />
