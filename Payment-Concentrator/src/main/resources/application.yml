@@ -1,13 +1,21 @@
 spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    password: ENC(DJV5MsDLF/6adraw4pj3ZQ==)
+    url: jdbc:h2:file:./pc-db
+    username: dzabic
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
   cloud:
     consul:
       discovery:
         instance-id: "${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}"
-  data:
-    mongodb:
-      database: PCDatabase
-      uri: mongodb+srv://PeroNikic:${spring.data.mongodb.password}@paymentconcentrator.04yzc.mongodb.net/PCDatabase?retryWrites=true&w=majority
-      password: ENC(+DYa9tr+/nAlfpg2ze+ak6Gubk7a42K1MsO2spCDxx8=)
 
 jasypt:
   encryptor:
