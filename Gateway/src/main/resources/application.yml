@@ -4,13 +4,6 @@ spring:
       discovery:
         locator:
           enabled: true
-      routes:
-        - id: payment-concentrator
-          uri: lb://payment-concentrator
-          predicates:
-            - Path=/payment-concentrator/**
-          filters:
-            - RewritePath=/payment-concentrator/(?<path>.*), /$\{path}
 
 logging.level.com.netflix: DEBUG
 

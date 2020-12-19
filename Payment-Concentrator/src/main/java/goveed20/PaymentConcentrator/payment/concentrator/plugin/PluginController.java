@@ -13,7 +13,7 @@ import java.util.Set;
 public interface PluginController {
 
     @PostMapping("/initialize-payment")
-    ResponseEntity<TransactionStatus> initializePayment(@Valid @RequestBody InitializationPaymentPayload payload);
+    ResponseEntity<?> initializePayment(@Valid @RequestBody InitializationPaymentPayload payload);
 
     @PostMapping("/complete-payment")
     ResponseEntity completePayment(@RequestBody BasePayload payload);

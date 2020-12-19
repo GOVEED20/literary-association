@@ -7,10 +7,7 @@ import goveed20.PaymentConcentrator.exceptions.StatusCodeException;
 import goveed20.PaymentConcentrator.model.Retailer;
 import goveed20.PaymentConcentrator.model.RetailerDataForPaymentService;
 import goveed20.PaymentConcentrator.model.Transaction;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.PluginController;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.RegistrationField;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.TransactionStatus;
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.*;
 import goveed20.PaymentConcentrator.repositories.RetailerDataForPaymentServiceRepository;
 import goveed20.PaymentConcentrator.repositories.RetailerRepository;
 import goveed20.PaymentConcentrator.repositories.TransactionRepository;
@@ -20,6 +17,7 @@ import org.springframework.cloud.openfeign.FeignClientBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -97,29 +95,6 @@ public class PaymentService {
                 .getPaymentData()
                 .forEach(paymentData -> paymentFields.put(paymentData.getName(), paymentData.getValue()));
 
-        InitializationPaymentPayload payload = InitializationPaymentPayload.childBuilder()
-                .paymentFields(paymentFields)
-                .amount(paymentRequest.getAmount())
-                .errorURL(paymentRequest.getErrorURL())
-                .failedURL(paymentRequest.getFailedURL())
-                .successURL(paymentRequest.getSuccessURL())
-                .build();
-
-        PluginController service = feignClientBuilder.forType(PluginController.class, paymentServiceName).build();
-        ResponseEntity<TransactionStatus> status = service.initializePayment(payload);
-
-        if (status.getStatusCode().isError()) {
-            throw new StatusCodeException(status.getStatusCode());
-        }
-
-        TransactionStatus transactionStatus = status.getBody();
-
-        if (transactionStatus == TransactionStatus.FAILED) {
-            throw new BadRequestException("Insufficient funds");
-        } else if (transactionStatus == TransactionStatus.ERROR) {
-            throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
         Transaction newTransaction = Transaction.builder()
                 .transactionId(UUID.randomUUID())
                 .initializedOn(new Date())
@@ -127,6 +102,22 @@ public class PaymentService {
                 .paidWith(paymentServiceName)
                 .status(goveed20.PaymentConcentrator.model.TransactionStatus.INITIALIZED)
                 .build();
+
+        InitializationPaymentPayload payload = InitializationPaymentPayload.childBuilder()
+                .paymentFields(paymentFields)
+                .transactionId(newTransaction.getTransactionId())
+                .amount(paymentRequest.getAmount())
+                .errorURL(paymentRequest.getErrorURL())
+                .failedURL(paymentRequest.getFailedURL())
+                .successURL(paymentRequest.getSuccessURL())
+                .build();
+
+        PluginController service = feignClientBuilder.forType(PluginController.class, paymentServiceName).build();
+        ResponseEntity<?> status = service.initializePayment(payload);
+
+        if (status.getStatusCode().isError()) {
+            throw new StatusCodeException(status.getStatusCode());
+        }
 
         try {
             newTransaction = transactionRepository.save(newTransaction);
@@ -136,5 +127,27 @@ public class PaymentService {
 
         // 8500 is port of first gateway, change it to random gateway later
         return String.format("http://localhost:8500/%s/api/payment/%s", paymentServiceName, newTransaction.getTransactionId().toString());
+    }
+
+    public void sendTransactionResponse(@RequestBody ResponsePayload responsePayload) {
+        Optional<Transaction> transactionOptional = transactionRepository.findByTransactionId(UUID.fromString(responsePayload.getTransactionID()));
+
+        if (transactionOptional.isEmpty()) {
+            throw new NotFoundException(String.format("Transaction with transaction id: %s not found.", responsePayload.getTransactionID()));
+        }
+
+        Transaction transaction = transactionOptional.get();
+        if (responsePayload.getTransactionStatus() == TransactionStatus.SUCCESS) {
+            transaction.setStatus(goveed20.PaymentConcentrator.model.TransactionStatus.COMPLETED);
+        } else {
+            transaction.setStatus(goveed20.PaymentConcentrator.model.TransactionStatus.FAILED);
+        }
+
+        try {
+            transactionRepository.save(transaction);
+        } catch (Exception e) {
+            throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 }

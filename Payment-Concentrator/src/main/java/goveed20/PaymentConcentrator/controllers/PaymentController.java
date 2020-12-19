@@ -4,6 +4,7 @@ import goveed20.PaymentConcentrator.dtos.InitializePaymentRequest;
 import goveed20.PaymentConcentrator.exceptions.BadRequestException;
 import goveed20.PaymentConcentrator.exceptions.NotFoundException;
 import goveed20.PaymentConcentrator.exceptions.StatusCodeException;
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.ResponsePayload;
 import goveed20.PaymentConcentrator.services.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -56,6 +57,18 @@ public class PaymentController {
             return new ResponseEntity<>("Request failed", e.getStatusCode());
         } catch (BadRequestException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/payment")
+    ResponseEntity<?> sendTransactionResponse(@RequestBody ResponsePayload responsePayload) {
+        try {
+            paymentService.sendTransactionResponse(responsePayload);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (StatusCodeException e) {
+            return new ResponseEntity<>("Request failed", e.getStatusCode());
         }
     }
 

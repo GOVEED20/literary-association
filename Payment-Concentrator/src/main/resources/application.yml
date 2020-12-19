@@ -12,19 +12,6 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
-  cloud:
-    consul:
-      discovery:
-        instance-id: "${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}"
-
-logging:
-  level:
-    org:
-      springframework:
-        web:
-          filter:
-            CommonRequestLoggingFilter:
-              DEBUG
 
 jasypt:
   encryptor:
