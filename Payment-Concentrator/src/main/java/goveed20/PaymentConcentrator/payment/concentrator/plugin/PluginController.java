@@ -12,11 +12,8 @@ import java.util.Set;
 @RequestMapping("/api")
 public interface PluginController {
 
-    @GetMapping("/name")
-    ResponseEntity<PluginName> getName();
-
     @PostMapping("/initialize-payment")
-    ResponseEntity initializePayment(@Valid @RequestBody InitializationPaymentPayload payload);
+    ResponseEntity<TransactionStatus> initializePayment(@Valid @RequestBody InitializationPaymentPayload payload);
 
     @PostMapping("/complete-payment")
     ResponseEntity completePayment(@RequestBody BasePayload payload);
@@ -25,7 +22,7 @@ public interface PluginController {
         Payment Concentrator should call this endpoint during Retailer registration to get necessary fields. Fields
         should be saved in RetailerDataForPaymentService class
     * */
-    @GetMapping("/payment/fields")
-    ResponseEntity<Set<String>> getPaymentFields();
+    @GetMapping("/payment-service/registration-fields")
+    ResponseEntity<Set<RegistrationField>> getPaymentServiceRegistrationFields();
 
 }

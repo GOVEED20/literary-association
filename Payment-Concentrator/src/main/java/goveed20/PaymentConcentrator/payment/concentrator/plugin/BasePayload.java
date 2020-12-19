@@ -10,5 +10,5 @@ import java.util.HashMap;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class BasePayload {
-    private HashMap<String, Object> paymentFields;
+    protected HashMap<String, String> paymentFields;
 }

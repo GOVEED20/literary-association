@@ -5,6 +5,7 @@ import lombok.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 
 @Getter
 @Setter
@@ -24,4 +25,13 @@ public class InitializationPaymentPayload extends BasePayload {
 
     @NotBlank
     private String errorURL;
+
+    @Builder(builderMethodName = "childBuilder")
+    public InitializationPaymentPayload(HashMap<String, String> paymentFields, Double amount, String successURL, String failedURL, String errorURL) {
+        super(paymentFields);
+        this.amount = amount;
+        this.successURL = successURL;
+        this.errorURL = errorURL;
+        this.failedURL = failedURL;
+    }
 }

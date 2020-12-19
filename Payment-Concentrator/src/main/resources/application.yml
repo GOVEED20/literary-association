@@ -17,12 +17,23 @@ spring:
       discovery:
         instance-id: "${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}"
 
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          filter:
+            CommonRequestLoggingFilter:
+              DEBUG
+
 jasypt:
   encryptor:
     password: goveed20
 
 server:
   port: 0
+  servlet:
+    context-path: /api
 
 ---
 spring:
