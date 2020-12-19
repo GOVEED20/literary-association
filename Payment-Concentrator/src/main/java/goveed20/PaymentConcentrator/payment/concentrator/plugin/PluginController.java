@@ -21,6 +21,10 @@ public interface PluginController {
     @PostMapping("/complete-payment")
     ResponseEntity completePayment(@RequestBody BasePayload payload);
 
+    /*
+        Payment Concentrator should call this endpoint during Retailer registration to get necessary fields. Fields
+        should be saved in RetailerDataForPaymentService class
+    * */
     @GetMapping("/payment/fields")
     ResponseEntity<Set<String>> getPaymentFields();
 
