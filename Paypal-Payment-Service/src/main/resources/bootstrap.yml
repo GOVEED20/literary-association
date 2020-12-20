@@ -5,7 +5,6 @@ spring:
     consul:
       enabled: true
       discovery:
-        healthCheckPath: /api/actuator/health
         instance-id: "${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}"
   zipkin:
     base-url: http://localhost:9411

@@ -916,7 +916,7 @@ NameToCode=No</a:ModelOptionsText>
 <c:ClassDiagrams>
 <o:ClassDiagram Id="o5">
 <a:ObjectID>0C2A06DC-6C7E-4900-A259-F659E690DC06</a:ObjectID>
-<a:Name>Payment Concentrator model</a:Name>
+<a:Name>Payment Concentrator goveed20.PaypalPaymentService.model</a:Name>
 <a:Code>PaymentConcentratormodel</a:Code>
 <a:CreationDate>1608327455</a:CreationDate>
 <a:Creator>Dragan</a:Creator>

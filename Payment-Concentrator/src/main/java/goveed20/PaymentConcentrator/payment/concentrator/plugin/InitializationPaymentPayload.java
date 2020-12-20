@@ -3,7 +3,6 @@ package goveed20.PaymentConcentrator.payment.concentrator.plugin;
 import lombok.*;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.UUID;
@@ -21,13 +20,10 @@ public class InitializationPaymentPayload extends BasePayload {
     @Min(0)
     private Double amount;
 
-    @NotBlank
     private String successURL;
 
-    @NotBlank
     private String failedURL;
 
-    @NotBlank
     private String errorURL;
 
     @Builder(builderMethodName = "childBuilder")

@@ -7,11 +7,11 @@ import goveed20.PaymentConcentrator.exceptions.StatusCodeException;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.ResponsePayload;
 import goveed20.PaymentConcentrator.services.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Set;
 
 @RestController
@@ -45,12 +45,10 @@ public class PaymentController {
     }
 
     @PostMapping(value = "/payment-services/{paymentService}/initialize-payment")
-    private ResponseEntity<?> initializePayment(@PathVariable("paymentService") String paymentServiceName,
-                                                @RequestBody InitializePaymentRequest paymentRequest) {
+    private ResponseEntity<String> initializePayment(@PathVariable("paymentService") String paymentServiceName,
+                                                     @Valid @RequestBody InitializePaymentRequest paymentRequest) {
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", paymentService.initializePayment(paymentServiceName, paymentRequest));
-            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+            return new ResponseEntity<>(paymentService.initializePayment(paymentServiceName, paymentRequest), HttpStatus.CREATED);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (StatusCodeException e) {

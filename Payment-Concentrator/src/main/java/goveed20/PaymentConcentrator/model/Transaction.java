@@ -38,4 +38,13 @@ public class Transaction {
     @Column(nullable = false)
     @Pattern(regexp = "^[A-Za-z]+-service$")
     private String paidWith;
+
+    @Column(nullable = false)
+    private String successURL;
+
+    @Column(nullable = false)
+    private String failedURL;
+
+    @Column(nullable = false)
+    private String errorURL;
 }

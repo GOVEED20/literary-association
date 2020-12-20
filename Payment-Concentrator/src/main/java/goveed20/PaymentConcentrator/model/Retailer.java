@@ -3,6 +3,7 @@ package goveed20.PaymentConcentrator.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -19,9 +20,11 @@ public class Retailer {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Builder.Default
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<RetailerDataForPaymentService> retailerDataForPaymentServices;
+    private Set<RetailerDataForPaymentService> retailerDataForPaymentServices = new HashSet<>();
 
+    @Builder.Default
     @OneToMany
-    private Set<Transaction> transactions;
+    private Set<Transaction> transactions = new HashSet<>();
 }

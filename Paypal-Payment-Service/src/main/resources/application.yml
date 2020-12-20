@@ -1,4 +1,21 @@
 server:
   port: 0
-  servlet:
-    context-path: /api
+
+jasypt:
+  encryptor:
+    password: goveed20
+
+paypal:
+  client:
+    mode: sandbox
+    id: ENC(5dMBfHBl+loOeH4/kIbaUWwWLxQ+dRt9VTCxjx2b1CIeXZb5jFxK+Yge/PONwrBgto9qRS/An/qonSbPhpJoz+rHFbsujHX+FVo+Yqrs3NXMNnzE825CPldFP9L7V/1q)
+    secret: ENC(v3ngbhprj3XBxQgVZ33ieBSC9m72iVHZKXkJmDUYsD9fzUWIJKgQoFvI6Drk84PceVFbqG3H7oF2774nfaBCBBw+NxmP00KfQdw3ET96DTQ0Rc2J+2vS7bBZADbJ6o7B)
+
+spring:
+  thymeleaf:
+    cache: false
+  data:
+    mongodb:
+      password: admin #ENC(K9h7BPzAg3ada6hAc+SNPA==)
+      uri: "mongodb+srv://admin:${spring.data.mongodb.password}@cluster0.sys1z.mongodb.net/${spring.data.mongodb.database}?retryWrites=true&w=majority"
+      database: Paypal-Service

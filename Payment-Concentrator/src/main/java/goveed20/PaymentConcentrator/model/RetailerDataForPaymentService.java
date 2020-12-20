@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -21,8 +22,9 @@ public class RetailerDataForPaymentService {
     @Pattern(regexp = "^[A-Za-z]+-service$")
     private String paymentService;
 
-    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<PaymentData> paymentData;
+    @Builder.Default
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<PaymentData> paymentData = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(nullable = false, referencedColumnName = "id")
