@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: bitcoin-service
+  cloud:
+    consul:
+      enabled: true
+      discovery:
+        healthCheckPath: /api/actuator/health
+        instance-id: "${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}"
