@@ -64,6 +64,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>goveed20</groupId>
+			<artifactId>Payment-Concentrator-Info-Api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
