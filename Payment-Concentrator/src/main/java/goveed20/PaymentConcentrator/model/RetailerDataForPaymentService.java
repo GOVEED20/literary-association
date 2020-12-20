@@ -21,7 +21,7 @@ public class RetailerDataForPaymentService {
     @Pattern(regexp = "^[A-Za-z]+-service$")
     private String paymentService;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<PaymentData> paymentData;
 
     @ManyToOne
