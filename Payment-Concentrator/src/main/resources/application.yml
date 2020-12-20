@@ -4,6 +4,7 @@ spring:
     password: ENC(DJV5MsDLF/6adraw4pj3ZQ==)
     url: jdbc:h2:file:./pc-db
     username: dzabic
+    initialization-mode: never
   h2:
     console:
       enabled: true

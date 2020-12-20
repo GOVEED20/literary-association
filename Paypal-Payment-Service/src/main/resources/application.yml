@@ -12,6 +12,8 @@ paypal:
     secret: ENC(v3ngbhprj3XBxQgVZ33ieBSC9m72iVHZKXkJmDUYsD9fzUWIJKgQoFvI6Drk84PceVFbqG3H7oF2774nfaBCBBw+NxmP00KfQdw3ET96DTQ0Rc2J+2vS7bBZADbJ6o7B)
 
 spring:
+  thymeleaf:
+    cache: false
   data:
     mongodb:
       password: admin #ENC(K9h7BPzAg3ada6hAc+SNPA==)

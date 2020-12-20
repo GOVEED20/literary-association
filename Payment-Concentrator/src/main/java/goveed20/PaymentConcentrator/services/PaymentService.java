@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,6 +38,8 @@ public class PaymentService {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public Set<String> getGlobalPaymentServices() {
         return discoveryClient.getServices()
@@ -95,7 +98,7 @@ public class PaymentService {
                 .forEach(paymentData -> paymentFields.put(paymentData.getName(), paymentData.getValue()));
 
         Transaction newTransaction = Transaction.builder()
-                .transactionId(UUID.randomUUID())
+                .transactionId(paymentRequest.getTransactionId())
                 .initializedOn(new Date())
                 .amount(paymentRequest.getAmount())
                 .paidWith(paymentServiceName)
@@ -106,26 +109,24 @@ public class PaymentService {
                 .paymentFields(paymentFields)
                 .transactionId(newTransaction.getTransactionId())
                 .amount(paymentRequest.getAmount())
-                .errorURL(paymentRequest.getErrorURL())
-                .failedURL(paymentRequest.getFailedURL())
-                .successURL(paymentRequest.getSuccessURL())
                 .build();
 
         PluginController service = feignClientBuilder.forType(PluginController.class, paymentServiceName).build();
-        ResponseEntity<?> status = service.initializePayment(payload);
+        ResponseEntity<String> redirectionUrlResponse = service.initializePayment(payload);
 
-        if (status.getStatusCode().isError()) {
-            throw new StatusCodeException(status.getStatusCode());
+        if (redirectionUrlResponse.getStatusCode().isError()) {
+            throw new StatusCodeException(redirectionUrlResponse.getStatusCode());
         }
 
+        String redirectionUrl = redirectionUrlResponse.getBody();
+
         try {
-            newTransaction = transactionRepository.save(newTransaction);
+            transactionRepository.save(newTransaction);
         } catch (Exception e) {
             throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        // TODO: 8500 is port of first gateway, change it to random gateway later
-        return String.format("http://localhost:8500/%s/api/payment/%s", paymentServiceName, newTransaction.getTransactionId().toString());
+        return redirectionUrl;
     }
 
     public void sendTransactionResponse(@RequestBody ResponsePayload responsePayload) {
@@ -148,5 +149,15 @@ public class PaymentService {
             throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+        switch (responsePayload.getTransactionStatus()) {
+            case SUCCESS:
+                restTemplate.getForEntity(transaction.getSuccessURL(), Void.class);
+                break;
+            case FAILED:
+                restTemplate.getForEntity(transaction.getFailedURL(), Void.class);
+                break;
+            default:
+                restTemplate.getForEntity(transaction.getErrorURL(), Void.class);
+        }
     }
 }

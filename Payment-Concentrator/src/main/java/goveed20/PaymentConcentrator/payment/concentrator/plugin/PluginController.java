@@ -1,11 +1,9 @@
 package goveed20.PaymentConcentrator.payment.concentrator.plugin;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Set;
 
@@ -13,10 +11,10 @@ import java.util.Set;
 public interface PluginController {
 
     @PostMapping(value = "/initialize-payment")
-    ResponseEntity<?> initializePayment(@Valid @RequestBody InitializationPaymentPayload payload);
+    ResponseEntity<String> initializePayment(@Valid @RequestBody InitializationPaymentPayload payload);
 
-    @PostMapping(value = "/complete-payment")
-    ResponseEntity<?> completePayment(@Valid @RequestBody TransactionDataPayload payload);
+    @RequestMapping(value = "/complete-payment", method = {RequestMethod.GET, RequestMethod.POST})
+    ResponseEntity<?> completePayment(HttpServletRequest request);
 
     /*
         Payment Concentrator should call this endpoint during Retailer registration to get necessary fields. Fields
