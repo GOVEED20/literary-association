@@ -1,7 +1,6 @@
 package goveed20.PaymentConcentrator.services;
 
 import goveed20.PaymentConcentrator.dtos.InitializePaymentRequest;
-import goveed20.PaymentConcentrator.exceptions.BadRequestException;
 import goveed20.PaymentConcentrator.exceptions.NotFoundException;
 import goveed20.PaymentConcentrator.exceptions.StatusCodeException;
 import goveed20.PaymentConcentrator.model.Retailer;
