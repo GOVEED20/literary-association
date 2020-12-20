@@ -35,12 +35,8 @@ public class PaymentController implements PluginController {
 
     @Override
     public ResponseEntity<?> completePaymentGet(HttpServletRequest request) {
-        try {
-            paymentService.completePayment(request.getParameterMap());
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Request failed", HttpStatus.BAD_REQUEST);
-        }
+        paymentService.completePayment(request.getParameterMap());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override

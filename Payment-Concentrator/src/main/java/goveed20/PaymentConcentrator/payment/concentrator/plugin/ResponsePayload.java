@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,5 +17,12 @@ public class ResponsePayload extends BasePayload {
     private TransactionStatus transactionStatus;
 
     @NotBlank
-    private String transactionID;
+    private UUID transactionID;
+
+    @Builder(builderMethodName = "childBuilder")
+    public ResponsePayload(HashMap<String, String> paymentFields, TransactionStatus transactionStatus, UUID transactionID) {
+        super(paymentFields);
+        this.transactionStatus = transactionStatus;
+        this.transactionID = transactionID;
+    }
 }

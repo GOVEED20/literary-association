@@ -130,7 +130,7 @@ public class PaymentService {
     }
 
     public void sendTransactionResponse(@RequestBody ResponsePayload responsePayload) {
-        Optional<Transaction> transactionOptional = transactionRepository.findByTransactionId(UUID.fromString(responsePayload.getTransactionID()));
+        Optional<Transaction> transactionOptional = transactionRepository.findByTransactionId(responsePayload.getTransactionID());
 
         if (transactionOptional.isEmpty()) {
             throw new NotFoundException(String.format("Transaction with transaction id %s not found.", responsePayload.getTransactionID()));
