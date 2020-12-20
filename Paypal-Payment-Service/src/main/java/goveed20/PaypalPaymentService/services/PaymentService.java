@@ -11,6 +11,7 @@ import goveed20.PaypalPaymentService.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -23,9 +24,6 @@ public class PaymentService {
 
     @Autowired
     private TransactionRepository transactionRepository;
-
-    @Autowired
-    private Environment environment;
 
     public String initializePayment(InitializationPaymentPayload payload) throws PayPalRESTException, UnknownHostException {
         Amount amount = new Amount();
@@ -54,14 +52,13 @@ public class PaymentService {
         payment.setPayer(payer);
         payment.setTransactions(transactions);
 
-        String baseUrl = String.format("%s:%d", InetAddress.getLocalHost().getHostAddress(),
-                Integer.parseInt(Objects.requireNonNull(environment.getProperty("server.port"))));
-
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
         RedirectUrls redirectUrls = new RedirectUrls();
         redirectUrls.setReturnUrl(baseUrl + "/api/complete-payment");
         redirectUrls.setCancelUrl(baseUrl + "/api/complete-payment");
 
+        System.out.println(baseUrl);
         payment.setRedirectUrls(redirectUrls);
 
         Payment initializedPayment = payment.create(apiContext);

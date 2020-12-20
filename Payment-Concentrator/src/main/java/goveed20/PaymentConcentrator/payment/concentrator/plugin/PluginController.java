@@ -13,8 +13,11 @@ public interface PluginController {
     @PostMapping(value = "/initialize-payment")
     ResponseEntity<String> initializePayment(@Valid @RequestBody InitializationPaymentPayload payload);
 
-    @RequestMapping(value = "/complete-payment", method = {RequestMethod.GET, RequestMethod.POST})
-    ResponseEntity<?> completePayment(HttpServletRequest request);
+    @PostMapping(value = "/complete-payment")
+    ResponseEntity<?> completePaymentPost(HttpServletRequest request);
+
+    @GetMapping(value = "/complete-payment")
+    ResponseEntity<?> completePaymentGet(HttpServletRequest request);
 
     /*
         Payment Concentrator should call this endpoint during Retailer registration to get necessary fields. Fields

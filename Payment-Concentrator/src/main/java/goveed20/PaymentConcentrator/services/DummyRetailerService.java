@@ -16,27 +16,29 @@ public class DummyRetailerService {
 
     @EventListener(ApplicationReadyEvent.class)
     public void addDummyRetailer() {
-        System.out.println("Adding dummy retailer");
+        if (retailerRepository.findByName("dummy").isEmpty()) {
+            System.out.println("Adding dummy retailer");
 
-        Retailer retailer = Retailer.builder()
-                .name("dummy")
-                .build();
+            Retailer retailer = Retailer.builder()
+                    .name("dummy")
+                    .build();
 
-        RetailerDataForPaymentService data = RetailerDataForPaymentService.builder()
-                .paymentService("paypal-service")
-                .retailer(retailer)
-                .build();
+            RetailerDataForPaymentService data = RetailerDataForPaymentService.builder()
+                    .paymentService("paypal-service")
+                    .retailer(retailer)
+                    .build();
 
-        PaymentData paymentData = PaymentData.builder()
-                .name("payee")
-                .value("sb-rqo034159139@business.example.com")
-                .build();
+            PaymentData paymentData = PaymentData.builder()
+                    .name("payee")
+                    .value("sb-rqo034159139@business.example.com")
+                    .build();
 
-        data.getPaymentData().add(paymentData);
-        retailer.getRetailerDataForPaymentServices().add(data);
+            data.getPaymentData().add(paymentData);
+            retailer.getRetailerDataForPaymentServices().add(data);
 
-        retailerRepository.save(retailer);
+            retailerRepository.save(retailer);
 
-        System.out.println("Dummy retailer added");
+            System.out.println("Dummy retailer added");
+        }
     }
 }
