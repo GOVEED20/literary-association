@@ -125,7 +125,7 @@ public class PaymentService {
             throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        // 8500 is port of first gateway, change it to random gateway later
+        // TODO: 8500 is port of first gateway, change it to random gateway later
         return String.format("http://localhost:8500/%s/api/payment/%s", paymentServiceName, newTransaction.getTransactionId().toString());
     }
 
@@ -133,7 +133,7 @@ public class PaymentService {
         Optional<Transaction> transactionOptional = transactionRepository.findByTransactionId(UUID.fromString(responsePayload.getTransactionID()));
 
         if (transactionOptional.isEmpty()) {
-            throw new NotFoundException(String.format("Transaction with transaction id: %s not found.", responsePayload.getTransactionID()));
+            throw new NotFoundException(String.format("Transaction with transaction id %s not found.", responsePayload.getTransactionID()));
         }
 
         Transaction transaction = transactionOptional.get();
