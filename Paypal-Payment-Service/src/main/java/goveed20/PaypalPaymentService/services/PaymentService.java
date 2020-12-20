@@ -65,7 +65,6 @@ public class PaymentService {
         redirectUrls.setReturnUrl(baseUrl + "/api/complete-payment");
         redirectUrls.setCancelUrl(baseUrl + "/api/complete-payment");
 
-        System.out.println(baseUrl);
         payment.setRedirectUrls(redirectUrls);
 
         Payment initializedPayment = payment.create(apiContext);
@@ -96,7 +95,7 @@ public class PaymentService {
 
         goveed20.PaypalPaymentService.model.Transaction internalTransaction = transactionRepository
                 .findTransactionByPayment(paymentId)
-                .orElseThrow(() -> new BadRequestException("Transaction id invalid"));
+                .orElseThrow(() -> new BadRequestException("Transaction id invalid")); // fix query in compas
 
         Payment payment = internalTransaction.getPayment();
 

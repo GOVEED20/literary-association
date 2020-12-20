@@ -25,7 +25,7 @@ public class PaymentController implements PluginController {
     @Override
     public ResponseEntity<String> initializePayment(@Valid @RequestBody InitializationPaymentPayload payload) {
         try {
-            return new ResponseEntity<>(paymentService.initializePayment(payload), HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(paymentService.initializePayment(payload), HttpStatus.OK);
         } catch (PayPalRESTException | UnknownHostException e) {
             return new ResponseEntity<>("Request failed", HttpStatus.BAD_REQUEST);
         } catch (BadRequestException e) {
@@ -46,6 +46,6 @@ public class PaymentController implements PluginController {
 
     @Override
     public ResponseEntity<Set<RegistrationField>> getPaymentServiceRegistrationFields() {
-        return null;
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 }

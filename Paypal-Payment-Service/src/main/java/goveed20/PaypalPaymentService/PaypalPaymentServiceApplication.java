@@ -9,7 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableEncryptableProperties
-@EnableFeignClients
+@EnableFeignClients(basePackages = {"goveed20.PaymentConcentrator.payment.concentrator.plugin"})
 public class PaypalPaymentServiceApplication {
 
 	public static void main(String[] args) {

@@ -102,6 +102,9 @@ public class PaymentService {
                 .initializedOn(new Date())
                 .amount(paymentRequest.getAmount())
                 .paidWith(paymentServiceName)
+                .errorURL(paymentRequest.getErrorURL())
+                .successURL(paymentRequest.getSuccessURL())
+                .failedURL(paymentRequest.getFailedURL())
                 .status(goveed20.PaymentConcentrator.model.TransactionStatus.INITIALIZED)
                 .build();
 
