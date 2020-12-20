@@ -107,13 +107,13 @@
 				<executions>
 					<execution>
 						<id>info-api</id>
-						<phase>package</phase>
+						<phase>install</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>
 						<configuration>
 							<descriptors>
-								<descriptor>src/main/resources/example.xml</descriptor>
+								<descriptor>src/main/resources/info-api.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>

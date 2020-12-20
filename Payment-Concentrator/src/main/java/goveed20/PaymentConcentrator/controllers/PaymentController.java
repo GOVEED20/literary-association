@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Set;
 
 @RestController
@@ -46,7 +47,7 @@ public class PaymentController {
 
     @PostMapping(value = "/payment-services/{paymentService}/initialize-payment")
     private ResponseEntity<?> initializePayment(@PathVariable("paymentService") String paymentServiceName,
-                                                @RequestBody InitializePaymentRequest paymentRequest) {
+                                                @Valid @RequestBody InitializePaymentRequest paymentRequest) {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", paymentService.initializePayment(paymentServiceName, paymentRequest));
