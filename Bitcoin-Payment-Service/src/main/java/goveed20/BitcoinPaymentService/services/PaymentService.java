@@ -8,6 +8,7 @@ import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPa
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.PaymentConcentratorFeignClient;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.ResponsePayload;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.TransactionStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,9 +21,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class PaymentService {
-
-    private final String sandboxUrl = "https://api-sandbox.coingate.com/v2/orders";
 
     @Autowired
     private PaymentConcentratorFeignClient paymentConcentratorFeignClient;
@@ -34,7 +34,6 @@ public class PaymentService {
         }
 
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        baseUrl = baseUrl.replace("host.docker.internal", "bitcoin-service");
 
         BitcoinOrder bitcoinOrder = BitcoinOrder.builder()
                 .order_id(payload.getTransactionId().toString())
@@ -54,8 +53,18 @@ public class PaymentService {
         String clientSecret = "Bearer " + payload.getPaymentFields().get("coinGateApiKey");
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", clientSecret);
+        String sandboxUrl = "https://api-sandbox.coingate.com/v2/orders";
         ResponseEntity<BitcoinOrder> responseEntity = new RestTemplate().exchange(sandboxUrl, HttpMethod.POST,
                 new HttpEntity<BitcoinOrder>(bitcoinOrder, headers), BitcoinOrder.class);
+
+        String paymentUrl = responseEntity.getBody().getPayment_url();
+
+        if (paymentUrl == null || paymentUrl.equals("")) {
+            throw new BadRequestException("Missing payment url from coingate");
+        }
+
+        log.info("BTC PaymentService: Received payment_url for transaction with id " +
+                payload.getTransactionId());
 
         return responseEntity.getBody().getPayment_url();
     }
@@ -64,7 +73,12 @@ public class PaymentService {
         Gson gson = new Gson();
         CompleteBitcoinOrder completedPayment = gson.fromJson(data, CompleteBitcoinOrder.class);
 
+        log.info("BTC PaymentService: Started completing transaction with id " +
+                completedPayment.getOrder_id());
+
         if (!completedPayment.getStatus().equals("paid") && !completedPayment.getStatus().equals("refunded")) {
+            log.info("BTC PaymentService: Transaction with id " +
+                    completedPayment.getOrder_id() + " got status FAILED");
             paymentConcentratorFeignClient.sendTransactionResponse(
                     ResponsePayload.childBuilder()
                             .transactionID(UUID.fromString(completedPayment.getOrder_id()))
@@ -73,6 +87,8 @@ public class PaymentService {
             );
         }
         else {
+            log.info("BTC PaymentService: Transaction with id " +
+                    completedPayment.getOrder_id() + " got status SUCCESS");
             paymentConcentratorFeignClient.sendTransactionResponse(
                     ResponsePayload.childBuilder()
                             .transactionID(UUID.fromString(completedPayment.getOrder_id()))

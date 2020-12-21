@@ -6,6 +6,7 @@ import goveed20.BitcoinPaymentService.services.PaymentService;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.PluginController;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.RegistrationField;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
+@Slf4j
 public class PaymentController implements PluginController {
 
     @Autowired
@@ -28,6 +30,9 @@ public class PaymentController implements PluginController {
     @Override
     public ResponseEntity<String> initializePayment(@Valid InitializationPaymentPayload payload) {
         try {
+            log.info("BTC PaymentController: Initialize transaction with id " + payload.getTransactionId()
+                    + " and amount " + payload.getAmount());
+
             return new ResponseEntity<>(paymentService.initializePayment(payload), HttpStatus.OK);
         } catch (BadRequestException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -43,6 +48,7 @@ public class PaymentController implements PluginController {
     @Override
     public ResponseEntity<?> completePaymentPost(HttpServletRequest request) {
         try {
+            log.info("BTC PaymentController: Started completing transaction");
             paymentService.completePayment(request.getReader().lines().collect(Collectors.joining()));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IOException e) {
