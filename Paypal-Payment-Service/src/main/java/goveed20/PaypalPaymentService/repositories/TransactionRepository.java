@@ -8,6 +8,6 @@ import java.math.BigInteger;
 import java.util.Optional;
 
 public interface TransactionRepository extends MongoRepository<Transaction, BigInteger> {
-    @Query("{ 'payment' : {'_id': ?0 } }")
+    @Query("{ 'payment._id': ?0 }")
     Optional<Transaction> findTransactionByPayment(String paymentId);
 }

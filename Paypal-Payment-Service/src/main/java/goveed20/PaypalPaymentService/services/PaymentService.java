@@ -11,15 +11,14 @@ import goveed20.PaypalPaymentService.exceptions.BadRequestException;
 import goveed20.PaypalPaymentService.model.PaypalPaymentIntent;
 import goveed20.PaypalPaymentService.model.PaypalPaymentMethod;
 import goveed20.PaypalPaymentService.repositories.TransactionRepository;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PaymentService {
@@ -86,26 +85,19 @@ public class PaymentService {
 
     public void completePayment(Map<String, String[]> paramMap) {
         String paymentId = Arrays.stream(paramMap.get("paymentId"))
-                .findFirst()
-                .orElseThrow(() -> new BadRequestException("Payment id not present"));
+                .findFirst().orElse(null);
 
         String payerId = Arrays.stream(paramMap.get("PayerID"))
-                .findFirst()
-                .orElseThrow(() -> new BadRequestException("Payer id not present"));
+                .findFirst().orElse(null);
 
         goveed20.PaypalPaymentService.model.Transaction internalTransaction = transactionRepository
-                .findTransactionByPayment(paymentId)
-                .orElseThrow(() -> new BadRequestException("Transaction id invalid")); // fix query in compas
+                .findTransactionByPayment(paymentId).orElse(null);
 
+        assert internalTransaction != null;
         Payment payment = internalTransaction.getPayment();
 
-        if (payment.getState().equals("failed")) {
-            paymentConcentratorFeignClient.sendTransactionResponse(
-                    ResponsePayload.childBuilder()
-                            .transactionID(internalTransaction.getTransactionId())
-                            .transactionStatus(TransactionStatus.FAILED)
-                            .build()
-            );
+        if (payerId == null || paymentId == null) {
+            sendTransactionResponse(internalTransaction.getTransactionId(), TransactionStatus.FAILED);
         }
 
         PaymentExecution paymentExecution = new PaymentExecution();
@@ -113,21 +105,20 @@ public class PaymentService {
 
         try {
             payment.execute(apiContext, paymentExecution);
-
-            paymentConcentratorFeignClient.sendTransactionResponse(
-                    ResponsePayload.childBuilder()
-                            .transactionID(internalTransaction.getTransactionId())
-                            .transactionStatus(TransactionStatus.SUCCESS)
-                            .build()
-            );
-
+            sendTransactionResponse(internalTransaction.getTransactionId(), TransactionStatus.SUCCESS);
         } catch (PayPalRESTException e) {
-            paymentConcentratorFeignClient.sendTransactionResponse(
-                    ResponsePayload.childBuilder()
-                            .transactionID(internalTransaction.getTransactionId())
-                            .transactionStatus(TransactionStatus.ERROR)
-                            .build()
-            );
+            sendTransactionResponse(internalTransaction.getTransactionId(), TransactionStatus.ERROR);
         }
+    }
+
+    @Async
+    @SneakyThrows
+    public void sendTransactionResponse(UUID transactionId, TransactionStatus status) {
+        paymentConcentratorFeignClient.sendTransactionResponse(
+                ResponsePayload.childBuilder()
+                        .transactionID(transactionId)
+                        .transactionStatus(status)
+                        .build()
+        );
     }
 }

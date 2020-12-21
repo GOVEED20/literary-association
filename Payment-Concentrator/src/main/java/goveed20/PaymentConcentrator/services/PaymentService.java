@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -152,15 +153,19 @@ public class PaymentService {
             throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        switch (responsePayload.getTransactionStatus()) {
-            case SUCCESS:
-                restTemplate.getForEntity(transaction.getSuccessURL(), Void.class);
-                break;
-            case FAILED:
-                restTemplate.getForEntity(transaction.getFailedURL(), Void.class);
-                break;
-            default:
-                restTemplate.getForEntity(transaction.getErrorURL(), Void.class);
+        try {
+            switch (responsePayload.getTransactionStatus()) {
+                case SUCCESS:
+                    restTemplate.getForEntity(transaction.getSuccessURL(), Void.class);
+                    break;
+                case FAILED:
+                    restTemplate.getForEntity(transaction.getFailedURL(), Void.class);
+                    break;
+                default:
+                    restTemplate.getForEntity(transaction.getErrorURL(), Void.class);
+            }
+        } catch (RestClientException e) {
+            throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
