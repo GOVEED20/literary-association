@@ -13,6 +13,17 @@ spring:
     async:
       enabled: false
 
+server:
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: src/main/resources/gateway.p12
+    key-alias: gateway
+    key-store-password: goveda2020
+    # client-auth: need
+    trust-store: src/main/resources/gatewayTruststore.jks
+    trust-store-password: goveda2020
+    trust-store-type: JKS
 
 ---
 spring:

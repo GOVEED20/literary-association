@@ -1,5 +1,15 @@
 server:
   port: 0
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: src/main/resources/paypalService.p12
+    key-alias: paypalService
+    key-store-password: goveda2020
+    # client-auth: need
+    trust-store: src/main/resources/paypalServiceTruststore.jks
+    trust-store-password: goveda2020
+    trust-store-type: JKS
 
 jasypt:
   encryptor:
