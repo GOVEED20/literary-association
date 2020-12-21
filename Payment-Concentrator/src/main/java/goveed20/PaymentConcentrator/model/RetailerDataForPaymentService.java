@@ -23,7 +23,7 @@ public class RetailerDataForPaymentService {
     private String paymentService;
 
     @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<PaymentData> paymentData = new HashSet<>();
 
     @ManyToOne

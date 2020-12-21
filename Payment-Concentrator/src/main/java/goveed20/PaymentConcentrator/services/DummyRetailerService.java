@@ -14,31 +14,31 @@ public class DummyRetailerService {
     @Autowired
     private RetailerRepository retailerRepository;
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void addDummyRetailer() {
-        if (retailerRepository.findByName("dummy").isEmpty()) {
-            System.out.println("Adding dummy retailer");
-
-            Retailer retailer = Retailer.builder()
-                    .name("dummy")
-                    .build();
-
-            RetailerDataForPaymentService data = RetailerDataForPaymentService.builder()
-                    .paymentService("paypal-service")
-                    .retailer(retailer)
-                    .build();
-
-            PaymentData paymentData = PaymentData.builder()
-                    .name("payee")
-                    .value("sb-rqo034159139@business.example.com")
-                    .build();
-
-            data.getPaymentData().add(paymentData);
-            retailer.getRetailerDataForPaymentServices().add(data);
-
-            retailerRepository.save(retailer);
-
-            System.out.println("Dummy retailer added");
-        }
-    }
+//    @EventListener(ApplicationReadyEvent.class)
+//    public void addDummyRetailer() {
+//        if (retailerRepository.findByName("dummy").isEmpty()) {
+//            System.out.println("Adding dummy retailer");
+//
+//            Retailer retailer = Retailer.builder()
+//                    .name("dummy")
+//                    .build();
+//
+//            RetailerDataForPaymentService data = RetailerDataForPaymentService.builder()
+//                    .paymentService("paypal-service")
+//                    .retailer(retailer)
+//                    .build();
+//
+//            PaymentData paymentData = PaymentData.builder()
+//                    .name("payee")
+//                    .value("sb-rqo034159139@business.example.com")
+//                    .build();
+//
+//            data.getPaymentData().add(paymentData);
+//            retailer.getRetailerDataForPaymentServices().add(data);
+//
+//            retailerRepository.save(retailer);
+//
+//            System.out.println("Dummy retailer added");
+//        }
+//    }
 }
