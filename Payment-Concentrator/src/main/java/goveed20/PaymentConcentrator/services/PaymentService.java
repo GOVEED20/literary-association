@@ -145,6 +145,7 @@ public class PaymentService {
             transaction.setCompletedOn(new Date());
         } else {
             transaction.setStatus(goveed20.PaymentConcentrator.model.TransactionStatus.FAILED);
+            transaction.setCompletedOn(new Date());
         }
 
         try {
@@ -153,15 +154,15 @@ public class PaymentService {
             throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-//        switch (responsePayload.getTransactionStatus()) {
-//            case SUCCESS:
-//                restTemplate.getForEntity(transaction.getSuccessURL(), Void.class);
-//                break;
-//            case FAILED:
-//                restTemplate.getForEntity(transaction.getFailedURL(), Void.class);
-//                break;
-//            default:
-//                restTemplate.getForEntity(transaction.getErrorURL(), Void.class);
-//        }
+        switch (responsePayload.getTransactionStatus()) {
+            case SUCCESS:
+                restTemplate.getForEntity(transaction.getSuccessURL(), Void.class);
+                break;
+            case FAILED:
+                restTemplate.getForEntity(transaction.getFailedURL(), Void.class);
+                break;
+            default:
+                restTemplate.getForEntity(transaction.getErrorURL(), Void.class);
+        }
     }
 }

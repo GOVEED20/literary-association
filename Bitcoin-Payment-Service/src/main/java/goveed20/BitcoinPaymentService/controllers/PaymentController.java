@@ -34,7 +34,7 @@ public class PaymentController implements PluginController {
                     + " and amount " + payload.getAmount());
 
             return new ResponseEntity<>(paymentService.initializePayment(payload), HttpStatus.OK);
-        } catch (BadRequestException e) {
+        } catch (BadRequestException | InterruptedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -47,13 +47,7 @@ public class PaymentController implements PluginController {
 
     @Override
     public ResponseEntity<?> completePaymentPost(HttpServletRequest request) {
-        try {
-            log.info("BTC PaymentController: Started completing transaction");
-            paymentService.completePayment(request.getReader().lines().collect(Collectors.joining()));
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @Override

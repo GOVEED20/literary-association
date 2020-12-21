@@ -9,7 +9,9 @@ import lombok.*;
 @Builder(toBuilder = true)
 public class BitcoinOrder {
 
+    private Integer id;
     private String order_id;
+    private String status;
     private Double price_amount;
     private String price_currency;
     private String receive_currency;

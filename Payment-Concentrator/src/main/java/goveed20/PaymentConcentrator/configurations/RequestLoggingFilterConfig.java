@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Configuration
 @Slf4j
-public class RequestLoggingFilterConfig extends AbstractRequestLoggingFilter {
+public class RequestLoggingFilterConfig {
     @Bean
     public CommonsRequestLoggingFilter logFilter() {
         CommonsRequestLoggingFilter filter
@@ -23,13 +23,13 @@ public class RequestLoggingFilterConfig extends AbstractRequestLoggingFilter {
         return filter;
     }
 
-    @Override
-    protected void beforeRequest(HttpServletRequest httpServletRequest, String s) {
-        logger.info(s);
-    }
-
-    @Override
-    protected void afterRequest(HttpServletRequest httpServletRequest, String s) {
-        logger.info(s);
-    }
+//    @Override
+//    protected void beforeRequest(HttpServletRequest httpServletRequest, String s) {
+//        logger.info(s);
+//    }
+//
+//    @Override
+//    protected void afterRequest(HttpServletRequest httpServletRequest, String s) {
+//        logger.info(s);
+//    }
 }
