@@ -10,7 +10,7 @@ import lombok.*;
 public class CompleteBitcoinOrder {
 
     private Integer id;
-    private Integer order_id;
+    private String order_id;
     private String status;
     private Double price_amount;
     private String price_currency;

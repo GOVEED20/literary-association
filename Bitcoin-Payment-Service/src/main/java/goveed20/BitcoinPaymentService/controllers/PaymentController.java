@@ -6,7 +6,6 @@ import goveed20.BitcoinPaymentService.services.PaymentService;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.PluginController;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.RegistrationField;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.TransactionDataPayload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 public class PaymentController implements PluginController {
@@ -41,8 +42,12 @@ public class PaymentController implements PluginController {
 
     @Override
     public ResponseEntity<?> completePaymentPost(HttpServletRequest request) {
-        System.out.println("Complete BTC");
-        return null;
+        try {
+            paymentService.completePayment(request.getReader().lines().collect(Collectors.joining()));
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override

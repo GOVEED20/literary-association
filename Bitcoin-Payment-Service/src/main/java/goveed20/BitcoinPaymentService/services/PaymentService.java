@@ -1,5 +1,7 @@
 package goveed20.BitcoinPaymentService.services;
 
+import com.google.gson.Gson;
+import goveed20.BitcoinPaymentService.dtos.CompleteBitcoinOrder;
 import goveed20.BitcoinPaymentService.exceptions.BadRequestException;
 import goveed20.BitcoinPaymentService.model.BitcoinOrder;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
@@ -51,4 +53,9 @@ public class PaymentService {
         return responseEntity.getBody().getPayment_url();
     }
 
+    public void completePayment(String data) {
+        Gson gson = new Gson();
+        CompleteBitcoinOrder completedPayment = gson.fromJson(data, CompleteBitcoinOrder.class);
+        
+    }
 }
