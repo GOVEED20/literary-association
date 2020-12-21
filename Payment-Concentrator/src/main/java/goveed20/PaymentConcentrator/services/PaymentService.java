@@ -133,7 +133,7 @@ public class PaymentService {
     }
 
     public void sendTransactionResponse(@RequestBody ResponsePayload responsePayload) {
-        Optional<Transaction> transactionOptional = transactionRepository.findByTransactionId(UUID.fromString(responsePayload.getTransactionID()));
+        Optional<Transaction> transactionOptional = transactionRepository.findByTransactionId(responsePayload.getTransactionID());
 
         if (transactionOptional.isEmpty()) {
             throw new NotFoundException(String.format("Transaction with transaction id %s not found.", responsePayload.getTransactionID()));
@@ -142,6 +142,7 @@ public class PaymentService {
         Transaction transaction = transactionOptional.get();
         if (responsePayload.getTransactionStatus() == TransactionStatus.SUCCESS) {
             transaction.setStatus(goveed20.PaymentConcentrator.model.TransactionStatus.COMPLETED);
+            transaction.setCompletedOn(new Date());
         } else {
             transaction.setStatus(goveed20.PaymentConcentrator.model.TransactionStatus.FAILED);
         }
@@ -152,15 +153,15 @@ public class PaymentService {
             throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        switch (responsePayload.getTransactionStatus()) {
-            case SUCCESS:
-                restTemplate.getForEntity(transaction.getSuccessURL(), Void.class);
-                break;
-            case FAILED:
-                restTemplate.getForEntity(transaction.getFailedURL(), Void.class);
-                break;
-            default:
-                restTemplate.getForEntity(transaction.getErrorURL(), Void.class);
-        }
+//        switch (responsePayload.getTransactionStatus()) {
+//            case SUCCESS:
+//                restTemplate.getForEntity(transaction.getSuccessURL(), Void.class);
+//                break;
+//            case FAILED:
+//                restTemplate.getForEntity(transaction.getFailedURL(), Void.class);
+//                break;
+//            default:
+//                restTemplate.getForEntity(transaction.getErrorURL(), Void.class);
+//        }
     }
 }

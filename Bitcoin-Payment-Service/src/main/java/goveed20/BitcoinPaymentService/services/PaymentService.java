@@ -5,6 +5,10 @@ import goveed20.BitcoinPaymentService.dtos.CompleteBitcoinOrder;
 import goveed20.BitcoinPaymentService.exceptions.BadRequestException;
 import goveed20.BitcoinPaymentService.model.BitcoinOrder;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.PaymentConcentratorFeignClient;
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.ResponsePayload;
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.TransactionStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,6 +23,9 @@ import java.util.UUID;
 public class PaymentService {
 
     private final String sandboxUrl = "https://api-sandbox.coingate.com/v2/orders";
+
+    @Autowired
+    private PaymentConcentratorFeignClient paymentConcentratorFeignClient;
 
     public String initializePayment(InitializationPaymentPayload payload) {
 
@@ -56,6 +63,22 @@ public class PaymentService {
     public void completePayment(String data) {
         Gson gson = new Gson();
         CompleteBitcoinOrder completedPayment = gson.fromJson(data, CompleteBitcoinOrder.class);
-        
+
+        if (!completedPayment.getStatus().equals("paid") && !completedPayment.getStatus().equals("refunded")) {
+            paymentConcentratorFeignClient.sendTransactionResponse(
+                    ResponsePayload.childBuilder()
+                            .transactionID(UUID.fromString(completedPayment.getOrder_id()))
+                            .transactionStatus(TransactionStatus.FAILED)
+                            .build()
+            );
+        }
+        else {
+            paymentConcentratorFeignClient.sendTransactionResponse(
+                    ResponsePayload.childBuilder()
+                            .transactionID(UUID.fromString(completedPayment.getOrder_id()))
+                            .transactionStatus(TransactionStatus.SUCCESS)
+                            .build()
+            );
+        }
     }
 }
