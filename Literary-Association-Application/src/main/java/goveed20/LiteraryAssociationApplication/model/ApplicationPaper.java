@@ -3,7 +3,6 @@ package goveed20.LiteraryAssociationApplication.model;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -11,14 +10,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @Entity
-public class VerificationToken {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public class ApplicationPaper {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    protected Long id;
 
     @Column(nullable = false)
-    private UUID disposableHash;
-
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
-    private BaseUser user;
+    protected String file;
 }

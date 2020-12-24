@@ -3,7 +3,6 @@ package goveed20.LiteraryAssociationApplication.model;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -11,14 +10,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @Entity
-public class VerificationToken {
+public class InvoiceItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false)
-    private UUID disposableHash;
+    private Integer quantity;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
-    private BaseUser user;
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private Double price;
 }
