@@ -36,11 +36,11 @@ server:
   ssl:
     enabled: true
     key-store-type: PKCS12
-    key-store: src/main/resources/paymentConcentrator.p12
+    key-store: Payment-Concentrator/src/main/resources/paymentConcentrator.p12
     key-alias: paymentConcentrator
     key-store-password: goveda2020
     # client-auth: need
-    trust-store: src/main/resources/paymentConcentratorTruststore.jks
+    trust-store: Payment-Concentrator/src/main/resources/paymentConcentratorTruststore.jks
     trust-store-password: goveda2020
     trust-store-type: JKS
 

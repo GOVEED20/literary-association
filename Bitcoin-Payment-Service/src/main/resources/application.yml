@@ -3,11 +3,11 @@ server:
   ssl:
     enabled: true
     key-store-type: PKCS12
-    key-store: src/main/resources/bitcoinService.p12
+    key-store: Bitcoin-Payment-Service/src/main/resources/bitcoinService.p12
     key-alias: bitcoinService
     key-store-password: goveda2020
     # client-auth: need
-    trust-store: src/main/resources/bitcoinServiceTruststore.jks
+    trust-store: Bitcoin-Payment-Service/src/main/resources/bitcoinServiceTruststore.jks
     trust-store-password: goveda2020
     trust-store-type: JKS
 
