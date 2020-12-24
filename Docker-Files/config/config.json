@@ -1,0 +1,20 @@
+{
+
+"ca_file": "/config/root.pem",
+
+"cert_file": "/config/consul.pem",
+
+"key_file": "/config/consul.key",
+
+"verify_incoming": true,
+
+"verify_outgoing": true, 
+
+"enable_agent_tls_for_checks": true,
+
+"ports": {
+	"http": -1,
+    "https": 8501
+  }
+
+}

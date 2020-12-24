@@ -3,6 +3,7 @@ spring:
     name: gateway
   cloud:
     consul:
+      scheme: https
       host: localhost
       port: 8500
   zipkin:
@@ -17,11 +18,11 @@ server:
   ssl:
     enabled: true
     key-store-type: PKCS12
-    key-store: src/main/resources/gateway.p12
+    key-store: Gateway/src/main/resources/gateway.p12
     key-alias: gateway
     key-store-password: goveda2020
-    # client-auth: need
-    trust-store: src/main/resources/gatewayTruststore.jks
+    client-auth: need
+    trust-store: Gateway/src/main/resources/gatewayTruststore.jks
     trust-store-password: goveda2020
     trust-store-type: JKS
 
