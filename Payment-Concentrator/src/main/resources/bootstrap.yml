@@ -15,3 +15,7 @@ spring:
     async:
       enabled: false
 
+server:
+  port: 0
+  servlet:
+    context-path: /api

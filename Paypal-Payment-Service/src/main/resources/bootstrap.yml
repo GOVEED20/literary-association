@@ -13,3 +13,6 @@ spring:
       probability: 1
     async:
       enabled: false
+
+server:
+  port: 0

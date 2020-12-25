@@ -1,55 +1,44 @@
 version: '2'
 services:
 
-  consul69:
+  consul1:
     image: consul
     ports:
      - "8500:8500"
     environment:
      - CONSUL_BIND_INTERFACE=eth0
-     - CONSUL_HTTP_SSL=true
-     # - CONSUL_CACERT=root.pem
-     # - CONSUL_CLIENT_KEY=consul.key
-     # - CONSUL_CLIENT_CERT=consul.pem
-     - CONSUL_HTTP_SSL_VERIFY=true
-    command: "agent -config-file=/config/config.json"
-    volumes:
-      - ./config/config.json:/config/config.json
-      - ./config/consul.key:/config/consul.key
-      - ./config/consul.pem:/config/consul.pem
-      - ./config/root.pem:/config/root.pem
     networks:
       static-network:
         ipv4_address: 172.20.128.2
 
-  # consul2:
-  #   image: consul
-  #   ports:
-  #    - "8501:8500"
-  #   environment:
-  #    - CONSUL_BIND_INTERFACE=eth0 
-  #   command: "agent -dev -join=172.20.128.2"
-  #   networks:
-  #     static-network:
-  #       ipv4_address: 172.20.128.3
-  #   depends_on: 
-  #     - consul1
+  consul2:
+     image: consul
+     ports:
+      - "8501:8500"
+     environment:
+      - CONSUL_BIND_INTERFACE=eth0
+     command: "agent -dev -join=172.20.128.2"
+     networks:
+       static-network:
+         ipv4_address: 172.20.128.3
+     depends_on:
+       - consul1
 
-  # consul3:
-  #   image: consul
-  #   ports:
-  #    - "8502:8500"
-  #   environment:
-  #    - CONSUL_BIND_INTERFACE=eth0 
-  #   command: "agent -dev -join=172.20.128.2"
-  #   networks:
-  #     static-network:
-  #       ipv4_address: 172.20.128.4
-  #   depends_on: 
-  #     - consul2
+  consul3:
+     image: consul
+     ports:
+      - "8502:8500"
+     environment:
+      - CONSUL_BIND_INTERFACE=eth0
+     command: "agent -dev -join=172.20.128.2"
+     networks:
+       static-network:
+         ipv4_address: 172.20.128.4
+     depends_on:
+       - consul2
 
-#   storage:
-#     image: ghcr.io/openzipkin/zipkin-mysql:${TAG:-latest}
+#  storage:
+#    image: ghcr.io/openzipkin/zipkin-mysql:${TAG:-latest}
 #     container_name: mysql
 #     # Uncomment to expose the storage port for testing
 #     ports:

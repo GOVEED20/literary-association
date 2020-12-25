@@ -29,21 +29,6 @@ jasypt:
   encryptor:
     password: goveed20
 
-server:
-  port: 0
-  servlet:
-    context-path: /api
-  ssl:
-    enabled: true
-    key-store-type: PKCS12
-    key-store: Payment-Concentrator/src/main/resources/paymentConcentrator.p12
-    key-alias: paymentConcentrator
-    key-store-password: goveda2020
-    # client-auth: need
-    trust-store: Payment-Concentrator/src/main/resources/paymentConcentratorTruststore.jks
-    trust-store-password: goveda2020
-    trust-store-type: JKS
-
 ---
 spring:
   profiles: zone1
