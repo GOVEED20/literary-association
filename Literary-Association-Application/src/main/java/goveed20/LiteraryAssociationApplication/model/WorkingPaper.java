@@ -1,11 +1,9 @@
 package goveed20.LiteraryAssociationApplication.model;
 
+import goveed20.LiteraryAssociationApplication.model.enums.WorkingPaperStatus;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -16,8 +14,8 @@ public class WorkingPaper extends ApplicationPaper {
     @Column(nullable = false)
     protected String title;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "genre", referencedColumnName = "id")
     protected Genre genre;
 
     @Column(unique = false)
@@ -27,7 +25,7 @@ public class WorkingPaper extends ApplicationPaper {
     @Enumerated(EnumType.STRING)
     private WorkingPaperStatus status;
 
-    @Builder(builderMethodName = "workingPaperBuilder", toBuilder = true)
+    @Builder(builderMethodName = "workingPaperBuilder")
     public WorkingPaper(Long id, String file, String title, Genre genre, String synopsis, WorkingPaperStatus status) {
         super(id, file);
         this.title = title;

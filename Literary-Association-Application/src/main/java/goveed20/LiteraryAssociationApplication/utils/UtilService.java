@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionFieldDTO;
 import goveed20.LiteraryAssociationApplication.model.Genre;
+import goveed20.LiteraryAssociationApplication.model.enums.GenreEnum;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;

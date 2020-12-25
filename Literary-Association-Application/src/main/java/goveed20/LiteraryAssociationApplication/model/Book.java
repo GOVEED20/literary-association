@@ -1,5 +1,6 @@
 package goveed20.LiteraryAssociationApplication.model;
 
+import goveed20.LiteraryAssociationApplication.model.enums.WorkingPaperStatus;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -10,7 +11,7 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Book extends WorkingPaper implements Purchasable {
+public class Book extends WorkingPaper {
     @Column(nullable = false, unique = true)
     private String ISBN;
 
@@ -32,7 +33,7 @@ public class Book extends WorkingPaper implements Purchasable {
     @Column(nullable = false)
     private Double price;
 
-    @Builder(builderMethodName = "bookBuilder", toBuilder = true)
+    @Builder(builderMethodName = "bookBuilder")
     public Book(Long id, String file, String title, Genre genre, String synopsis, WorkingPaperStatus status, String ISBN, String keywords, String publisher, Integer publicationYear, Integer pages, String publicationPlace, Double price) {
         super(id, file, title, genre, synopsis, status);
         this.ISBN = ISBN;
@@ -41,26 +42,6 @@ public class Book extends WorkingPaper implements Purchasable {
         this.publicationYear = publicationYear;
         this.pages = pages;
         this.publicationPlace = publicationPlace;
-        this.price = price;
-    }
-
-    @Override
-    public String getName() {
-        return title;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.title = name;
-    }
-
-    @Override
-    public Double getPrice() {
-        return price;
-    }
-
-    @Override
-    public void setPrice(Double price) {
         this.price = price;
     }
 }

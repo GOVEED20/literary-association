@@ -1,7 +1,5 @@
 package goveed20.LiteraryAssociationApplication.services;
 
-import goveed20.LiteraryAssociationApplication.model.User;
-import goveed20.LiteraryAssociationApplication.model.VerificationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -19,14 +17,12 @@ public class EmailService {
     private JavaMailSender javaMailSender;
 
     @Async
-    public void sendVerificationEmail(User user, VerificationToken verificationToken, String pID) {
+    public void sendEmail(String recipientEmail, String subject, String text) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(user.getEmail());
-        mailMessage.setSubject("Complete registration");
+        mailMessage.setTo(recipientEmail);
+        mailMessage.setSubject(subject);
         mailMessage.setFrom(emailAddress);
-        mailMessage.setText(String.format("Dear %s %s,%nTo confirm your account please click here: %n"
-                + "http://localhost:9090/api/register/verification/" + pID + "?token=" +
-                verificationToken.getDisposableHash(), user.getName(), user.getSurname()));
+        mailMessage.setText(text);
         javaMailSender.send(mailMessage);
     }
 }

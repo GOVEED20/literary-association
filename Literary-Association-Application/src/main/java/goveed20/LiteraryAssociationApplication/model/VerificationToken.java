@@ -17,7 +17,7 @@ public class VerificationToken {
     private Long id;
 
     @Column(nullable = false)
-    private UUID disposableHash;
+    private String disposableHash;
 
     @OneToOne(fetch = FetchType.EAGER, optional = false)
     private BaseUser user;

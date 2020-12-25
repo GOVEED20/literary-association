@@ -10,7 +10,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class Notification {
-    private Set<String> recepients;
+    private Set<String> recipients;
     private String subject;
     private String content;
 }

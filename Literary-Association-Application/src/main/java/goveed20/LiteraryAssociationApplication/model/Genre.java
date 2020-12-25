@@ -1,21 +1,22 @@
 package goveed20.LiteraryAssociationApplication.model;
 
-public enum Genre {
-    ADVENTURE("Avantura"),
-    FANTASY("Fantastika"),
-    MYSTERY("Misterija"),
-    HISTORICAL("Istorijska"),
-    HORROR("Horor"),
-    ROMANCE("Ljubavna"),
-    SCIFI("Naučna fanstastika"),
-    THRILLER("Triler"),
-    COOKBOOKS("Kuvar"),
-    CRIME("Krimi"),
-    EROTIC("Erotika");
+import goveed20.LiteraryAssociationApplication.model.enums.GenreEnum;
+import lombok.*;
 
-    public final String serbianName;
+import javax.persistence.*;
 
-    Genre(String serbianName) {
-        this.serbianName = serbianName;
-    }
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+@Entity
+public class Genre {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    @Enumerated(EnumType.STRING)
+    private GenreEnum genre;
 }

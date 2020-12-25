@@ -1,4 +1,4 @@
-package goveed20.LiteraryAssociationApplication.model;
+package goveed20.LiteraryAssociationApplication.model.enums;
 
 public enum CommentType {
     BOARD_MEMBER_COMMENT,

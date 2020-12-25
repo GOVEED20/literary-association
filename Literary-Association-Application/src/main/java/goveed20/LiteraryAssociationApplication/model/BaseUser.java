@@ -1,5 +1,6 @@
 package goveed20.LiteraryAssociationApplication.model;
 
+import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import lombok.*;
 
 import javax.persistence.*;

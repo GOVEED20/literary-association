@@ -1,6 +1,6 @@
 package goveed20.LiteraryAssociationApplication.utils;
 
-import goveed20.LiteraryAssociationApplication.model.Genre;
+import goveed20.LiteraryAssociationApplication.model.enums.GenreEnum;
 import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.impl.form.type.AbstractFormFieldType;
 import org.camunda.bpm.engine.variable.Variables;
@@ -24,7 +24,7 @@ public class GenreSet extends AbstractFormFieldType {
         if (typedValue.getValue() == null) {
             return Variables.stringValue(null, typedValue.isTransient());
         } else {
-            String value = String.join(",", (String[]) List.copyOf((Set<Genre>) typedValue.getValue())
+            String value = String.join(",", (String[]) List.copyOf((Set<GenreEnum>) typedValue.getValue())
                     .stream().map(e -> e.toString().toLowerCase()).toArray());
             return Variables.stringValue(value, typedValue.isTransient());
         }
@@ -41,7 +41,7 @@ public class GenreSet extends AbstractFormFieldType {
                 return Variables.untypedNullValue();
             }
             try {
-                Set<Genre> genreValues = Arrays.stream(strValues).map(Genre::valueOf).collect(Collectors.toSet());
+                Set<GenreEnum> genreValues = Arrays.stream(strValues).map(GenreEnum::valueOf).collect(Collectors.toSet());
                 return Variables.untypedValue(genreValues, typedValue.isTransient());
             } catch (Exception e) {
                 throw new ProcessEngineException("Could not parse value '" + value + "' as GenreSet.");

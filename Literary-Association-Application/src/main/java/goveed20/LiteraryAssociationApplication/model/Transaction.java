@@ -1,5 +1,6 @@
 package goveed20.LiteraryAssociationApplication.model;
 
+import goveed20.LiteraryAssociationApplication.model.enums.TransactionStatus;
 import lombok.*;
 
 import javax.persistence.*;

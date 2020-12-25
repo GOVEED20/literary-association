@@ -1,4 +1,4 @@
-package goveed20.LiteraryAssociationApplication.model;
+package goveed20.LiteraryAssociationApplication.model.enums;
 
 public enum UserRole {
     READER,
@@ -6,5 +6,5 @@ public enum UserRole {
     LECTOR,
     BOARD_MEMBER,
     EDITOR,
-    HEAD_EDITOR;
+    HEAD_EDITOR
 }

@@ -19,7 +19,6 @@ public class BetaReaderStatus {
     @ElementCollection(targetClass = Genre.class)
     @JoinTable(name = "genres", joinColumns = @JoinColumn(name = "beta_id"))
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private Set<Genre> betaGenres;
 
     @Column(nullable = false)
