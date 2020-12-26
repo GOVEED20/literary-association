@@ -10,13 +10,10 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransactionDataPayload extends BasePayload {
+@Builder
+public class TransactionDataPayload {
+    private HashMap<String, String> paymentFields;
+
     @NotBlank
     private UUID transactionID;
-
-    @Builder(builderMethodName = "childBuilder")
-    public TransactionDataPayload(HashMap<String, String> paymentFields, UUID transactionId) {
-        super(paymentFields);
-        this.transactionID = transactionId;
-    }
 }

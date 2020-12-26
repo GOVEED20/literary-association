@@ -8,5 +8,5 @@ import java.util.Set;
 
 @Repository
 public interface RetailerDataForPaymentServiceRepository extends JpaRepository<RetailerDataForPaymentService, Long> {
-    Set<RetailerDataForPaymentService> findByRetailer(Long retailerId);
+    Set<RetailerDataForPaymentService> findByRetailer_Id(Long retailerId);
 }

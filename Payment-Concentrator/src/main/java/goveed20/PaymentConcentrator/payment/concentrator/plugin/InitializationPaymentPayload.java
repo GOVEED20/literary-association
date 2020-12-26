@@ -3,6 +3,7 @@ package goveed20.PaymentConcentrator.payment.concentrator.plugin;
 import lombok.*;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.UUID;
@@ -11,10 +12,13 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InitializationPaymentPayload extends BasePayload {
+@Builder
+public class InitializationPaymentPayload {
+    @NotEmpty
+    private HashMap<String, String> paymentFields;
 
     @NotNull
-    private UUID transactionId;
+    private Long transactionId;
 
     @NotNull
     @Min(0)
@@ -25,15 +29,4 @@ public class InitializationPaymentPayload extends BasePayload {
     private String failedURL;
 
     private String errorURL;
-
-    @Builder(builderMethodName = "childBuilder")
-    public InitializationPaymentPayload(HashMap<String, String> paymentFields, UUID transactionId, Double amount,
-                                        String successURL, String failedURL, String errorURL) {
-        super(paymentFields);
-        this.transactionId = transactionId;
-        this.amount = amount;
-        this.successURL = successURL;
-        this.errorURL = errorURL;
-        this.failedURL = failedURL;
-    }
 }

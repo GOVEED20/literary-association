@@ -5,7 +5,6 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -22,7 +21,7 @@ public class Transaction {
     private TransactionStatus status;
 
     @Column(unique = true)
-    private UUID transactionId;
+    private Long transactionId;
 
     @Column(nullable = false)
     @Temporal(value = TemporalType.TIMESTAMP)

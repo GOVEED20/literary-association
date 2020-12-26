@@ -11,10 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.UnknownHostException;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -34,14 +36,13 @@ public class PaymentController implements PluginController {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public ResponseEntity<?> completePaymentGet(HttpServletRequest request) {
-        paymentService.completePayment(request.getParameterMap());
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+        Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        Long transactionId = Long.parseLong(String.valueOf(pathVariables.get("transactionId")));
 
-    @Override
-    public ResponseEntity<?> completePaymentPost(HttpServletRequest request) {
-        return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+        paymentService.completePayment(transactionId, request.getParameterMap());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override

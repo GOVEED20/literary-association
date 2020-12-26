@@ -13,4 +13,5 @@ public class RegistrationField {
     private String name;
     private RegistrationFieldType type;
     private Map<String, Object> validationConstraints;
+    private Boolean encrypted;
 }

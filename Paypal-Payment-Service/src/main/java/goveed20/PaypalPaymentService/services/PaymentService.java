@@ -10,15 +10,19 @@ import goveed20.PaymentConcentrator.payment.concentrator.plugin.TransactionStatu
 import goveed20.PaypalPaymentService.exceptions.BadRequestException;
 import goveed20.PaypalPaymentService.model.PaypalPaymentIntent;
 import goveed20.PaypalPaymentService.model.PaypalPaymentMethod;
-import goveed20.PaypalPaymentService.repositories.TransactionRepository;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.MalformedURLException;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class PaymentService {
@@ -26,11 +30,9 @@ public class PaymentService {
     private APIContext apiContext;
 
     @Autowired
-    private TransactionRepository transactionRepository;
-
-    @Autowired
     private PaymentConcentratorFeignClient paymentConcentratorFeignClient;
 
+    @SneakyThrows(MalformedURLException.class)
     public String initializePayment(InitializationPaymentPayload payload) throws PayPalRESTException, UnknownHostException {
         Amount amount = new Amount();
         amount.setCurrency("USD");
@@ -58,22 +60,25 @@ public class PaymentService {
         payment.setPayer(payer);
         payment.setTransactions(transactions);
 
-        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        UriComponents context = ServletUriComponentsBuilder.fromCurrentContextPath().build();
 
         RedirectUrls redirectUrls = new RedirectUrls();
-        redirectUrls.setReturnUrl(baseUrl + "/api/complete-payment");
-        redirectUrls.setCancelUrl(baseUrl + "/api/complete-payment");
+
+        UriComponents uriComponents = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(context.getHost())
+                .port(context.getPort())
+                .path(String.format("/api/complete-payment/%d", payload.getTransactionId()))
+                .build();
+
+        String redirectUrl = uriComponents.toUri().toURL().toString();
+
+        redirectUrls.setReturnUrl(redirectUrl);
+        redirectUrls.setCancelUrl(redirectUrl);
 
         payment.setRedirectUrls(redirectUrls);
 
         Payment initializedPayment = payment.create(apiContext);
-
-        goveed20.PaypalPaymentService.model.Transaction internalTransaction = goveed20.PaypalPaymentService.model.Transaction.builder()
-                .transactionId(payload.getTransactionId())
-                .payment(initializedPayment)
-                .build();
-
-        transactionRepository.save(internalTransaction);
 
         return initializedPayment.getLinks()
                 .stream()
@@ -83,39 +88,34 @@ public class PaymentService {
                 .getHref();
     }
 
-    public void completePayment(Map<String, String[]> paramMap) {
-        String paymentId = Arrays.stream(paramMap.get("paymentId"))
-                .findFirst().orElse(null);
-
-        String payerId = Arrays.stream(paramMap.get("PayerID"))
-                .findFirst().orElse(null);
-
-        goveed20.PaypalPaymentService.model.Transaction internalTransaction = transactionRepository
-                .findTransactionByPayment(paymentId).orElse(null);
-
-        assert internalTransaction != null;
-        Payment payment = internalTransaction.getPayment();
+    public void completePayment(Long transactionId, Map<String, String[]> paramMap) {
+        String[] paymentId = paramMap.getOrDefault("paymentId", null);
+        String[] payerId = paramMap.getOrDefault("PayerID", null);
 
         if (payerId == null || paymentId == null) {
-            sendTransactionResponse(internalTransaction.getTransactionId(), TransactionStatus.FAILED);
+            sendTransactionResponse(transactionId, TransactionStatus.FAILED);
+            return;
         }
 
+        Payment payment = new Payment();
+        payment.setId(paymentId[0]);
+
         PaymentExecution paymentExecution = new PaymentExecution();
-        paymentExecution.setPayerId(payerId);
+        paymentExecution.setPayerId(payerId[0]);
 
         try {
             payment.execute(apiContext, paymentExecution);
-            sendTransactionResponse(internalTransaction.getTransactionId(), TransactionStatus.SUCCESS);
+            sendTransactionResponse(transactionId, TransactionStatus.SUCCESS);
         } catch (PayPalRESTException e) {
-            sendTransactionResponse(internalTransaction.getTransactionId(), TransactionStatus.ERROR);
+            sendTransactionResponse(transactionId, TransactionStatus.ERROR);
         }
     }
 
     @Async
     @SneakyThrows
-    public void sendTransactionResponse(UUID transactionId, TransactionStatus status) {
+    public void sendTransactionResponse(Long transactionId, TransactionStatus status) {
         paymentConcentratorFeignClient.sendTransactionResponse(
-                ResponsePayload.childBuilder()
+                ResponsePayload.builder()
                         .transactionID(transactionId)
                         .transactionStatus(status)
                         .build()

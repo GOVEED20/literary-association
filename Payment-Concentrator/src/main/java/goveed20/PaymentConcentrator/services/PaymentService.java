@@ -10,17 +10,20 @@ import goveed20.PaymentConcentrator.payment.concentrator.plugin.*;
 import goveed20.PaymentConcentrator.repositories.RetailerDataForPaymentServiceRepository;
 import goveed20.PaymentConcentrator.repositories.RetailerRepository;
 import goveed20.PaymentConcentrator.repositories.TransactionRepository;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.openfeign.FeignClientBuilder;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,7 +53,7 @@ public class PaymentService {
     }
 
     public Set<String> getRetailerPaymentServices(Long retailerId) {
-        Set<String> supportedPaymentServices = retailerDataForPaymentServiceRepository.findByRetailer(retailerId)
+        Set<String> supportedPaymentServices = retailerDataForPaymentServiceRepository.findByRetailer_Id(retailerId)
                 .stream()
                 .map(RetailerDataForPaymentService::getPaymentService)
                 .collect(Collectors.toSet());
@@ -107,12 +110,10 @@ public class PaymentService {
                 .successURL(paymentRequest.getSuccessURL())
                 .failedURL(paymentRequest.getFailedURL())
                 .status(goveed20.PaymentConcentrator.model.TransactionStatus.INITIALIZED)
-                .successURL(paymentRequest.getSuccessURL())
-                .failedURL(paymentRequest.getFailedURL())
                 .errorURL(paymentRequest.getErrorURL())
                 .build();
 
-        InitializationPaymentPayload payload = InitializationPaymentPayload.childBuilder()
+        InitializationPaymentPayload payload = InitializationPaymentPayload.builder()
                 .paymentFields(paymentFields)
                 .transactionId(newTransaction.getTransactionId())
                 .amount(paymentRequest.getAmount())
@@ -122,16 +123,15 @@ public class PaymentService {
         ResponseEntity<String> redirectionUrlResponse = service.initializePayment(payload);
 
         if (redirectionUrlResponse.getStatusCode().isError()) {
+            newTransaction.setStatus(goveed20.PaymentConcentrator.model.TransactionStatus.FAILED);
+            transactionRepository.save(newTransaction);
+
             throw new StatusCodeException(redirectionUrlResponse.getStatusCode());
         }
 
         String redirectionUrl = redirectionUrlResponse.getBody();
 
-        try {
-            transactionRepository.save(newTransaction);
-        } catch (Exception e) {
-            throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        transactionRepository.save(newTransaction);
 
         return redirectionUrl;
     }
@@ -144,33 +144,31 @@ public class PaymentService {
         }
 
         Transaction transaction = transactionOptional.get();
+
         if (responsePayload.getTransactionStatus() == TransactionStatus.SUCCESS) {
             transaction.setStatus(goveed20.PaymentConcentrator.model.TransactionStatus.COMPLETED);
-            transaction.setCompletedOn(new Date());
         } else {
             transaction.setStatus(goveed20.PaymentConcentrator.model.TransactionStatus.FAILED);
-            transaction.setCompletedOn(new Date());
         }
+        transaction.setCompletedOn(new Date());
 
-        try {
-            transactionRepository.save(transaction);
-        } catch (Exception e) {
-            throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        transactionRepository.save(transaction);
 
-        try {
-            switch (responsePayload.getTransactionStatus()) {
-                case SUCCESS:
-                    restTemplate.getForEntity(transaction.getSuccessURL(), Void.class);
-                    break;
-                case FAILED:
-                    restTemplate.getForEntity(transaction.getFailedURL(), Void.class);
-                    break;
-                default:
-                    restTemplate.getForEntity(transaction.getErrorURL(), Void.class);
-            }
-        } catch (RestClientException e) {
-            throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
+        switch (responsePayload.getTransactionStatus()) {
+            case SUCCESS:
+                informClient(transaction.getSuccessURL());
+                break;
+            case FAILED:
+                informClient(transaction.getFailedURL());
+                break;
+            default:
+                informClient(transaction.getErrorURL());
         }
+    }
+
+    @SneakyThrows
+    @Async
+    public void informClient(String url) {
+        restTemplate.getForEntity(url, Void.class);
     }
 }
