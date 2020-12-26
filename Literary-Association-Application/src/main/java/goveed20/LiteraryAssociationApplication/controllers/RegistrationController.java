@@ -8,9 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.PathParam;
-import java.util.List;
-
 @RestController
 @RequestMapping("/register")
 @CrossOrigin
@@ -19,9 +16,9 @@ public class RegistrationController {
     @Autowired
     private RegistrationService registrationService;
 
-    @GetMapping("/form-fields")
-    public ResponseEntity<FormFieldsDTO> getFormFields() {
-        return new ResponseEntity<>(registrationService.getFormFields(), HttpStatus.OK);
+    @GetMapping("/form-fields/{processID}")
+    public ResponseEntity<FormFieldsDTO> getFormFields(@PathVariable String processID) {
+        return new ResponseEntity<>(registrationService.getFormFields(processID), HttpStatus.OK);
     }
 
     @PostMapping
