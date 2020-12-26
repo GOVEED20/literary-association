@@ -14,7 +14,7 @@ public interface PluginController {
     ResponseEntity<String> initializePayment(@Valid @RequestBody InitializationPaymentPayload payload);
 
     @GetMapping(value = "/complete-payment/{transactionId}")
-    ResponseEntity<?> completePaymentGet(HttpServletRequest request);
+    ResponseEntity<?> completePayment(HttpServletRequest request);
 
     @GetMapping(value = "/payment-service/registration-fields")
     ResponseEntity<Set<RegistrationField>> getPaymentServiceRegistrationFields();

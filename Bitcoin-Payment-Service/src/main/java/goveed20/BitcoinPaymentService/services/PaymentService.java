@@ -1,15 +1,13 @@
 package goveed20.BitcoinPaymentService.services;
 
-import com.google.gson.Gson;
-import goveed20.BitcoinPaymentService.dtos.CompleteBitcoinOrder;
 import goveed20.BitcoinPaymentService.exceptions.BadRequestException;
 import goveed20.BitcoinPaymentService.model.BitcoinOrder;
 import goveed20.BitcoinPaymentService.model.BitcoinOrderData;
-import goveed20.BitcoinPaymentService.utils.BitcoinTransactionChecker;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.PaymentConcentratorFeignClient;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.ResponsePayload;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.TransactionStatus;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -26,12 +24,9 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class PaymentService {
-
     @Autowired
     private PaymentConcentratorFeignClient paymentConcentratorFeignClient;
 
-    @Autowired
-    private BitcoinTransactionChecker bitcoinTransactionChecker;
 
     public String initializePayment(InitializationPaymentPayload payload) throws InterruptedException {
 
@@ -67,7 +62,7 @@ public class PaymentService {
             throw new BadRequestException("Missing payment url from coingate");
         }
 
-        bitcoinTransactionChecker.checkTransaction(responseEntity.getBody().getId(), payload.getPaymentFields().get("coinGateApiKey"));
+        checkTransaction(responseEntity.getBody().getId(), payload.getPaymentFields().get("coinGateApiKey"));
 
         log.info("BTC PaymentService: Received payment_url for transaction with id " +
                 payload.getTransactionId());
@@ -80,35 +75,53 @@ public class PaymentService {
         log.info("BTC PaymentService: Started completing transaction with id " +
                 data.getOrder_id());
 
+        Long transactionId = Long.parseLong(data.getOrder_id());
+
         if (data.getStatus().equals("paid")) {
             log.info("BTC PaymentService: Transaction with id " +
                     data.getOrder_id() + " got status SUCCESS");
-            paymentConcentratorFeignClient.sendTransactionResponse(
-                    ResponsePayload.childBuilder()
-                            .transactionID(UUID.fromString(data.getOrder_id()))
-                            .transactionStatus(TransactionStatus.SUCCESS)
-                            .build()
-            );
-        }
-        else if (data.getStatus().equals("expired") || data.getStatus().equals("canceled")){
+            sendTransactionResponse(transactionId, TransactionStatus.SUCCESS);
+        } else if (data.getStatus().equals("expired") || data.getStatus().equals("canceled")) {
             log.info("BTC PaymentService: Transaction with id " +
                     data.getOrder_id() + " got status FAILED");
-            paymentConcentratorFeignClient.sendTransactionResponse(
-                    ResponsePayload.childBuilder()
-                            .transactionID(UUID.fromString(data.getOrder_id()))
-                            .transactionStatus(TransactionStatus.FAILED)
-                            .build()
-            );
-        }
-        else {
+            sendTransactionResponse(transactionId, TransactionStatus.FAILED);
+        } else {
             log.info("BTC PaymentService: Transaction with id " +
                     data.getOrder_id() + " got status ERROR");
-            paymentConcentratorFeignClient.sendTransactionResponse(
-                    ResponsePayload.childBuilder()
-                            .transactionID(UUID.fromString(data.getOrder_id()))
-                            .transactionStatus(TransactionStatus.ERROR)
-                            .build()
-            );
+            sendTransactionResponse(transactionId, TransactionStatus.ERROR);
         }
+    }
+
+    @SneakyThrows
+    @Async
+    public void checkTransaction(Integer id, String coingateApiKey) {
+        String getOrderSandboxUrl = "https://api-sandbox.coingate.com/v2/orders/" + id;
+
+        String clientSecret = "Bearer " + coingateApiKey;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", clientSecret);
+
+        ResponseEntity<BitcoinOrderData> responseEntity;
+
+        do {
+            responseEntity = new RestTemplate().exchange(getOrderSandboxUrl, HttpMethod.GET,
+                    new HttpEntity<>(headers), BitcoinOrderData.class);
+            Thread.sleep(5000);
+
+        } while (responseEntity.getBody().getStatus().equals("new") || responseEntity.getBody().getStatus().equals("pending") ||
+                responseEntity.getBody().getStatus().equals("confirming"));
+
+        completePayment(responseEntity.getBody());
+    }
+
+    @Async
+    @SneakyThrows
+    public void sendTransactionResponse(Long transactionId, TransactionStatus status) {
+        paymentConcentratorFeignClient.sendTransactionResponse(
+                ResponsePayload.builder()
+                        .transactionID(transactionId)
+                        .transactionStatus(status)
+                        .build()
+        );
     }
 }

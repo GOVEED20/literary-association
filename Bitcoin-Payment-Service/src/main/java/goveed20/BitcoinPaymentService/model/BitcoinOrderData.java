@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class BitcoinOrderData {
-
     private Integer id;
     private String status;
     private String price_currency;
@@ -22,7 +21,6 @@ public class BitcoinOrderData {
     private String order_id;
     private String underpaid_amount;
     private String overpaid_amount;
-    private boolean is_refundable;
+    private Boolean is_refundable;
     private String payment_url;
-
 }

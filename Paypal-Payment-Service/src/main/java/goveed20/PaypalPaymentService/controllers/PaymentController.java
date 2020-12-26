@@ -37,7 +37,7 @@ public class PaymentController implements PluginController {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public ResponseEntity<?> completePaymentGet(HttpServletRequest request) {
+    public ResponseEntity<?> completePayment(HttpServletRequest request) {
         Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         Long transactionId = Long.parseLong(String.valueOf(pathVariables.get("transactionId")));
 
