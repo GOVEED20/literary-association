@@ -7,13 +7,6 @@ spring:
       discovery:
         healthCheckPath: /api/actuator/health
         instance-id: "${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}"
-  zipkin:
-    base-url: http://localhost:9411
-  sleuth:
-    sampler:
-      probability: 1
-    async:
-      enabled: false
 
 server:
   port: 0
