@@ -33,5 +33,6 @@ public class Log {
     private String logLevel;
 
     @Column(nullable = false)
+    @Lob
     private String message;
 }
