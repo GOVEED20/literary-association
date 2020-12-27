@@ -11,6 +11,9 @@
           <camunda:formField id="username" label="Username" type="string">
             <camunda:properties>
               <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="minlength" value="8" />
+              <camunda:property id="placeholder" value="Username" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
@@ -21,6 +24,8 @@
             <camunda:properties>
               <camunda:property id="type" value="password" />
               <camunda:property id="pattern" value="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#38;])[A-Za-z\d@$!%*?&#38;]{8,}$" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="placeholder" value="Password" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
@@ -29,6 +34,8 @@
           <camunda:formField id="name" label="Name" type="string">
             <camunda:properties>
               <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="placeholder" value="Name" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
@@ -37,6 +44,8 @@
           <camunda:formField id="surname" label="Surname" type="string">
             <camunda:properties>
               <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="placeholder" value="Surname" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
@@ -45,6 +54,8 @@
           <camunda:formField id="country" label="Country" type="string">
             <camunda:properties>
               <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="placeholder" value="Country" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
@@ -53,6 +64,8 @@
           <camunda:formField id="city" label="City" type="string">
             <camunda:properties>
               <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="placeholder" value="City" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
@@ -60,14 +73,22 @@
           </camunda:formField>
           <camunda:formField id="email" label="Email" type="string">
             <camunda:properties>
-              <camunda:property id="type" value="text" />
+              <camunda:property id="type" value="email" />
               <camunda:property id="pattern" value="^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="placeholder" value="Email address" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="genres" label="Genres" type="string" />
+          <camunda:formField id="genres" label="Genres" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="select" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="multiple" value="multiple" />
+            </camunda:properties>
+          </camunda:formField>
           <camunda:formField id="beta_reader" label="Beta reader" type="boolean" defaultValue="false">
             <camunda:properties>
               <camunda:property id="type" value="checkbox" />
@@ -97,7 +118,11 @@
     <bpmn:userTask id="Select_beta_genres" name="Select beta genres" camunda:formKey="beta_genres_registration">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="beta_genres" label="Beta genres" type="string" />
+          <camunda:formField id="beta_genres" label="Beta genres" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="select" />
+            </camunda:properties>
+          </camunda:formField>
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_01frtpj</bpmn:incoming>
@@ -139,6 +164,12 @@
   <bpmn:signal id="Signal_189vto0" name="Confirmation_link_signal" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Reader_registration">
+      <bpmndi:BPMNEdge id="Flow_1615jkv_di" bpmnElement="Flow_1615jkv">
+        <di:waypoint x="390" y="175" />
+        <di:waypoint x="390" y="240" />
+        <di:waypoint x="330" y="240" />
+        <di:waypoint x="330" y="157" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mjuzcx_di" bpmnElement="Flow_1mjuzcx">
         <di:waypoint x="1138" y="140" />
         <di:waypoint x="1212" y="140" />
@@ -177,12 +208,6 @@
       <bpmndi:BPMNEdge id="Flow_0tt70i1_di" bpmnElement="Flow_0tt70i1">
         <di:waypoint x="215" y="117" />
         <di:waypoint x="310" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1615jkv_di" bpmnElement="Flow_1615jkv">
-        <di:waypoint x="390" y="175" />
-        <di:waypoint x="390" y="240" />
-        <di:waypoint x="330" y="240" />
-        <di:waypoint x="330" y="157" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="99" width="36" height="36" />

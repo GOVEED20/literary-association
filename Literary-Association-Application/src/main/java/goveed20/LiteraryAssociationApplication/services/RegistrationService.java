@@ -57,7 +57,7 @@ public class RegistrationService {
         List<FormField> properties = tfd.getFormFields();
         properties.forEach(p -> {
             if (p.getId().equals("genres")) {
-                p.getProperties().put("genresJson", UtilService
+                p.getProperties().put("options", UtilService
                         .serializeGenres(new HashSet<>(genreRepository.findAll())));
             }
         });
