@@ -12,7 +12,7 @@
             <camunda:properties>
               <camunda:property id="type" value="text" />
               <camunda:property id="required" value="required" />
-              <camunda:property id="minlength" value="8" />
+              <camunda:property id="minLength" value="8" />
               <camunda:property id="placeholder" value="Username" />
             </camunda:properties>
             <camunda:validation>
