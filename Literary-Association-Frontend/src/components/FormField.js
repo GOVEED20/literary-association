@@ -4,14 +4,19 @@ import {Form} from 'react-bootstrap'
 const FormField = ({formField, onChange, value}) => {
     switch (formField.properties.type) {
         case "select":
+            const nativeProps = {
+                multiple: formField.properties.multiple,
+                required: formField.properties.required
+            }
+
             return (
                 <Form.Group controlId={formField.id}>
                     <Form.Label>{formField.label}</Form.Label>
-                    <Form.Control as="select" {...formField.properties} onChange={onChange} value={value}>
+                    <Form.Control as="select" {...nativeProps} onChange={onChange} value={value}>
                         {
-                            JSON.parse(formField.properties.values)
+                            JSON.parse(formField.properties.options)
                                 .map((option) =>
-                                    <option value={option.value}>{option.name}</option>
+                                    <option key={option.value} value={option.value}>{option.name}</option>
                                 )
                         }
                     </Form.Control>
