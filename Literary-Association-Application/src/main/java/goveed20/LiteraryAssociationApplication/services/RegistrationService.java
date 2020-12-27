@@ -56,7 +56,7 @@ public class RegistrationService {
         TaskFormData tfd = formService.getTaskFormData(task.getId());
         List<FormField> properties = tfd.getFormFields();
         properties.forEach(p -> {
-            if (p.getId().equals("genres")) {
+            if (p.getId().equals("genres") || p.getId().equals("beta_genres")) {
                 p.getProperties().put("options", UtilService
                         .serializeGenres(new HashSet<>(genreRepository.findAll())));
             }
@@ -79,14 +79,6 @@ public class RegistrationService {
         String processInstanceId = task.getProcessInstanceId();
         runtimeService.setVariable(processInstanceId, "registration", regData.getFormFields());
         formService.submitTaskForm(task.getId(), map); // complete input registration data task
-
-        if (Boolean.parseBoolean(map.get("beta_reader").toString())) {
-            task = taskService.createTaskQuery().processInstanceId(task.getProcessInstanceId()).active().list().get(0);
-            String beta_genres = map.get("beta_genres").toString();
-            map.clear();
-            map.put("beta_genres", beta_genres);
-            formService.submitTaskForm(task.getId(), map); // complete select beta genres task
-        }
     }
 
     public void verify(String disHash, String pID) throws Exception {

@@ -4,6 +4,7 @@ import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionFieldDTO;
 import goveed20.LiteraryAssociationApplication.model.*;
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import goveed20.LiteraryAssociationApplication.repositories.BetaReaderStatusRepository;
+import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
 import goveed20.LiteraryAssociationApplication.repositories.ReaderRepository;
 import goveed20.LiteraryAssociationApplication.repositories.VerificationTokenRepository;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
@@ -14,10 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class RegistrationDelegate implements JavaDelegate {
@@ -31,13 +29,16 @@ public class RegistrationDelegate implements JavaDelegate {
     @Autowired
     BetaReaderStatusRepository betaReaderStatusRepository;
 
+    @Autowired
+    GenreRepository genreRepository;
+
     @SuppressWarnings("unchecked")
     @Override
     public void execute(DelegateExecution delegateExecution) {
         List<FormSubmissionFieldDTO> registration = (List<FormSubmissionFieldDTO>)delegateExecution
                 .getVariable("registration");
         Reader reader = Reader.readerBuilder().role(UserRole.READER)
-                .comments(new HashSet<>()).transactions(new HashSet<>()).build();
+                .comments(new HashSet<>()).transactions(new HashSet<>()).genres(new HashSet<>()).build();
 
         /* DEFAULT LOCATION */
         Location l = Location.builder().city("default").country("default").latitude(45.0).longitude(45.0).build();
@@ -48,7 +49,6 @@ public class RegistrationDelegate implements JavaDelegate {
         betaReader.ifPresent(formSubmissionFieldDTO -> reader
                 .setBetaReader(Boolean.parseBoolean(formSubmissionFieldDTO.getFieldValue())));
 
-        BetaReaderStatus brs = null;
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         for (FormSubmissionFieldDTO formField : registration) {
@@ -69,15 +69,17 @@ public class RegistrationDelegate implements JavaDelegate {
                     reader.setEmail(formField.getFieldValue());
                     break;
                 case "genres":
-                    reader.setGenres(UtilService.parseGenres(formField.getFieldValue()));
+                    UtilService.parseGenres(formField.getFieldValue()).forEach(g -> reader.getGenres()
+                            .add(genreRepository.findByGenre(g.getGenre())));
                     break;
                 case "beta_genres":
                     if (reader.getBetaReader()) {
-                        brs = BetaReaderStatus.builder().betaGenres(UtilService
-                                .parseGenres(formField.getFieldValue()))
+                        BetaReaderStatus brs = BetaReaderStatus.builder().betaGenres(new HashSet<>())
                                 .betaReaderPapers(new HashSet<>()).penaltyPoints(0).reader(reader).build();
+                        UtilService.parseGenres(formField.getFieldValue()).forEach(g -> brs.getBetaGenres()
+                                .add(genreRepository.findByGenre(g.getGenre())));
+                        reader.setBetaReaderStatus(brs);
                     }
-                    reader.setBetaReaderStatus(brs);
                     break;
             }
         }
