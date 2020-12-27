@@ -69,9 +69,6 @@ public class PaymentService {
 
         transactionChecker.checkTransaction(responseEntity.getBody().getId(), payload.getPaymentFields().get("coinGateApiKey"));
 
-        log.info("BTC PaymentService: Received payment_url for transaction with id " +
-                payload.getTransactionId());
-
         return paymentUrl;
     }
 
