@@ -17,7 +17,7 @@ public class BetaReaderStatus {
     private Long id;
 
     @ElementCollection(targetClass = Genre.class)
-    @JoinTable(name = "genres", joinColumns = @JoinColumn(name = "beta_id"))
+    @JoinTable(name = "beta_genres", joinColumns = @JoinColumn(name = "beta_id"))
     @Column(nullable = false)
     private Set<Genre> betaGenres;
 

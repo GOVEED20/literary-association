@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 public class Reader extends BaseUser {
     @ElementCollection(targetClass = Genre.class)
-    @JoinTable(name = "genres", joinColumns = @JoinColumn(name = "reader_id"))
+    @JoinTable(name = "genres_reader", joinColumns = @JoinColumn(name = "reader_id"))
     @Column(nullable = false)
     private Set<Genre> genres;
 
