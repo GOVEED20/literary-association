@@ -1,26 +1,53 @@
 import React, {useEffect, useState} from "react";
 import {startProcess} from "../services/processService";
-import {getRegistrationFields} from "../services/readerRegistrationService";
+import {getRegistrationFields, sendRegistrationData} from "../services/readerRegistrationService";
 import Form from "./Form";
+import {Spinner} from "react-bootstrap";
 
 const Register = () => {
     const [processId, setProcessId] = useState(null)
     const [formFields, setFormFields] = useState(null)
 
     useEffect(() => {
-        if (window.localStorage.getItem("processID") == null) {
-            const processID = startProcess("Reader_registration")
+        const getProcessIdAndFormFields = async () => {
+            setProcessId(await getProcessId())
 
-            window.localStorage.setItem("processID", processID)
-            setProcessId(processID)
+            if (processId) {
+                setFormFields(await getFormFields(processId))
+            }
         }
-        setFormFields(getRegistrationFields(processId))
+
+        const getProcessId = async () => {
+            let id = JSON.parse(window.localStorage.getItem("processID"))
+            id = id == null ? await startProcess("Reader_registration") : id
+            window.localStorage.setItem("processID", JSON.stringify(id))
+
+            return id
+        }
+
+        const getFormFields = async (id) => {
+            return await getRegistrationFields(id)
+        }
+
+        getProcessIdAndFormFields().then()
     }, [processId])
+
+    const onSubmit = async (state) => {
+        await sendRegistrationData(processId, state)
+    }
+
+    if (!formFields) {
+        return (
+            <Spinner animation="border" role="status">
+                <span className="sr-only">Loading...</span>
+            </Spinner>
+        )
+    }
 
     return (
         <div>
             <h2>Reader registration</h2>
-            <Form form={formFields}/>
+            <Form form={formFields} onSubmit={onSubmit}/>
         </div>
     )
 }
