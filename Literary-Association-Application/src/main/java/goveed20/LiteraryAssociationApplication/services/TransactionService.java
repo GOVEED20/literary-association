@@ -8,6 +8,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -19,7 +20,7 @@ public class TransactionService {
         JSONObject jo = new JSONObject();
         jo.put("retailer", "Laguna");
         jo.put("amount", order.getAmount());
-        jo.put("transactionId", UUID.randomUUID());
+        jo.put("transactionId", new Random().nextLong());
         jo.put("successURL", "http://localhost:9090/api/transactions/success");
         jo.put("failedURL", "http://localhost:9090/api/transactions/failed");
         jo.put("errorURL", "http://localhost:9090/api/transactions/error");
