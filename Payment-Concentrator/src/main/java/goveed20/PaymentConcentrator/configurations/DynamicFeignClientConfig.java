@@ -1,6 +1,5 @@
 package goveed20.PaymentConcentrator.configurations;
 
-import goveed20.PaymentConcentrator.aspects.LoggingPaymentAspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClientBuilder;
 import org.springframework.context.ApplicationContext;
