@@ -10,24 +10,28 @@ const FormField = ({formField, onChange, value}) => {
             }
 
             return (
-                <Form.Group controlId={formField.id}>
-                    <Form.Label>{formField.label}</Form.Label>
-                    <Form.Control as="select" {...nativeProps} onChange={onChange} value={value}>
-                        {
-                            JSON.parse(formField.properties.options)
-                                .map((option) =>
-                                    <option key={option.value} value={option.value}>{option.name}</option>
-                                )
-                        }
-                    </Form.Control>
-                </Form.Group>
+                <Form.Row>
+                    <Form.Group controlId={formField.id}>
+                        <Form.Label>{formField.label}</Form.Label>
+                        <Form.Control as="select" {...nativeProps} onChange={onChange} value={value}>
+                            {
+                                JSON.parse(formField.properties.options)
+                                    .map((option) =>
+                                        <option key={option.value} value={option.value}>{option.name}</option>
+                                    )
+                            }
+                        </Form.Control>
+                    </Form.Group>
+                </Form.Row>
             )
         default:
             return (
-                <Form.Group controlId={formField.id}>
-                    <Form.Label>{formField.label}</Form.Label>
-                    <Form.Control {...formField.properties} onChange={onChange} value={value}/>
-                </Form.Group>
+                <Form.Row>
+                    <Form.Group controlId={formField.id}>
+                        <Form.Label>{formField.label}</Form.Label>
+                        <Form.Control {...formField.properties} onChange={onChange} value={value}/>
+                    </Form.Group>
+                </Form.Row>
             )
     }
 }

@@ -10,20 +10,20 @@ export const getRegistrationFields = async (processId) => {
 export const sendRegistrationData = async (processID, state) => {
     Object.keys(state).map((key) => {
         if (key === "genres" || key === "beta_genres") {
-            state[key] = state[key].map(v => {
+            state[key] = JSON.stringify(state[key].map(v => {
                 return {
                     genre: v
                 }
-            })
+            }))
         }
     })
 
     const payload = {
         processID,
-        formFields: Object.entries(state).map((key, value) => {
+        formFields: Object.entries(state).map((value) => {
             return {
-                fieldId: key,
-                fieldValue: value
+                fieldId: value[0],
+                fieldValue: value[1]
             }
         })
     }
