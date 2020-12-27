@@ -101,6 +101,8 @@
             <camunda:properties>
               <camunda:property id="type" value="select" />
               <camunda:property id="dependsOn" value="beta_reader" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="multiple" value="multiple" />
             </camunda:properties>
           </camunda:formField>
         </camunda:formData>
