@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Random;
-import java.util.UUID;
 
 @Service
 public class TransactionService {

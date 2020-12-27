@@ -1,9 +1,7 @@
 package goveed20.PaymentConcentrator.aspects;
 
 import goveed20.PaymentConcentrator.dtos.InitializePaymentRequest;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.LogDTO;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.LoggingFeignClient;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -12,17 +10,14 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Optional;
 
 @Aspect
 @Component
 public class LoggingPaymentAspect {
 
     @Autowired
-    private LoggingFeignClient loggingFeignClient;
+    private AsyncLogging asyncLogging;
 
     @Before("execution(public * goveed20.PaymentConcentrator.services.PaymentService.*(..))")
     public void paymentService(JoinPoint joinPoint) {
@@ -45,7 +40,7 @@ public class LoggingPaymentAspect {
             e.printStackTrace();
         }
 
-        loggingFeignClient.createLog(logDTO);
+        asyncLogging.callFeignClient(logDTO);
     }
 
     private String generateMessage(String methodName, Object[] arguments, boolean isBefore) {

@@ -1,6 +1,5 @@
 package goveed20.LoggingService.controllers;
 
-import goveed20.LoggingService.model.Log;
 import goveed20.LoggingService.services.LogService;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.LogDTO;
 import org.springframework.beans.factory.annotation.Autowired;
