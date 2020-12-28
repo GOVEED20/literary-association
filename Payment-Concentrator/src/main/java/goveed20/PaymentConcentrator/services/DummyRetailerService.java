@@ -17,7 +17,6 @@ public class DummyRetailerService {
     @EventListener(ApplicationReadyEvent.class)
     public void addDummyRetailer() {
         if (retailerRepository.findByName("Laguna").isEmpty()) {
-            System.out.println("Adding dummy retailer");
 
             Retailer retailer = Retailer.builder()
                     .name("Laguna")
@@ -51,7 +50,6 @@ public class DummyRetailerService {
 
             retailerRepository.save(retailer);
 
-            System.out.println("Dummy retailer added");
         }
     }
 }

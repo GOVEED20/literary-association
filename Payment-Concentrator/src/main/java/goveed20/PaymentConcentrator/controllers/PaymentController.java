@@ -20,12 +20,12 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @GetMapping(value = "/payment-services")
-    private ResponseEntity<Set<String>> getGlobalPaymentServices() {
+    public ResponseEntity<Set<String>> getGlobalPaymentServices() {
         return new ResponseEntity<>(paymentService.getGlobalPaymentServices(), HttpStatus.OK);
     }
 
     @GetMapping(value = "{retailerId}/payment-services")
-    private ResponseEntity<?> getRetailerPaymentServices(@PathVariable("retailerId") Long retailerId) {
+    public ResponseEntity<?> getRetailerPaymentServices(@PathVariable("retailerId") Long retailerId) {
         try {
             return new ResponseEntity<>(paymentService.getRetailerPaymentServices(retailerId), HttpStatus.OK);
         } catch (NotFoundException e) {
@@ -34,7 +34,7 @@ public class PaymentController {
     }
 
     @GetMapping(value = "/payment-services/{paymentService}/registration-fields")
-    private ResponseEntity<?> getPaymentServiceRegistrationFields(@PathVariable("paymentService") String paymentServiceName) {
+    public ResponseEntity<?> getPaymentServiceRegistrationFields(@PathVariable("paymentService") String paymentServiceName) {
         try {
             return new ResponseEntity<>(paymentService.getPaymentServiceRegistrationFields(paymentServiceName), HttpStatus.OK);
         } catch (NotFoundException e) {
@@ -45,7 +45,7 @@ public class PaymentController {
     }
 
     @PostMapping(value = "/payment-services/{paymentService}/initialize-payment")
-    private ResponseEntity<String> initializePayment(@PathVariable("paymentService") String paymentServiceName,
+    public ResponseEntity<String> initializePayment(@PathVariable("paymentService") String paymentServiceName,
                                                      @Valid @RequestBody InitializePaymentRequest paymentRequest) {
         try {
             return new ResponseEntity<>(paymentService.initializePayment(paymentServiceName, paymentRequest), HttpStatus.CREATED);
@@ -59,7 +59,7 @@ public class PaymentController {
     }
 
     @PostMapping("/payment")
-    ResponseEntity<?> sendTransactionResponse(@RequestBody ResponsePayload responsePayload) {
+    public ResponseEntity<?> sendTransactionResponse(@RequestBody ResponsePayload responsePayload) {
         try {
             paymentService.sendTransactionResponse(responsePayload);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
