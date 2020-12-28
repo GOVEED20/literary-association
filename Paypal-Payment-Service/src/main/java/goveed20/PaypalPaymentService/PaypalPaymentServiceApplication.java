@@ -7,7 +7,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"goveed20.PaymentConcentrator.payment.concentrator.plugin", "goveed20.PaypalPaymentService"})
 @EnableDiscoveryClient
 @EnableEncryptableProperties
 @EnableFeignClients(basePackages = {"goveed20.PaymentConcentrator.payment.concentrator.plugin"})

@@ -1,5 +1,6 @@
 package goveed20.PaypalPaymentService.aspects;
 
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.AsyncLogging;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.LogDTO;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.TransactionStatus;
@@ -10,13 +11,10 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerMapping;
 
-import java.net.http.HttpRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 
 @Aspect
 @Component
@@ -39,7 +37,7 @@ public class PaymentAspect {
             e.printStackTrace();
         }
 
-        asyncLogging.callFeignClient(logDTO);
+        asyncLogging.callLoggingFeignClient(logDTO);
     }
 
     @AfterReturning("execution(public * goveed20.PaypalPaymentService.services.PaymentService.*(..))")
@@ -55,7 +53,7 @@ public class PaymentAspect {
             e.printStackTrace();
         }
 
-        asyncLogging.callFeignClient(logDTO);
+        asyncLogging.callLoggingFeignClient(logDTO);
     }
 
     @AfterThrowing(pointcut = "execution(public * goveed20.PaypalPaymentService.services.PaymentService.*(..)) || " +
@@ -72,7 +70,7 @@ public class PaymentAspect {
             e.printStackTrace();
         }
 
-        asyncLogging.callFeignClient(logDTO);
+        asyncLogging.callLoggingFeignClient(logDTO);
     }
 
     private LogDTO generateLog(String className, String methodName, String logLevel, String message) throws ParseException {

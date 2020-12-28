@@ -1,6 +1,7 @@
 package goveed20.BitcoinPaymentService.aspects;
 
 import goveed20.BitcoinPaymentService.model.BitcoinOrderData;
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.AsyncLogging;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.LogDTO;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.TransactionStatus;
@@ -37,7 +38,7 @@ public class PaymentAspect {
             e.printStackTrace();
         }
 
-        asyncLogging.callFeignClient(logDTO);
+        asyncLogging.callLoggingFeignClient(logDTO);
     }
 
     @AfterReturning("execution(public * goveed20.BitcoinPaymentService.services.PaymentService.*(..))")
@@ -53,7 +54,7 @@ public class PaymentAspect {
             e.printStackTrace();
         }
 
-        asyncLogging.callFeignClient(logDTO);
+        asyncLogging.callLoggingFeignClient(logDTO);
     }
 
     @AfterThrowing(pointcut = "execution(public * goveed20.BitcoinPaymentService.services.PaymentService.*(..)) || " +
@@ -70,7 +71,7 @@ public class PaymentAspect {
             e.printStackTrace();
         }
 
-        asyncLogging.callFeignClient(logDTO);
+        asyncLogging.callLoggingFeignClient(logDTO);
     }
 
     private LogDTO generateLog(String className, String methodName, String logLevel, String message) throws ParseException {

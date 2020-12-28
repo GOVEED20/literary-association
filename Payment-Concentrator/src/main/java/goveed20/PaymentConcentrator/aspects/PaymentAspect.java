@@ -1,6 +1,7 @@
 package goveed20.PaymentConcentrator.aspects;
 
 import goveed20.PaymentConcentrator.dtos.InitializePaymentRequest;
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.AsyncLogging;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.LogDTO;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.ResponsePayload;
 import org.aspectj.lang.JoinPoint;
@@ -33,7 +34,7 @@ public class PaymentAspect {
             e.printStackTrace();
         }
 
-        asyncLogging.callFeignClient(logDTO);
+        asyncLogging.callLoggingFeignClient(logDTO);
     }
 
     @AfterReturning("execution(public * goveed20.PaymentConcentrator.services.PaymentService.*(..))")
@@ -49,7 +50,7 @@ public class PaymentAspect {
             e.printStackTrace();
         }
 
-        asyncLogging.callFeignClient(logDTO);
+        asyncLogging.callLoggingFeignClient(logDTO);
     }
 
     @AfterThrowing(pointcut = "execution(public * goveed20.PaymentConcentrator.services.PaymentService.*(..)) || " +
@@ -66,7 +67,7 @@ public class PaymentAspect {
             e.printStackTrace();
         }
 
-        asyncLogging.callFeignClient(logDTO);
+        asyncLogging.callLoggingFeignClient(logDTO);
     }
 
     private LogDTO generateLog(String className, String methodName, String logLevel, String message) throws ParseException {
