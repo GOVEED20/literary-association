@@ -8,7 +8,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableAspectJAutoProxy
 @EnableFeignClients
 public class PaymentConcentratorApplication {
 

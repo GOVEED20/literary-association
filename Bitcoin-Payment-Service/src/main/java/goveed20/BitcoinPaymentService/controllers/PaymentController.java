@@ -25,9 +25,6 @@ public class PaymentController implements PluginController {
     @Override
     public ResponseEntity<String> initializePayment(@Valid InitializationPaymentPayload payload) {
         try {
-            log.info("BTC PaymentController: Initialize transaction with id " + payload.getTransactionId()
-                    + " and amount " + payload.getAmount());
-
             return new ResponseEntity<>(paymentService.initializePayment(payload), HttpStatus.OK);
         } catch (BadRequestException | InterruptedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

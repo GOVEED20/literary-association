@@ -74,22 +74,13 @@ public class PaymentService {
 
     public void completePayment(BitcoinOrderData data) {
 
-        log.info("BTC PaymentService: Started completing transaction with id " +
-                data.getOrder_id());
-
         Long transactionId = Long.parseLong(data.getOrder_id());
 
         if (data.getStatus().equals("paid")) {
-            log.info("BTC PaymentService: Transaction with id " +
-                    data.getOrder_id() + " got status SUCCESS");
             sendTransactionResponse(transactionId, TransactionStatus.SUCCESS);
         } else if (data.getStatus().equals("expired") || data.getStatus().equals("canceled")) {
-            log.info("BTC PaymentService: Transaction with id " +
-                    data.getOrder_id() + " got status FAILED");
             sendTransactionResponse(transactionId, TransactionStatus.FAILED);
         } else {
-            log.info("BTC PaymentService: Transaction with id " +
-                    data.getOrder_id() + " got status ERROR");
             sendTransactionResponse(transactionId, TransactionStatus.ERROR);
         }
     }

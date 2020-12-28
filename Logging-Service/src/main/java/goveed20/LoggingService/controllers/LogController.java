@@ -13,7 +13,7 @@ public class LogController {
     @Autowired
     private LogService logService;
 
-    @PostMapping()
+    @PostMapping
     public void createLog(@RequestBody LogDTO log) {
         logService.createLog(log);
     }
