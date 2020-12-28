@@ -1,7 +1,10 @@
 package goveed20.LiteraryAssociationApplication.delegates;
 
 import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionFieldDTO;
-import goveed20.LiteraryAssociationApplication.model.*;
+import goveed20.LiteraryAssociationApplication.model.BetaReaderStatus;
+import goveed20.LiteraryAssociationApplication.model.Location;
+import goveed20.LiteraryAssociationApplication.model.Reader;
+import goveed20.LiteraryAssociationApplication.model.VerificationToken;
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import goveed20.LiteraryAssociationApplication.repositories.BetaReaderStatusRepository;
 import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
@@ -15,7 +18,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class RegistrationDelegate implements JavaDelegate {

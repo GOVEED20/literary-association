@@ -28,7 +28,8 @@ public class TransactionService {
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
 
-        ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8080/api/payment-services/" + order.getPaymentService() + "/initialize-payment",
+        ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8080/api/payment-services/"
+                        + order.getPaymentService() + "/initialize-payment",
                 jo.toMap(), String.class);
 
         return response.getBody();
