@@ -9,11 +9,12 @@ import javax.validation.constraints.NotNull;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponsePayload extends BasePayload {
+@Builder
+public class ResponsePayload {
 
     @NotNull
     private TransactionStatus transactionStatus;
 
     @NotBlank
-    private String transactionID;
+    private Long transactionID;
 }

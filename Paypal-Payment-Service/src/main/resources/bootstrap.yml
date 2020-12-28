@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: paypal-service
+  cloud:
+    consul:
+      enabled: true
+      discovery:
+        instance-id: "${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}"
+
+server:
+  port: 0

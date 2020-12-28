@@ -1,0 +1,16 @@
+jasypt:
+  encryptor:
+    password: goveed20
+
+paypal:
+  client:
+    mode: sandbox
+    id: ENC(5dMBfHBl+loOeH4/kIbaUWwWLxQ+dRt9VTCxjx2b1CIeXZb5jFxK+Yge/PONwrBgto9qRS/An/qonSbPhpJoz+rHFbsujHX+FVo+Yqrs3NXMNnzE825CPldFP9L7V/1q)
+    secret: ENC(v3ngbhprj3XBxQgVZ33ieBSC9m72iVHZKXkJmDUYsD9fzUWIJKgQoFvI6Drk84PceVFbqG3H7oF2774nfaBCBBw+NxmP00KfQdw3ET96DTQ0Rc2J+2vS7bBZADbJ6o7B)
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 160000000
+        readTimeout: 160000000

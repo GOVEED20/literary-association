@@ -1,27 +1,22 @@
 package goveed20.PaymentConcentrator.payment.concentrator.plugin;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Set;
 
-@RequestMapping("/api")
+@RequestMapping(value = "/api")
 public interface PluginController {
 
-    @GetMapping("/name")
-    ResponseEntity<PluginName> getName();
+    @PostMapping(value = "/initialize-payment")
+    ResponseEntity<String> initializePayment(@Valid @RequestBody InitializationPaymentPayload payload);
 
-    @PostMapping("/initialize-payment")
-    ResponseEntity initializePayment(@Valid @RequestBody InitializationPaymentPayload payload);
+    @GetMapping(value = "/complete-payment/{transactionId}")
+    ResponseEntity<?> completePayment(HttpServletRequest request);
 
-    @PostMapping("/complete-payment")
-    ResponseEntity completePayment(@RequestBody BasePayload payload);
-
-    @GetMapping("/payment/fields")
-    ResponseEntity<Set<String>> getPaymentFields();
+    @GetMapping(value = "/payment-service/registration-fields")
+    ResponseEntity<Set<RegistrationField>> getPaymentServiceRegistrationFields();
 
 }
