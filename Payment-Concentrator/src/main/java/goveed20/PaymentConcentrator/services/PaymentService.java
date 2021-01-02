@@ -20,30 +20,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class PaymentService {
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private DiscoveryClient discoveryClient;
-
     @Autowired
     private FeignClientBuilder feignClientBuilder;
-
     @Autowired
     private RetailerRepository retailerRepository;
-
     @Autowired
     private RetailerDataForPaymentServiceRepository retailerDataForPaymentServiceRepository;
-
     @Autowired
     private TransactionRepository transactionRepository;
-
-    private final RestTemplate restTemplate = new RestTemplate();
 
     public Set<String> getGlobalPaymentServices() {
         return discoveryClient.getServices()
@@ -97,9 +89,15 @@ public class PaymentService {
                 .stream()
                 .filter(retailerData -> retailerData.getPaymentService().equals(paymentServiceName))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException(String.format("Retailer doesn't support payment service %s", paymentServiceName)))
+                .orElseThrow(() -> new NotFoundException(String
+                        .format("Retailer doesn't support payment service %s", paymentServiceName)))
                 .getPaymentData()
                 .forEach(paymentData -> paymentFields.put(paymentData.getName(), paymentData.getValue()));
+
+        if (paymentServiceName.equals("card-payment-service")) {
+            paymentFields.put("MERCHANT_TIMESTAMP", String.valueOf(new Date()));
+            paymentFields.put("MERCHANT_ORDER_ID", UUID.randomUUID().toString());
+        }
 
         Transaction newTransaction = Transaction.builder()
                 .transactionId(paymentRequest.getTransactionId())
@@ -137,10 +135,12 @@ public class PaymentService {
     }
 
     public void sendTransactionResponse(@RequestBody ResponsePayload responsePayload) {
-        Optional<Transaction> transactionOptional = transactionRepository.findByTransactionId(responsePayload.getTransactionID());
+        Optional<Transaction> transactionOptional = transactionRepository
+                .findByTransactionId(responsePayload.getTransactionID());
 
         if (transactionOptional.isEmpty()) {
-            throw new NotFoundException(String.format("Transaction with transaction id %s not found.", responsePayload.getTransactionID()));
+            throw new NotFoundException(String
+                    .format("Transaction with transaction id %s not found.", responsePayload.getTransactionID()));
         }
 
         Transaction transaction = transactionOptional.get();

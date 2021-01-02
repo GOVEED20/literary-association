@@ -32,6 +32,11 @@ public class DummyRetailerService {
                     .retailer(retailer)
                     .build();
 
+            RetailerDataForPaymentService dataForCardPaymentService = RetailerDataForPaymentService.builder()
+                    .paymentService("card-payment-service")
+                    .retailer(retailer)
+                    .build();
+
             PaymentData payee = PaymentData.builder()
                     .name("payee")
                     .value("sb-rqo034159139@business.example.com")
@@ -42,11 +47,17 @@ public class DummyRetailerService {
                     .value("gJi77wfVqcFGpFx81gjEBUTPd7Ms4u3wH9_j5qen")
                     .build();
 
+            PaymentData merchantID = PaymentData.builder().name("MERCHANT_ID").value("retailerID").build();
+            PaymentData merchantPassword = PaymentData.builder().name("MERCHANT_PASSWORD").value("satipo").build();
+
             dataForPaypalService.getPaymentData().add(payee);
             dataForBitcoinService.getPaymentData().add(coinGateApiKey);
+            dataForCardPaymentService.getPaymentData().add(merchantID);
+            dataForCardPaymentService.getPaymentData().add(merchantPassword);
 
             retailer.getRetailerDataForPaymentServices().add(dataForPaypalService);
             retailer.getRetailerDataForPaymentServices().add(dataForBitcoinService);
+            retailer.getRetailerDataForPaymentServices().add(dataForCardPaymentService);
 
             retailerRepository.save(retailer);
 
