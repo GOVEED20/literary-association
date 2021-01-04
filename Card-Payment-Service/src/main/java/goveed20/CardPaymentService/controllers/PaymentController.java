@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -32,7 +34,11 @@ public class PaymentController implements PluginController {
 
     @Override
     public ResponseEntity<?> completePayment(HttpServletRequest request) {
-        return null;
+        Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        Long transactionId = Long.parseLong(String.valueOf(pathVariables.get("transactionId")));
+
+        paymentService.completePayment(transactionId, request.getParameterMap());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override

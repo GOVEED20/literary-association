@@ -49,11 +49,13 @@ public class DummyRetailerService {
 
             PaymentData merchantID = PaymentData.builder().name("MERCHANT_ID").value("retailerID").build();
             PaymentData merchantPassword = PaymentData.builder().name("MERCHANT_PASSWORD").value("satipo").build();
+            PaymentData bank = PaymentData.builder().name("ACQUIRER_BANK").value("UniCredit").build();
 
             dataForPaypalService.getPaymentData().add(payee);
             dataForBitcoinService.getPaymentData().add(coinGateApiKey);
             dataForCardPaymentService.getPaymentData().add(merchantID);
             dataForCardPaymentService.getPaymentData().add(merchantPassword);
+            dataForCardPaymentService.getPaymentData().add(bank);
 
             retailer.getRetailerDataForPaymentServices().add(dataForPaypalService);
             retailer.getRetailerDataForPaymentServices().add(dataForBitcoinService);

@@ -3,6 +3,7 @@ package goveed20.CardPaymentService.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 @Getter
@@ -24,6 +25,6 @@ public class Card {
     private String cardHolderName;
 
     @Column(nullable = false)
-    @Temporal(value = TemporalType.TIMESTAMP)
-    private Date expiryDate;
+    @Pattern(regexp = "((0[1-9])|(1[0-2]))/[0-9]{4}")
+    private String expiryDate;
 }
