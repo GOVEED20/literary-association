@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -33,6 +34,9 @@ public class Transaction {
 
     @Column(nullable = false)
     private Double amount;
+
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<PaymentData> paymentData;
 
     @Column(nullable = false)
     @Pattern(regexp = "^[A-Za-z]+-service$")

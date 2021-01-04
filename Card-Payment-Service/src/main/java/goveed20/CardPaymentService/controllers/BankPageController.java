@@ -9,11 +9,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @Controller
 public class BankPageController {
 
-    @GetMapping(value = "/bank-page/{bankName}/{paymentID}/{transactionID}")
-    public String getBankPage(@PathVariable String bankName, @PathVariable String paymentID, Model model,
-                              @PathVariable String transactionID) {
+    @GetMapping(value = "/bank-page/{bankName}/{transactionID}")
+    public String getBankPage(@PathVariable String bankName, @PathVariable String transactionID, Model model) {
         model.addAttribute("bankName", bankName);
-        model.addAttribute("paymentID", paymentID);
         model.addAttribute("baseURL", ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString());
         model.addAttribute("transactionID", transactionID);
 

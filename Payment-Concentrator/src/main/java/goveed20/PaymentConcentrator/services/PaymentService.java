@@ -3,6 +3,7 @@ package goveed20.PaymentConcentrator.services;
 import goveed20.PaymentConcentrator.dtos.InitializePaymentRequest;
 import goveed20.PaymentConcentrator.exceptions.NotFoundException;
 import goveed20.PaymentConcentrator.exceptions.StatusCodeException;
+import goveed20.PaymentConcentrator.model.PaymentData;
 import goveed20.PaymentConcentrator.model.Retailer;
 import goveed20.PaymentConcentrator.model.RetailerDataForPaymentService;
 import goveed20.PaymentConcentrator.model.Transaction;
@@ -151,6 +152,12 @@ public class PaymentService {
             transaction.setStatus(goveed20.PaymentConcentrator.model.TransactionStatus.FAILED);
         }
         transaction.setCompletedOn(new Date());
+
+        if (responsePayload.getPaymentData() != null) {
+            transaction.setPaymentData(new HashSet<>());
+            responsePayload.getPaymentData().forEach((key, value) -> transaction.getPaymentData()
+                    .add(PaymentData.builder().name(key).value(value).build()));
+        }
 
         transactionRepository.save(transaction);
 

@@ -20,6 +20,9 @@ public class Bank {
     @Column(unique = true, nullable = false)
     private String name;
 
+    @Column(unique = true, nullable = false)
+    private String bankIdentifier;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Client> clients;
 }
