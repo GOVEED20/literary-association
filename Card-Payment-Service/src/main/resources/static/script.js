@@ -9,12 +9,17 @@ $(document).ready(function(){
         let cardholder = $("#cardholder").val();
         let expiryDate = $("#expiryDate").val();
 
-        let completePaymentURL = baseURL + "/api/complete-payment/" + transactionID + "?bankName=" + bankName +
-            "&pan=" + pan + "&secCode=" + secCode + "&cardholder=" + cardholder + "&expiryDate=" + expiryDate;
+        let completePaymentURL = baseURL + "/api/complete-payment/" + transactionID + "?bankName=" + bankName;
 
         $.ajax({
             url: completePaymentURL,
             type : 'GET',
+            headers: {
+                "pan": pan,
+                "secCode": secCode,
+                "cardholder": cardholder,
+                "expiryDate": expiryDate
+            },
             success: function (response) {
                 console.log(response);
             },

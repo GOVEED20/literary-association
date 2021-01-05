@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -95,8 +96,9 @@ public class PaymentService {
                 .getPaymentData()
                 .forEach(paymentData -> paymentFields.put(paymentData.getName(), paymentData.getValue()));
 
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
         if (paymentServiceName.equals("card-payment-service")) {
-            paymentFields.put("MERCHANT_TIMESTAMP", String.valueOf(new Date()));
+            paymentFields.put("MERCHANT_TIMESTAMP", sdf.format(new Date()));
             paymentFields.put("MERCHANT_ORDER_ID", UUID.randomUUID().toString());
         }
 

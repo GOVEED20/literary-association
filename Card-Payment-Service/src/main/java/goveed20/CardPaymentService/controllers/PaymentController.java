@@ -13,6 +13,8 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,7 +39,7 @@ public class PaymentController implements PluginController {
         Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         Long transactionId = Long.parseLong(String.valueOf(pathVariables.get("transactionId")));
 
-        paymentService.completePayment(transactionId, request.getParameterMap());
+        paymentService.completePayment(transactionId, request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
