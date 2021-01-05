@@ -17,7 +17,7 @@ public class PCCService {
     @Autowired
     private BankRepository bankRepository;
 
-    CustomersBankResponseDTO callPCC(String pan, String securityCode, String cardholder, String expiryDate,
+    public CustomersBankResponseDTO callPCC(String pan, String securityCode, String cardholder, String expiryDate,
                                      String acquirerOrderID, String acquirerTimestamp, Transaction transaction) {
 
         String bankIdentifier = pan.substring(0, 4) + pan.substring(5, 7);

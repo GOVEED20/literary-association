@@ -1,6 +1,6 @@
-package goveed20.BitcoinPaymentService.aspects;
+package goveed20.CardPaymentService.aspects;
 
-import goveed20.BitcoinPaymentService.model.BitcoinOrderData;
+import goveed20.CardPaymentService.model.Transaction;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.AsyncLogging;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.LogDTO;
@@ -24,8 +24,10 @@ public class PaymentAspect {
     @Autowired
     private AsyncLogging asyncLogging;
 
-    @Before("execution(public * goveed20.BitcoinPaymentService.services.PaymentService.*(..)) || " +
-            "execution(* goveed20.BitcoinPaymentService.controllers.*.*(..))")
+    @Before("execution(public * goveed20.CardPaymentService.services.PaymentService.*(..)) || " +
+            "execution(* goveed20.CardPaymentService.controllers.*.*(..)) || " +
+            "execution(public * goveed20.CardPaymentService.services.BankService.*(..))) || " +
+            "execution(public * goveed20.CardPaymentService.services.PCCService.*(..)))")
     public void paymentBefore(JoinPoint joinPoint) {
         LogDTO logDTO = null;
         Object[] arguments = joinPoint.getArgs();
@@ -41,7 +43,9 @@ public class PaymentAspect {
         asyncLogging.callLoggingFeignClient(logDTO);
     }
 
-    @AfterReturning("execution(public * goveed20.BitcoinPaymentService.services.PaymentService.*(..))")
+    @AfterReturning("execution(public * goveed20.CardPaymentService.services.PaymentService.*(..)) || " +
+            "execution(public * goveed20.CardPaymentService.services.BankService.*(..))) || " +
+            "execution(public * goveed20.CardPaymentService.services.PCCService.*(..)))")
     public void paymentServiceAfterSuccess(JoinPoint joinPoint) {
         LogDTO logDTO = null;
         Object[] arguments = joinPoint.getArgs();
@@ -57,8 +61,10 @@ public class PaymentAspect {
         asyncLogging.callLoggingFeignClient(logDTO);
     }
 
-    @AfterThrowing(pointcut = "execution(public * goveed20.BitcoinPaymentService.services.PaymentService.*(..)) || " +
-            "execution(* goveed20.BitcoinPaymentService.controllers.*.*(..))", throwing = "error")
+    @AfterThrowing(pointcut = "execution(public * goveed20.CardPaymentService.services.PaymentService.*(..)) || " +
+            "execution(* goveed20.CardPaymentService.controllers.*.*(..)) || " +
+            "execution(public * goveed20.CardPaymentService.services.BankService.*(..))) || " +
+            "execution(public * goveed20.CardPaymentService.services.PCCService.*(..)))", throwing = "error")
     public void paymentServiceAfterError(JoinPoint joinPoint, Throwable error) {
 
         LogDTO logDTO = null;
@@ -78,7 +84,7 @@ public class PaymentAspect {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
         return LogDTO.builder()
                 .date(formatter.parse(formatter.format(new Date())))
-                .serviceName("bitcoin-service")
+                .serviceName("card-payment-service")
                 .className(className)
                 .methodName(methodName)
                 .logLevel(logLevel)
@@ -102,30 +108,55 @@ public class PaymentAspect {
             case "initializePayment":
                 InitializationPaymentPayload initializationPaymentPayload = (InitializationPaymentPayload) arguments[0];
                 message = isBefore ?
-                        "Initialize bitcoin transaction with id " + initializationPaymentPayload.getTransactionId() +
+                        "Initialize bank transaction with id " + initializationPaymentPayload.getTransactionId() +
                                 " and amount " + initializationPaymentPayload.getAmount()
                         :
-                        "Bitcoin transaction with id " + initializationPaymentPayload.getTransactionId() +
+                        "Bank transaction with id " + initializationPaymentPayload.getTransactionId() +
                                 " successfully initialized";
                 break;
             case "completePayment":
-                BitcoinOrderData bitcoinOrderData = (BitcoinOrderData) arguments[0];
+                Long bankTransactionId = (Long) arguments[0];
                 message = isBefore ?
-                        "Complete bitcoin transaction with order id " + bitcoinOrderData.getOrder_id() +
-                                " , got status " + bitcoinOrderData.getStatus()
+                        "Complete bank transaction with id " + bankTransactionId
                         :
-                        "Bitcoin transaction with order id " + bitcoinOrderData.getOrder_id() +
-                                " completed with status " + bitcoinOrderData.getStatus();
+                        "Bank transaction with id " + bankTransactionId +
+                                " completed";
                 break;
             case "sendTransactionResponse":
                 Long transactionId = (Long) arguments[0];
                 TransactionStatus status = (TransactionStatus) arguments[1];
                 message = isBefore ?
-                        "Sending data of bitcoin transaction with id " + transactionId + " and status " +
+                        "Sending data of bank transaction with id " + transactionId + " and status " +
                                 status + " to payment concentrator"
                         :
-                        "Data of bitcoin transaction with id " + transactionId + " and status " + status +
+                        "Data of bank transaction with id " + transactionId + " and status " + status +
                                 " sent to payment concentrator";
+                break;
+            case "callPCC":
+                Transaction transaction = (Transaction) arguments[6];
+                message = isBefore ?
+                        "Sending data of bank transaction with id " + transaction.getTransactionID() +
+                                " to PCC"
+                        :
+                        "Data of bank transaction with id " + transaction.getTransactionID() +
+                                " is processed on PCC";
+                break;
+            case "completePaymentInCustomersBank":
+                Transaction transactionCustomer = (Transaction) arguments[0];
+                message = isBefore ?
+                        "Complete bank transaction with id " + transactionCustomer.getTransactionID() +
+                                " in customer's bank"
+                        :
+                        "Bank transaction with id " + transactionCustomer.getTransactionID() +
+                                " completed in customer's bank";
+                break;
+            case "completePaymentInMerchantsBank":
+                Long merchantTransactionId = (Long) arguments[0];
+                message = isBefore ?
+                        "Complete bank transaction with id " + merchantTransactionId + " in merchant's bank"
+                        :
+                        "Bank transaction with id " + merchantTransactionId +
+                                " completed in merchant's bank";
                 break;
             default:
                 message = "";
@@ -136,13 +167,28 @@ public class PaymentAspect {
 
     private String generateControllerMessage(String methodName, Object[] arguments, boolean isBefore) {
         String message;
-        InitializationPaymentPayload initializationPaymentPayload = (InitializationPaymentPayload) arguments[0];
-        message = isBefore ?
-                "Starting initialization bitcoin transaction with id " + initializationPaymentPayload.getTransactionId() +
-                        " and amount " + initializationPaymentPayload.getAmount()
-                :
-                "Successfully initialized bitcoin transaction with id " + initializationPaymentPayload.getTransactionId() +
-                        " and amount " + initializationPaymentPayload.getAmount();
+        switch (methodName) {
+            case "initializePayment":
+                InitializationPaymentPayload initializationPaymentPayload = (InitializationPaymentPayload) arguments[0];
+                message = isBefore ?
+                        "Starting initialization of bank transaction with id " + initializationPaymentPayload
+                                .getTransactionId() +
+                                " and amount " + initializationPaymentPayload.getAmount()
+                        :
+                        "Successfully initialized bank transaction with id " + initializationPaymentPayload
+                                .getTransactionId() +
+                                " and amount " + initializationPaymentPayload.getAmount();
+                break;
+            case "completePayment":
+                message = isBefore ?
+                        "Starting completing bank transaction"
+                        :
+                        "Successfully completed bank transaction";
+                break;
+            default:
+                message = "";
+        }
+
         return message;
     }
 

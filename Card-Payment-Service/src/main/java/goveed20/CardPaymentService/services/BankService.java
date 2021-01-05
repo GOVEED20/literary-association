@@ -32,7 +32,7 @@ public class BankService {
 
     private SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
 
-    Client checkClientsAccount(Bank bank, String pan, String securityCode, String cardholder, String expiryDate,
+    public Client checkClientsAccount(Bank bank, String pan, String securityCode, String cardholder, String expiryDate,
                                Double amount) {
         Client client = bank.getClients().stream().filter(c -> c.getPAN().equals(pan)).findFirst()
                 .orElseThrow(() -> new InvalidBankClientDataException("Client with given PAN does not exist"));
@@ -64,7 +64,7 @@ public class BankService {
         return client;
     }
 
-    CustomersBankResponseDTO completePaymentInCustomersBank(Transaction transaction, Bank bank,
+    public CustomersBankResponseDTO completePaymentInCustomersBank(Transaction transaction, Bank bank,
                                                             String pan, String securityCode, String cardholder,
                                                             String expiryDate, String acquirerOrderID,
                                                             String acquirerTimestamp) {
@@ -85,11 +85,11 @@ public class BankService {
                 .issuerTimestamp(formatter.format(new Date())).errorMessage(errorMessage).build();
     }
 
-    Transaction completePaymentInSellersBank(Long transactionID, Transaction transaction, Bank bank, String pan,
-                                             String securityCode, String cardholder, String expiryDate,
-                                             CustomersBankResponseDTO customersBankResponse) {
+    public Transaction completePaymentInMerchantsBank(Long transactionID, Transaction transaction, Bank bank, String pan,
+                                                      String securityCode, String cardholder, String expiryDate,
+                                                      CustomersBankResponseDTO customersBankResponse) {
 
-        Client customer = null;
+        Client customer;
         Double amount = transaction.getAmount();
 
         Map<String, String> paymentData = new HashMap<>();
@@ -98,6 +98,8 @@ public class BankService {
 
         String acquirerOrderID;
         String acquirerTimestamp;
+        String issuerOrderID = null;
+        String issuerTimestamp = null;
 
         if (customersBankResponse == null) {
             acquirerOrderID = UUID.randomUUID().toString();
@@ -105,11 +107,15 @@ public class BankService {
         } else {
             acquirerOrderID = customersBankResponse.getAcquirerOrderID();
             acquirerTimestamp = customersBankResponse.getAcquirerTimestamp();
+            issuerOrderID = customersBankResponse.getIssuerOrderID();
+            issuerTimestamp = customersBankResponse.getIssuerTimestamp();
         }
         paymentData.put("ACQUIRER_ORDER_ID", acquirerOrderID);
         paymentData.put("ACQUIRER_TIMESTAMP", acquirerTimestamp);
         transaction.setAcquirerOrderID(acquirerOrderID);
         transaction.setAcquirerTimestamp(acquirerTimestamp);
+        transaction.setIssuerOrderID(issuerOrderID);
+        transaction.setIssuerTimestamp(issuerTimestamp);
 
 
         if (customersBankResponse == null) {

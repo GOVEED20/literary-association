@@ -33,7 +33,7 @@ public class DummyRetailerService {
                     .build();
 
             RetailerDataForPaymentService dataForCardPaymentService = RetailerDataForPaymentService.builder()
-                    .paymentService("card-payment-service")
+                    .paymentService("bank-service")
                     .retailer(retailer)
                     .build();
 
@@ -47,9 +47,20 @@ public class DummyRetailerService {
                     .value("gJi77wfVqcFGpFx81gjEBUTPd7Ms4u3wH9_j5qen")
                     .build();
 
-            PaymentData merchantID = PaymentData.builder().name("MERCHANT_ID").value("retailerID").build();
-            PaymentData merchantPassword = PaymentData.builder().name("MERCHANT_PASSWORD").value("satipo").build();
-            PaymentData bank = PaymentData.builder().name("MERCHANT_BANK").value("UniCredit").build();
+            PaymentData merchantID = PaymentData.builder()
+                    .name("MERCHANT_ID")
+                    .value("123456789")
+                    .build();
+
+            PaymentData merchantPassword = PaymentData.builder()
+                    .name("MERCHANT_PASSWORD")
+                    .value("satipo")
+                    .build();
+
+            PaymentData bank = PaymentData.builder()
+                    .name("MERCHANT_BANK")
+                    .value("UniCredit")
+                    .build();
 
             dataForPaypalService.getPaymentData().add(payee);
             dataForBitcoinService.getPaymentData().add(coinGateApiKey);

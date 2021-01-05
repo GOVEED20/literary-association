@@ -2,8 +2,7 @@ package goveed20.CardPaymentService.model;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -12,6 +11,10 @@ import javax.persistence.Entity;
 @Builder(toBuilder = true)
 @Entity
 public class Transaction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String transactionID;

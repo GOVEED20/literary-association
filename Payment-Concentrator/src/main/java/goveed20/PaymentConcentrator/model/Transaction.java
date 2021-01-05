@@ -35,7 +35,7 @@ public class Transaction {
     @Column(nullable = false)
     private Double amount;
 
-    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<PaymentData> paymentData;
 
     @Column(nullable = false)

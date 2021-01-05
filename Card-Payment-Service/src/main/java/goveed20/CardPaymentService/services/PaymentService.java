@@ -109,7 +109,7 @@ public class PaymentService {
         }
 
         transaction = bankService
-                .completePaymentInSellersBank(transactionID, transaction, bank, pan, securityCode,
+                .completePaymentInMerchantsBank(transactionID, transaction, bank, pan, securityCode,
                         cardholder, expiryDate, customersBankResponse);
 
         transactionRepository.save(transaction);
