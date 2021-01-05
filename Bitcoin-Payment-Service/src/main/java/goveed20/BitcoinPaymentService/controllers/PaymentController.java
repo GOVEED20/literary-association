@@ -38,6 +38,6 @@ public class PaymentController implements PluginController {
 
     @Override
     public ResponseEntity<Set<RegistrationField>> getPaymentServiceRegistrationFields() {
-        return null;
+        return new ResponseEntity<>(paymentService.getPaymentServiceRegistrationFields(), HttpStatus.OK);
     }
 }

@@ -136,13 +136,27 @@ public class PaymentAspect {
 
     private String generateControllerMessage(String methodName, Object[] arguments, boolean isBefore) {
         String message;
-        InitializationPaymentPayload initializationPaymentPayload = (InitializationPaymentPayload) arguments[0];
-        message = isBefore ?
-                "Starting initializating bitcoin transaction with id " + initializationPaymentPayload.getTransactionId() +
-                        " and amount " + initializationPaymentPayload.getAmount()
-                :
-                "Successfully initialized bitcoin transaction with id " + initializationPaymentPayload.getTransactionId() +
-                        " and amount " + initializationPaymentPayload.getAmount();
+        switch (methodName) {
+            case "initializePayment":
+                InitializationPaymentPayload initializationPaymentPayload = (InitializationPaymentPayload) arguments[0];
+                message = isBefore ?
+                        "Starting initializating bitcoin transaction with id " + initializationPaymentPayload.getTransactionId() +
+                                " and amount " + initializationPaymentPayload.getAmount()
+                        :
+                        "Successfully initialized bitcoin transaction with id " + initializationPaymentPayload.getTransactionId() +
+                                " and amount " + initializationPaymentPayload.getAmount();
+                break;
+            case "getPaymentServiceRegistrationFields":
+                message = isBefore ?
+                        "Starting getting registration fields for bitcoin service "
+                        :
+                        "Successfully got registration fields for bitcoin service";
+                break;
+            default:
+                message = "";
+
+        }
+
         return message;
     }
 
