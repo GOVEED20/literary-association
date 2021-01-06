@@ -12,6 +12,7 @@ import goveed20.PaymentConcentrator.payment.concentrator.plugin.TransactionStatu
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -30,14 +31,17 @@ public class BankService {
     @Autowired
     private PaymentConcentratorFeignClient paymentConcentratorFeignClient;
 
+    @Autowired
+    private PasswordEncoder encoder;
+
     private SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
 
     public Client checkClientsAccount(Bank bank, String pan, String securityCode, String cardholder, String expiryDate,
                                Double amount) {
-        Client client = bank.getClients().stream().filter(c -> c.getPAN().equals(pan)).findFirst()
+        Client client = bank.getClients().stream().filter(c -> encoder.matches(pan, c.getPAN())).findFirst()
                 .orElseThrow(() -> new InvalidBankClientDataException("Client with given PAN does not exist"));
 
-        if (!client.getCard().getSecurityCode().equals(securityCode)) {
+        if (!encoder.matches(securityCode, client.getCard().getSecurityCode())) {
             throw new InvalidBankClientDataException("Invalid security code");
         } else if (!client.getCard().getCardHolderName().equals(cardholder)) {
             throw new InvalidBankClientDataException("Invalid cardholder");

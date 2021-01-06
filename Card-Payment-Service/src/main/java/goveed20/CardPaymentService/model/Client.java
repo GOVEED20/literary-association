@@ -18,7 +18,6 @@ public class Client {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    @Pattern(regexp = "([0-9]{4}-){3}[0-9]{4}")
     private String PAN;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <title>Bank page</title>
     <link rel="stylesheet" href="../static/style.css" th:href="@{/style.css}">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="../static/script.js" th:src="@{/script.js}"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js"></script>
 </head>
 <body>
 
@@ -13,18 +15,20 @@
         <form id="bank">
             <h3 th:text="${bankName} + ' bank form'"/>
             <fieldset>
-                <input placeholder="PAN (XXXX-XXXX-XXXX-XXXX)" id="pan" name="pan" type="text" tabindex="1" pattern="([0-9]{4}-){3}[0-9]{4}"
+                <input placeholder="PAN (XXXX-XXXX-XXXX-XXXX)" id="pan" name="pan" type="text" tabindex="1"
+                       pattern="([0-9]{4}-){3}[0-9]{4}" minlength="19" maxlength="19"
                        required autofocus>
             </fieldset>
             <fieldset>
-                <input placeholder="Security code" id="secCode" name="secCode" type="password" tabindex="2" required minlength="3" maxlength="3">
+                <input placeholder="Security code" id="secCode" name="secCode" type="password" tabindex="2"
+                       required minlength="3" maxlength="3">
             </fieldset>
             <fieldset>
                 <input placeholder="Cardholder" id="cardholder" name="cardholder" type="text" tabindex="3" required>
             </fieldset>
             <fieldset>
-                <input placeholder="Expiry date (MM/yyyy)" id="expiryDate" name="expiryDate" type="text" tabindex="4" required
-                       pattern="((0[1-9])|(1[0-2]))/[0-9]{4}">
+                <input placeholder="Expiry date (MM/yyyy)" id="expiryDate" name="expiryDate" type="text" tabindex="4"
+                       required pattern="((0[1-9])|(1[0-2]))/[0-9]{4}">
             </fieldset>
             <input type="hidden" id="bankName" th:value="${bankName}"/>
             <input type="hidden" id="baseURL" th:value="${baseURL}"/>

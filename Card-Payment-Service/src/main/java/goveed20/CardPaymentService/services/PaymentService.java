@@ -8,15 +8,17 @@ import goveed20.CardPaymentService.model.Transaction;
 import goveed20.CardPaymentService.repositories.BankRepository;
 import goveed20.CardPaymentService.repositories.TransactionRepository;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.RegistrationField;
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.RegistrationFieldType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -33,6 +35,9 @@ public class PaymentService {
 
     @Autowired
     private PCCService pccService;
+
+    @Autowired
+    private PasswordEncoder encoder;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
 
@@ -76,7 +81,7 @@ public class PaymentService {
         return baseUrl + "/bank-page/" + bank.getName() + "/" + payload.getTransactionId();
     }
 
-    public void completePayment(Long transactionID, HttpServletRequest request) {
+    public String completePayment(Long transactionID, HttpServletRequest request) {
         if (request.getHeaderNames() == null) {
             throw new BadRequestException("Missing parameters");
         }
@@ -113,5 +118,21 @@ public class PaymentService {
                         cardholder, expiryDate, customersBankResponse);
 
         transactionRepository.save(transaction);
+
+        return "Transaction is completed successfully";
+    }
+
+    public Set<RegistrationField> getPaymentServiceRegistrationFields() {
+        Map<String, Object> validationConstraints = new HashMap<>();
+        validationConstraints.put("required", true);
+        validationConstraints.put("pattern", "([0-9]{4}-){3}[0-9]{4}");
+        validationConstraints.put("minlength", "19");
+        validationConstraints.put("maxlength", "19");
+
+        Set<RegistrationField> regFields = new HashSet<>();
+        regFields.add(RegistrationField.builder().name("PAN").type(RegistrationFieldType.STRING)
+                .validationConstraints(validationConstraints).encrypted(true).build());
+
+        return regFields;
     }
 }

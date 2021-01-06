@@ -7,6 +7,8 @@ import goveed20.PaymentConcentrator.repositories.RetailerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -54,7 +56,7 @@ public class DummyRetailerService {
 
             PaymentData merchantPassword = PaymentData.builder()
                     .name("MERCHANT_PASSWORD")
-                    .value("satipo")
+                    .value("$2a$10$NqK3gW9/ZYzWvQID0GEbzuOcyglZg3jZtju.StvmetohqpMj9o09O")
                     .build();
 
             PaymentData bank = PaymentData.builder()
