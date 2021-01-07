@@ -1,6 +1,18 @@
 spring:
   application:
-    name: Card-Payment-Service
+    name: bank-service
   cloud:
+    consul:
+      enabled: true
+      discovery:
+        instance-id: "${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}"
+
+server:
+  port: 0
+
+feign:
+  client:
     config:
-      uri: http://localhost:8888
+      default:
+        connectTimeout: 160000000
+        readTimeout: 160000000

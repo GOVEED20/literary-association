@@ -101,7 +101,7 @@ public class PaymentAspect {
             case "initializePayment":
                 InitializationPaymentPayload initializationPaymentPayload = (InitializationPaymentPayload) arguments[0];
                 message = isBefore ?
-                        "Starting initializating paypal transaction with id " + initializationPaymentPayload.getTransactionId() +
+                        "Starting initialization paypal transaction with id " + initializationPaymentPayload.getTransactionId() +
                                 " and amount " + initializationPaymentPayload.getAmount()
                         :
                         "Successfully initialized paypal transaction with id " + initializationPaymentPayload.getTransactionId() +
