@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 @RestController
-@Slf4j
 public class PaymentController implements PluginController {
 
     @Autowired

@@ -10,9 +10,7 @@ import goveed20.CardPaymentService.repositories.TransactionRepository;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.RegistrationField;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.RegistrationFieldType;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -21,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-@Slf4j
 public class PaymentService {
 
     @Autowired
@@ -35,9 +32,6 @@ public class PaymentService {
 
     @Autowired
     private PCCService pccService;
-
-    @Autowired
-    private PasswordEncoder encoder;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
 

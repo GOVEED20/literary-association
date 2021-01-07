@@ -97,10 +97,8 @@ public class PaymentService {
                 .forEach(paymentData -> paymentFields.put(paymentData.getName(), paymentData.getValue()));
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
-        if (paymentServiceName.equals("bank-service")) {
-            paymentFields.put("MERCHANT_TIMESTAMP", sdf.format(new Date()));
-            paymentFields.put("MERCHANT_ORDER_ID", UUID.randomUUID().toString());
-        }
+        paymentFields.put("MERCHANT_TIMESTAMP", sdf.format(new Date()));
+        paymentFields.put("MERCHANT_ORDER_ID", UUID.randomUUID().toString());
 
         Transaction newTransaction = Transaction.builder()
                 .transactionId(paymentRequest.getTransactionId())
@@ -165,12 +163,10 @@ public class PaymentService {
 
         switch (responsePayload.getTransactionStatus()) {
             case SUCCESS:
-                //informClient(transaction.getSuccessURL());
-                System.out.println("Transaction succeed");
+                informClient(transaction.getSuccessURL());
                 break;
             case FAILED:
-                //informClient(transaction.getFailedURL());
-                System.out.println("Transaction failed");
+                informClient(transaction.getFailedURL());
                 break;
             default:
                 informClient(transaction.getErrorURL());
