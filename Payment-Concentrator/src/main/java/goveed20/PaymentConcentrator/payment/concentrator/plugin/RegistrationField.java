@@ -12,6 +12,6 @@ import java.util.Map;
 public class RegistrationField {
     private String name;
     private RegistrationFieldType type;
-    private Map<String, Object> validationConstraints;
+    private Map<String, String> validationConstraints;
     private Boolean encrypted;
 }

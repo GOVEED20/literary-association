@@ -3,10 +3,7 @@ package goveed20.PaypalPaymentService.services;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.PaymentConcentratorFeignClient;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.ResponsePayload;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.TransactionStatus;
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.*;
 import goveed20.PaypalPaymentService.exceptions.BadRequestException;
 import goveed20.PaypalPaymentService.model.PaypalPaymentIntent;
 import goveed20.PaypalPaymentService.model.PaypalPaymentMethod;
@@ -20,9 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PaymentService {
@@ -31,6 +26,24 @@ public class PaymentService {
 
     @Autowired
     private PaymentConcentratorFeignClient paymentConcentratorFeignClient;
+
+    public Set<RegistrationField> getPaymentServiceRegistrationFields() {
+        Map<String, String> validationConstraints = new HashMap<>();
+        validationConstraints.put("type", "email");
+        validationConstraints.put("required", "required");
+
+        RegistrationField payee = RegistrationField.builder()
+                .encrypted(false)
+                .name("payee")
+                .type(RegistrationFieldType.STRING)
+                .validationConstraints(validationConstraints)
+                .build();
+
+        Set<RegistrationField> registrationFields = new HashSet<>();
+        registrationFields.add(payee);
+
+        return registrationFields;
+    }
 
     @SneakyThrows(MalformedURLException.class)
     public String initializePayment(InitializationPaymentPayload payload) throws PayPalRESTException, UnknownHostException {

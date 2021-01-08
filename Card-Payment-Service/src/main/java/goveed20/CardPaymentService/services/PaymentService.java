@@ -117,8 +117,9 @@ public class PaymentService {
     }
 
     public Set<RegistrationField> getPaymentServiceRegistrationFields() {
-        Map<String, Object> validationConstraints = new HashMap<>();
-        validationConstraints.put("required", true);
+        Map<String, String> validationConstraints = new HashMap<>();
+        validationConstraints.put("type", "text");
+        validationConstraints.put("required", "true");
         validationConstraints.put("pattern", "([0-9]{4}-){3}[0-9]{4}");
         validationConstraints.put("minlength", "19");
         validationConstraints.put("maxlength", "19");
