@@ -1,10 +1,10 @@
 const mainDivStyle = {
     width: '480px',
     margin: '0 auto',
-    marginTop: '50px',
+    marginTop: '25px',
     backgroundColor: 'white',
     padding: '20px',
-    color: '#010d3b'
+    color: '#010d3b',
 }
 
 const serviceDivStyle = {
@@ -27,12 +27,16 @@ const formStyle = {
 }
 
 const h1Style = {
-    marginTop: "10px"
+    marginTop: "10px",
+    textAlign: "center"
 }
 
 const h4Style = {
     marginTop: "15px"
 }
 
+const formFieldStyle = {
+    marginTop: "5px"
+}
 
-export {mainDivStyle, serviceDivStyle, submitButtonStyle, h1Style, formStyle, h4Style}
+export {mainDivStyle, serviceDivStyle, submitButtonStyle, h1Style, formStyle, h4Style, formFieldStyle}
