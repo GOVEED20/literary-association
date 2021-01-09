@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -17,4 +18,6 @@ public class ResponsePayload {
 
     @NotBlank
     private Long transactionID;
+
+    private Map<String, String> paymentData;
 }
