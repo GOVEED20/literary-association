@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {getAvailableServices, getPaymentServiceRegistrationFields} from "../services/paymentService";
 import ServiceForm from "./ServiceForm"
-import {Form as BootstrapForm, Button} from "react-bootstrap";
-import axios from "axios";
+import {Button, Form as BootstrapForm} from "react-bootstrap";
 
 const Register = () => {
 
@@ -23,7 +22,7 @@ const Register = () => {
             let newState = {...state};
             let newCheckServices = {...checkServices};
             let newFormFields = {...formFields};
-            availableServices.map(service => {
+            availableServices.forEach(service => {
                 newState = {...newState}
                 newState[service] = null;
                 newCheckServices = {...newCheckServices}
@@ -40,15 +39,65 @@ const Register = () => {
 
     }, [availableServices])
 
+    const createServiceFormState = (formFields) => {
+        const reducer = (accumulator, currentValue) => {
+            const field = currentValue.name
+            let value = null
+            switch (currentValue.validationConstraints['type']) {
+                case "select":
+                    if (currentValue.validationConstraints['multiple']) {
+                        value = []
+                    } else {
+                        value = ""
+                    }
+                    break
+                case "checkbox":
+                    value = false
+                    break
+                default:
+                    value = ""
+            }
+            const newAccumulator = {...accumulator}
+            newAccumulator[field] = value
+            return newAccumulator
+        }
+        return formFields.reduce(reducer, {})
+    }
+
+    const changeState = (e, serviceName) => {
+        const newState = {...state}
+        const fieldName = e.target.id
+        const fieldValue = e.target.value
+        if (Array.isArray(newState[serviceName][fieldName])) {
+            if (fieldValue === "") {
+                return
+            }
+
+            if (newState[serviceName][fieldName].includes(fieldValue)) {
+                newState[serviceName][fieldName] = newState[serviceName][fieldName].filter(v => v !== fieldValue)
+            } else {
+                newState[serviceName][fieldName] = [...newState[serviceName][fieldName], fieldValue]
+            }
+        } else if (typeof newState[serviceName][fieldName] === "boolean") {
+            newState[serviceName][fieldName] = !newState[serviceName][fieldName]
+        } else {
+            newState[serviceName][fieldName] = fieldValue
+        }
+        setState(newState)
+    }
+
     const checkChanged = (e) => {
         const serviceName = e.target.id;
         const newCheckServices = {...checkServices}
         newCheckServices[serviceName] = e.target.checked
         setCheckServices(newCheckServices)
         const newFormFields = {...formFields}
+        const newState = {...state}
         getPaymentServiceRegistrationFields(serviceName).then(res => {
             newFormFields[serviceName] = res
             setFormFields(newFormFields)
+            newState[serviceName] = createServiceFormState(res)
+            setState(newState)
         })
     }
 
@@ -66,7 +115,12 @@ const Register = () => {
                     availableServices.map((service) =>
                         <div key={service}>
                             <BootstrapForm.Check type="checkbox" id={service} label={service} onChange={(e) => checkChanged(e)}/>
-                            {checkServices[service] && <ServiceForm serviceName={service} formFields={formFields[service]}/>}
+                            {checkServices[service] &&
+                                <ServiceForm
+                                    serviceName={service}
+                                    formFields={formFields[service]}
+                                    onChange={(e) => changeState(e, service)}/>
+                            }
                         </div>
                     )
                 }
