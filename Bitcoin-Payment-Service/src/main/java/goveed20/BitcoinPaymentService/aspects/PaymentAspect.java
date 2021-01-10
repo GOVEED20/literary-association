@@ -24,7 +24,8 @@ public class PaymentAspect {
     @Autowired
     private AsyncLogging asyncLogging;
 
-    @Before("execution(public * goveed20.BitcoinPaymentService.services.PaymentService.*(..)) || " +
+    @Before("execution(public * goveed20.BitcoinPaymentService.services.PaymentService.*(..)) ||" +
+            "execution(public * goveed20.BitcoinPaymentService.services.RetailerService.*(..)) ||" +
             "execution(* goveed20.BitcoinPaymentService.controllers.*.*(..))")
     public void paymentBefore(JoinPoint joinPoint) {
         LogDTO logDTO = null;
@@ -57,7 +58,8 @@ public class PaymentAspect {
         asyncLogging.callLoggingFeignClient(logDTO);
     }
 
-    @AfterThrowing(pointcut = "execution(public * goveed20.BitcoinPaymentService.services.PaymentService.*(..)) || " +
+    @AfterThrowing(pointcut = "execution(public * goveed20.BitcoinPaymentService.services.PaymentService.*(..)) ||" +
+            "execution(public * goveed20.BitcoinPaymentService.services.RetailerService.*(..)) ||" +
             "execution(* goveed20.BitcoinPaymentService.controllers.*.*(..))", throwing = "error")
     public void paymentServiceAfterError(JoinPoint joinPoint, Throwable error) {
 
@@ -127,6 +129,12 @@ public class PaymentAspect {
                         "Data of bitcoin transaction with id " + transactionId + " and status " + status +
                                 " sent to payment concentrator";
                 break;
+            case "checkPaymentServiceFields":
+                message = isBefore ?
+                        "Checking registration fields on bitcoin service"
+                        :
+                        "Bitcoin service registration fields successfully checked";
+                break;
             default:
                 message = "";
         }
@@ -151,6 +159,12 @@ public class PaymentAspect {
                         "Starting getting registration fields for bitcoin service "
                         :
                         "Successfully got registration fields for bitcoin service";
+                break;
+            case "checkPaymentServiceFields":
+                message = isBefore ?
+                        "Starting checking registration fields on bitcoin service"
+                        :
+                        "Successfully checked registration fields on bitcoin service";
                 break;
             default:
                 message = "";

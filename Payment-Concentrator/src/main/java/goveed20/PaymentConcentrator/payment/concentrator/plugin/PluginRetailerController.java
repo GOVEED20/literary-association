@@ -11,5 +11,5 @@ import java.util.List;
 public interface PluginRetailerController {
 
     @PostMapping(value = "/check-fields")
-    ResponseEntity<String> checkPaymentServiceFields(@RequestBody List<RegistrationFieldForm> payload);
+    ResponseEntity<ServiceFieldsCheck> checkPaymentServiceFields(@RequestBody List<RegistrationFieldForm> payload);
 }

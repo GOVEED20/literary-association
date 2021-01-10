@@ -1,6 +1,7 @@
 package goveed20.PaymentConcentrator.aspects;
 
 import goveed20.PaymentConcentrator.dtos.InitializePaymentRequest;
+import goveed20.PaymentConcentrator.dtos.RetailerData;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.AsyncLogging;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.LogDTO;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.ResponsePayload;
@@ -21,7 +22,8 @@ public class PaymentAspect {
     private AsyncLogging asyncLogging;
 
     @Before("execution(public * goveed20.PaymentConcentrator.services.PaymentService.*(..)) || " +
-            "execution(* goveed20.PaymentConcentrator.controllers.*.*(..))")
+            "execution(* goveed20.PaymentConcentrator.controllers.*.*(..)) ||" +
+            "execution(public * goveed20.PaymentConcentrator.services.RetailerService.*(..))")
     public void paymentBefore(JoinPoint joinPoint) {
         LogDTO logDTO = null;
         Object[] arguments = joinPoint.getArgs();
@@ -37,7 +39,8 @@ public class PaymentAspect {
         asyncLogging.callLoggingFeignClient(logDTO);
     }
 
-    @AfterReturning("execution(public * goveed20.PaymentConcentrator.services.PaymentService.*(..))")
+    @AfterReturning("execution(public * goveed20.PaymentConcentrator.services.PaymentService.*(..)) ||" +
+            "execution(public * goveed20.PaymentConcentrator.services.RetailerService.*(..))")
     public void paymentServiceAfterSuccess(JoinPoint joinPoint) {
         LogDTO logDTO = null;
         Object[] arguments = joinPoint.getArgs();
@@ -53,8 +56,9 @@ public class PaymentAspect {
         asyncLogging.callLoggingFeignClient(logDTO);
     }
 
-    @AfterThrowing(pointcut = "execution(public * goveed20.PaymentConcentrator.services.PaymentService.*(..)) || " +
-            "execution(* goveed20.PaymentConcentrator.controllers.*.*(..))", throwing = "error")
+    @AfterThrowing(pointcut = "execution(public * goveed20.PaymentConcentrator.services.PaymentService.*(..)) ||" +
+            "execution(* goveed20.PaymentConcentrator.controllers.*.*(..)) ||" +
+            "execution(public * goveed20.PaymentConcentrator.services.RetailerService.*(..))", throwing = "error")
     public void paymentServiceAfterError(JoinPoint joinPoint, Throwable error) {
 
         LogDTO logDTO = null;
@@ -133,6 +137,13 @@ public class PaymentAspect {
                         :
                         "Successfully got all available payment services";
                 break;
+            case "registerRetailer":
+                RetailerData retailerData = (RetailerData) arguments[0];
+                message = isBefore ?
+                        "Started registering retailer with name " + retailerData.getRetailerName()
+                        :
+                        "Successfully registered retailer with name " + retailerData.getRetailerName();
+                break;
             default:
                 message = "";
         }
@@ -180,6 +191,13 @@ public class PaymentAspect {
                         "Started getting all available payment services"
                         :
                         "Got all available payment services";
+                break;
+            case "registerRetailer":
+                RetailerData retailerData = (RetailerData) arguments[0];
+                message = isBefore ?
+                        "Registering retailer with name " + retailerData.getRetailerName()
+                        :
+                        "Registered retailer with name " + retailerData.getRetailerName() + " successfully";
                 break;
             default:
                 message = "";

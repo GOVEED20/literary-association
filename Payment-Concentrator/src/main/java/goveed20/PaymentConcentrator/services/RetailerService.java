@@ -9,6 +9,7 @@ import goveed20.PaymentConcentrator.model.PaymentData;
 import goveed20.PaymentConcentrator.model.Retailer;
 import goveed20.PaymentConcentrator.model.RetailerDataForPaymentService;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.PluginController;
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.ServiceFieldsCheck;
 import goveed20.PaymentConcentrator.repositories.RetailerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClientBuilder;
@@ -43,19 +44,21 @@ public class RetailerService {
             throw new BadRequestException("You must provide retailer name");
         }
 
+        if (retailerRepository.findByName(retailerData.getRetailerName()).isPresent()) {
+            throw new BadRequestException("Given retailer name is already in use");
+        }
+
         if (retailerData.getPaymentServices().size() == 0) {
             throw new BadRequestException("You must select at least one payment service");
         }
 
         for (PaymentServiceData paymentServiceData : retailerData.getPaymentServices()) {
             Set<PaymentData> paymentDataSet = new HashSet<>();
-            List<RegistrationFieldForm> list = paymentServiceData.getData();
-            String serviceName = paymentServiceData.getServiceName();
             PluginRetailerController service = feignClientBuilder.forType(PluginRetailerController.class, paymentServiceData.getServiceName()).build();
 
-            ResponseEntity<String> validationResponse = service.checkPaymentServiceFields(paymentServiceData.getData());
-            if (validationResponse.getStatusCode().equals(HttpStatus.OK) && validationResponse.getBody().equals("ok")) {
-                for (RegistrationFieldForm paymentField : paymentServiceData.getData()) {
+            ResponseEntity<ServiceFieldsCheck> validationResponse = service.checkPaymentServiceFields(paymentServiceData.getData());
+            if (validationResponse.getStatusCode().equals(HttpStatus.OK) && validationResponse.getBody().getValidationMessage().equals("ok")) {
+                for (RegistrationFieldForm paymentField : validationResponse.getBody().getAdditionalFields()) {
                     PaymentData paymentData = new PaymentData();
                     if (paymentField.getEncrypted()) {
                         paymentData.setValue(passwordEncoder.encode(paymentField.getValue()));
@@ -67,7 +70,7 @@ public class RetailerService {
 
                 }
             } else {
-                throw new BadRequestException(validationResponse.getBody());
+                throw new BadRequestException(validationResponse.getBody().getValidationMessage());
             }
 
             RetailerDataForPaymentService retailerDataForPaymentService = RetailerDataForPaymentService.builder()
