@@ -13,13 +13,10 @@ import java.util.Map;
 public class PaypalPlanRequest {
     private String product_id;
     private String name;
-    private String description;
 
     @Singular("billing_cycle")
     private List<BillingCycleDTO> billing_cycles;
 
     @Singular("payment_preference")
     private Map<String, Object> payment_preferences;
-
-    private TaxDTO taxes;
 }

@@ -9,9 +9,6 @@ import lombok.*;
 @Builder(toBuilder = true)
 public class PaypalProductRequest {
     private String name;
-    private String description;
     private String type;
     private String category;
-    private String image_url;
-    private String home_url;
 }

@@ -6,13 +6,10 @@ import goveed20.PaypalPaymentService.exceptions.SubscriptionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.TimeZone;
 
 @SuppressWarnings("deprecation")
 @Service
@@ -25,21 +22,20 @@ public class PaypalSubscriptionsService {
     static final String PRODUCTS_URL = "https://api-m.sandbox.paypal.com/v1/catalogs/products";
     static final String PLANS_URL = "https://api-m.sandbox.paypal.com/v1/billing/plans";
     static final String SUBSCRIPTIONS_URL = "https://api-m.sandbox.paypal.com/v1/billing/subscriptions";
+    static final String GET_SUBSCRIPTION_URL = "https://api.sandbox.paypal.com/v1/billing/subscriptions/%s";
 
-    public String createProduct() {
+    public String createProduct(String name) {
         PaypalProductRequest product = PaypalProductRequest.builder()
-                .name("Subscription")
-                .description("Literary association subscription")
+                .name(name)
                 .type("SERVICE")
                 .category("MEMBERSHIP_CLUBS_AND_ORGANIZATIONS")
-                .image_url("https://example.com/streaming.jpg")
-                .home_url("https://example.com/home")
                 .build();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Accept", "application/json");
         headers.add("Content-Type", "application/json");
         headers.add("Authorization", apiContext.getAccessToken());
+        headers.add("Prefer", "return=minimal");
 
         HttpEntity<PaypalProductRequest> request = new HttpEntity<>(product, headers);
 
@@ -52,11 +48,10 @@ public class PaypalSubscriptionsService {
         }
     }
 
-    public String createPlan(String productId) {
+    public String createPlan(String productId, String amount) {
         PaypalPlanRequest plan = PaypalPlanRequest.builder()
                 .product_id(productId)
                 .name(String.format("Plan for %s", productId))
-                .description("Plan")
                 .billing_cycle(
                         BillingCycleDTO.builder()
                                 .frequency(
@@ -70,7 +65,7 @@ public class PaypalSubscriptionsService {
                                 .total_cycles(0)
                                 .pricing_scheme("fixed_price",
                                         PriceDTO.builder()
-                                                .value("10")
+                                                .value(amount)
                                                 .currency_code("USD")
                                                 .build()
                                 )
@@ -78,18 +73,13 @@ public class PaypalSubscriptionsService {
                 )
                 .payment_preference("auto_bill_outstanding", true)
                 .payment_preference("payment_failure_threshold", 3)
-                .taxes(TaxDTO.builder()
-                        .percentage("0")
-                        .inclusive(false)
-                        .build()
-                )
                 .build();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Accept", "application/json");
         headers.add("Content-Type", "application/json");
         headers.add("Authorization", apiContext.getAccessToken());
-        headers.add("Prefer", "return=representation");
+        headers.add("Prefer", "return=minimal");
 
         HttpEntity<PaypalPlanRequest> request = new HttpEntity<>(plan, headers);
 
@@ -102,34 +92,26 @@ public class PaypalSubscriptionsService {
         }
     }
 
-    public String createSubscription(String planId) {
-        String callbackUrl = PaymentService.buildCallbackUrl(1L);
+    public String createSubscription(String planId, Long transactionId) {
+        String callbackUrl = PaymentService.buildCallbackUrl(transactionId);
 
         PaypalSubscriptionRequest subscription = PaypalSubscriptionRequest.builder()
                 .plan_id(planId)
-                .start_time(createSubscriptionStartDate())
-                .subscriber(SubscriberDTO.builder().email_address("sb-jysh474156546@personal.example.com").build())
                 .application_context(
                         ApplicationContextDTO.builder()
                                 .shipping_preference("NO_SHIPPING")
                                 .user_action("SUBSCRIBE_NOW")
-                                .payment_method(
-                                        PaymentMethodDTO.builder()
-                                                .payee_preferred("IMMEDIATE_PAYMENT_REQUIRED")
-                                                .payer_selected("PAYPAL")
-                                                .build()
-                                )
+                                .return_url(callbackUrl)
+                                .cancel_url(callbackUrl)
                                 .build()
                 )
-                .return_url(callbackUrl)
-                .cancel_url(callbackUrl)
                 .build();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Accept", "application/json");
         headers.add("Content-Type", "application/json");
         headers.add("Authorization", apiContext.getAccessToken());
-        headers.add("Prefer", "return=representation");
+        headers.add("Prefer", "return=minimal");
 
         HttpEntity<PaypalSubscriptionRequest> request = new HttpEntity<>(subscription, headers);
 
@@ -146,13 +128,20 @@ public class PaypalSubscriptionsService {
         }
     }
 
-    private String createSubscriptionStartDate() {
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        sdf.setTimeZone(tz);
+    public Boolean isSubscriptionActive(String subscriptionId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        headers.add("Authorization", apiContext.getAccessToken());
 
-        Calendar cal = Calendar.getInstance(tz);
-        cal.add(Calendar.DAY_OF_MONTH, 1);
-        return sdf.format(cal.getTime());
+        ResponseEntity<SubscriptionDTO> response = restTemplate.exchange(String.format(GET_SUBSCRIPTION_URL, subscriptionId),
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                SubscriptionDTO.class);
+
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            return response.getBody().getStatus().equals("ACTIVE");
+        } else {
+            throw new SubscriptionException("Failed to get subscription");
+        }
     }
 }

@@ -48,7 +48,7 @@ public class PaymentService {
 
     public String initializePayment(InitializationPaymentPayload payload) throws PayPalRESTException {
         if (payload.getPaymentFields().containsKey("subscription")) {
-            return "."; // integrate subscriptions
+            return createSubscription(payload);
         } else {
             Payment payment = createPayment(payload);
 
@@ -64,22 +64,24 @@ public class PaymentService {
     public void completePayment(Long transactionId, Map<String, String[]> paramMap) {
         String[] paymentId = paramMap.getOrDefault("paymentId", null);
         String[] payerId = paramMap.getOrDefault("PayerID", null);
-
-        if (payerId == null || paymentId == null) {
-            sendTransactionResponse(transactionId, TransactionStatus.FAILED);
-            return;
-        }
-
-        Payment payment = new Payment();
-        payment.setId(paymentId[0]);
-
-        PaymentExecution paymentExecution = new PaymentExecution();
-        paymentExecution.setPayerId(payerId[0]);
+        String[] subscriptionId = paramMap.getOrDefault("subscription_id", null);
 
         try {
-            payment.execute(apiContext, paymentExecution);
-            sendTransactionResponse(transactionId, TransactionStatus.SUCCESS);
-        } catch (PayPalRESTException e) {
+            if (payerId != null && paymentId != null) {
+                Payment payment = new Payment();
+                payment.setId(paymentId[0]);
+
+                PaymentExecution paymentExecution = new PaymentExecution();
+                paymentExecution.setPayerId(payerId[0]);
+
+                payment.execute(apiContext, paymentExecution);
+                sendTransactionResponse(transactionId, TransactionStatus.SUCCESS);
+            } else if (subscriptionId != null && paypalSubscriptionsService.isSubscriptionActive(subscriptionId[0])) {
+                sendTransactionResponse(transactionId, TransactionStatus.SUCCESS);
+            } else {
+                sendTransactionResponse(transactionId, TransactionStatus.FAILED);
+            }
+        } catch (Exception ignored) {
             sendTransactionResponse(transactionId, TransactionStatus.ERROR);
         }
     }
@@ -123,13 +125,27 @@ public class PaymentService {
         return payment.create(apiContext);
     }
 
+    private String createSubscription(InitializationPaymentPayload payload) {
+        return paypalSubscriptionsService.createSubscription(
+                paypalSubscriptionsService.createPlan(
+                        paypalSubscriptionsService.createProduct(payload.getPaymentFields().get("name")), payload.getAmount().toString()
+                ), payload.getTransactionId()
+        );
+    }
+
     @SneakyThrows
     public static String buildCallbackUrl(Long transactionId) {
         UriComponents context = ServletUriComponentsBuilder.fromCurrentContextPath().build();
 
+        String host = context.getHost();
+
+        if (host != null && (host.equals("localhost") || host.equals("host.docker.internal"))) {
+            host = "www.la.com";
+        }
+
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
                 .scheme("http")
-                .host(context.getHost())
+                .host(host)
                 .port(context.getPort())
                 .path(String.format("/api/complete-payment/%d", transactionId))
                 .build();
