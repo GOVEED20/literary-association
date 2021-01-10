@@ -6,9 +6,11 @@ import goveed20.PaymentConcentrator.payment.concentrator.plugin.PluginController
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.RegistrationField;
 import goveed20.PaypalPaymentService.exceptions.BadRequestException;
 import goveed20.PaypalPaymentService.services.PaymentService;
+import goveed20.PaypalPaymentService.services.PaypalSubscriptionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
@@ -22,6 +24,9 @@ import java.util.Set;
 public class PaymentController implements PluginController {
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private PaypalSubscriptionsService paypalSubscriptionsService;
 
     @Override
     public ResponseEntity<String> initializePayment(@Valid @RequestBody InitializationPaymentPayload payload) {
@@ -47,5 +52,10 @@ public class PaymentController implements PluginController {
     @Override
     public ResponseEntity<Set<RegistrationField>> getPaymentServiceRegistrationFields() {
         return new ResponseEntity<>(paymentService.getPaymentServiceRegistrationFields(), HttpStatus.OK);
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return new ResponseEntity<>(paypalSubscriptionsService.createSubscription(paypalSubscriptionsService.createPlan(paypalSubscriptionsService.createProduct())), HttpStatus.OK);
     }
 }
