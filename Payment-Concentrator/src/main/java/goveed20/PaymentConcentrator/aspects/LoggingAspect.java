@@ -16,7 +16,7 @@ import java.util.Date;
 
 @Aspect
 @Component
-public class PaymentAspect {
+public class LoggingAspect {
 
     @Autowired
     private AsyncLogging asyncLogging;
