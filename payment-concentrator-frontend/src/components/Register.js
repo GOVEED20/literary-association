@@ -147,8 +147,9 @@ const Register = () => {
             }
         })
         retailerData['paymentServices'] = paymentServiceDataArray
-        console.log(retailerData)
-        await registerRetailer(retailerData)
+        registerRetailer(retailerData).then(res => {
+            console.log(res)
+        })
     }
 
     const formatServiceName = (serviceName) => {

@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import Register from "./components/Register";
 import {Switch, Route} from "react-router-dom";
 import React from "react";

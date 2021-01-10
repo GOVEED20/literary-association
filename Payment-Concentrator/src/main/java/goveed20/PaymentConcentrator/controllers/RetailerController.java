@@ -8,17 +8,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin
 @RestController
 public class RetailerController {
 
     @Autowired
     private RetailerService retailerService;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerRetailer(@RequestBody RetailerData retailerData) {
+    @PostMapping(value = "/register", consumes = "multipart/form-data")
+    public ResponseEntity<?> registerRetailer(@RequestPart("retailerData") RetailerData retailerData) {
         try {
             return new ResponseEntity<>(retailerService.registerRetailer(retailerData), HttpStatus.OK);
         } catch (BadRequestException e) {
