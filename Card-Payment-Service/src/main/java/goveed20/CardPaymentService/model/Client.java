@@ -3,7 +3,6 @@ package goveed20.CardPaymentService.model;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter

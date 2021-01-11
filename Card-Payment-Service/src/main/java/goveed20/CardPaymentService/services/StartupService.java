@@ -31,12 +31,8 @@ public class StartupService {
                     .clients(new ArrayList<>()).build();
 
             // merchant
-            String pass = encoder.encode("satipo");
-            System.out.println(pass);
-            OnlinePaymentData oyp = OnlinePaymentData.builder().merchantID("123456789")
-                    .merchantPassword(pass).build();
-            Client merchant = Client.builder().balance(100.00).onlinePaymentData(oyp)
-                    .PAN(encoder.encode("1234-5611-1111-1111")).build();
+            Client merchant = Client.builder().balance(100.00).PAN(encoder
+                    .encode("1234-5611-1111-1111")).build();
             unicredit.getClients().add(merchant);
 
             // customer unicredit

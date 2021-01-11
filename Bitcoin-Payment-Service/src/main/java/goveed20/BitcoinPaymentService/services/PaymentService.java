@@ -101,7 +101,6 @@ public class PaymentService {
         RegistrationField coinGateApiKey = RegistrationField.builder()
                 .encrypted(true)
                 .name("coinGateApiKey")
-                .type(RegistrationFieldType.STRING)
                 .validationConstraints(validationConstraints)
                 .build();
 
