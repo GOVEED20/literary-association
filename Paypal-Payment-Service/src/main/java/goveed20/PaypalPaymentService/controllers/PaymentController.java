@@ -47,6 +47,6 @@ public class PaymentController implements PluginController {
 
     @Override
     public ResponseEntity<Set<RegistrationField>> getPaymentServiceRegistrationFields() {
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<>(paymentService.getPaymentServiceRegistrationFields(), HttpStatus.OK);
     }
 }

@@ -4,10 +4,7 @@ import goveed20.BitcoinPaymentService.exceptions.BadRequestException;
 import goveed20.BitcoinPaymentService.model.BitcoinOrder;
 import goveed20.BitcoinPaymentService.model.BitcoinOrderData;
 import goveed20.BitcoinPaymentService.utils.TransactionChecker;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.PaymentConcentratorFeignClient;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.ResponsePayload;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.TransactionStatus;
+import goveed20.PaymentConcentrator.payment.concentrator.plugin.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -94,5 +91,22 @@ public class PaymentService {
                         .transactionStatus(status)
                         .build()
         );
+    }
+
+    public Set<RegistrationField> getPaymentServiceRegistrationFields() {
+        Map<String, String> validationConstraints = new HashMap<>();
+        validationConstraints.put("type", "text");
+        validationConstraints.put("required", "required");
+
+        RegistrationField coinGateApiKey = RegistrationField.builder()
+                .encrypted(true)
+                .name("coinGateApiKey")
+                .validationConstraints(validationConstraints)
+                .build();
+
+        Set<RegistrationField> registrationFields = new HashSet<>();
+        registrationFields.add(coinGateApiKey);
+
+        return registrationFields;
     }
 }

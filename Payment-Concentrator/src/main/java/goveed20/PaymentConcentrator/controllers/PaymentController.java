@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Set;
 
+@CrossOrigin
 @RestController
 public class PaymentController {
+
     @Autowired
     private PaymentService paymentService;
 

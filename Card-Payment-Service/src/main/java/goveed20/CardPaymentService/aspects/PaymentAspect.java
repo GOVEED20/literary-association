@@ -27,7 +27,8 @@ public class PaymentAspect {
     @Before("execution(public * goveed20.CardPaymentService.services.PaymentService.*(..)) || " +
             "execution(* goveed20.CardPaymentService.controllers.*.*(..)) || " +
             "execution(public * goveed20.CardPaymentService.services.BankService.*(..))) || " +
-            "execution(public * goveed20.CardPaymentService.services.PCCService.*(..)))")
+            "execution(public * goveed20.CardPaymentService.services.PCCService.*(..))) ||" +
+            "execution(public * goveed20.CardPaymentService.services.RetailerService.*(..)))")
     public void paymentBefore(JoinPoint joinPoint) {
         LogDTO logDTO = null;
         Object[] arguments = joinPoint.getArgs();
@@ -45,7 +46,8 @@ public class PaymentAspect {
 
     @AfterReturning("execution(public * goveed20.CardPaymentService.services.PaymentService.*(..)) || " +
             "execution(public * goveed20.CardPaymentService.services.BankService.*(..))) || " +
-            "execution(public * goveed20.CardPaymentService.services.PCCService.*(..)))")
+            "execution(public * goveed20.CardPaymentService.services.PCCService.*(..))) ||" +
+            "execution(public * goveed20.CardPaymentService.services.RetailerService.*(..)))")
     public void paymentServiceAfterSuccess(JoinPoint joinPoint) {
         LogDTO logDTO = null;
         Object[] arguments = joinPoint.getArgs();
@@ -64,7 +66,8 @@ public class PaymentAspect {
     @AfterThrowing(pointcut = "execution(public * goveed20.CardPaymentService.services.PaymentService.*(..)) || " +
             "execution(* goveed20.CardPaymentService.controllers.*.*(..)) || " +
             "execution(public * goveed20.CardPaymentService.services.BankService.*(..))) || " +
-            "execution(public * goveed20.CardPaymentService.services.PCCService.*(..)))", throwing = "error")
+            "execution(public * goveed20.CardPaymentService.services.PCCService.*(..))) ||" +
+            "execution(public * goveed20.CardPaymentService.services.RetailerService.*(..)))", throwing = "error")
     public void paymentServiceAfterError(JoinPoint joinPoint, Throwable error) {
 
         LogDTO logDTO = null;
