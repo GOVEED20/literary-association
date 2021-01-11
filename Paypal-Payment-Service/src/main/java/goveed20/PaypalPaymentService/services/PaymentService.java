@@ -35,7 +35,6 @@ public class PaymentService {
         RegistrationField payee = RegistrationField.builder()
                 .encrypted(false)
                 .name("payee")
-                .type(RegistrationFieldType.STRING)
                 .validationConstraints(validationConstraints)
                 .build();
 

@@ -125,7 +125,7 @@ public class PaymentService {
         validationConstraints.put("maxLength", "19");
 
         Set<RegistrationField> regFields = new HashSet<>();
-        regFields.add(RegistrationField.builder().name("PAN").type(RegistrationFieldType.STRING)
+        regFields.add(RegistrationField.builder().name("PAN")
                 .validationConstraints(validationConstraints).encrypted(true).build());
 
         return regFields;

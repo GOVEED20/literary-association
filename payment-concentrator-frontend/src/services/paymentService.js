@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const PC_BASE_URL = process.env.PC_BASE_URL // TODO: It gives undefined
+const PC_BASE_URL = process.env.PC_BASE_URL
 
 export const getAvailableServices = async () => {
     const response = await axios.get(`http://localhost:8080/api/payment-services`)
