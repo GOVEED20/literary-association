@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {getAvailableServices, getPaymentServiceRegistrationFields} from "../services/paymentService";
 import ServiceForm from "./ServiceForm"
-import {Button, Form as BootstrapForm} from "react-bootstrap";
+import {Button, Form as BootstrapForm, Toast} from "react-bootstrap";
 import {registerRetailer} from "../services/retailerService";
 import {formStyle, h1Style, h4Style, mainDivStyle, serviceDivStyle, submitButtonStyle} from "../css/registerStyles";
+import Toaster from "./Toaster";
 
 const Register = () => {
 
@@ -13,6 +14,12 @@ const Register = () => {
     const [formFields, setFormFields] = useState(null)
     const [encryptionFields, setEncryptionFields] = useState({})
     const [retailerName, setRetailerName] = useState("")
+    const [toastData, setToastData] = useState({
+        show: false,
+        message: '',
+        type: '',
+        color: ''
+    })
 
     useEffect( () => {
         const getPaymentServices = async () => {
@@ -124,6 +131,12 @@ const Register = () => {
         setRetailerName(e.target.value)
     }
 
+    const closeToaster = (message, type) => {
+        setTimeout(() => {
+            setToastData({show: false, message: message, type: type, color: ''})
+        }, 3000)
+    }
+
     const onSubmit = async (e) => {
         e.preventDefault()
         const retailerData = {}
@@ -147,9 +160,15 @@ const Register = () => {
             }
         })
         retailerData['paymentServices'] = paymentServiceDataArray
-        registerRetailer(retailerData).then(res => {
-            console.log(res)
-        })
+        registerRetailer(retailerData)
+            .then(res => {
+                setToastData({show: true, message: res, type: 'success', color: 'green'})
+                closeToaster(res, 'success')
+            })
+            .catch(error => {
+                setToastData({show: true, message: error.response.data, type: 'error', color: 'red'})
+                closeToaster(error.response.data, 'error')
+            })
     }
 
     const formatServiceName = (serviceName) => {
@@ -162,30 +181,33 @@ const Register = () => {
     document.body.style.backgroundColor = "#010d3b"
 
     return (
-        <div className={"container"} style={mainDivStyle}>
-            <h1 style={h1Style}>Retailer registration</h1>
-            <BootstrapForm onSubmit={(e) => onSubmit(e)} style={formStyle}>
-                <BootstrapForm.Label>Retailer name: </BootstrapForm.Label>
-                <BootstrapForm.Control type="text" placeholder="Enter retailer name"
-                                       onChange={(e) => onChangeNameHandler(e)}/>
-                <h4 style={h4Style}>Payment services</h4>
-                <p>Choose which payment services you will provide to customers</p>
-                {
-                    availableServices.map((service) =>
-                        <div key={service} style={serviceDivStyle}>
-                            <BootstrapForm.Check type="checkbox" id={service} label={formatServiceName(service)}
-                                                 onChange={(e) => checkChanged(e)}/>
-                            {checkServices[service] &&
-                                <ServiceForm
-                                    serviceName={service}
-                                    formFields={formFields[service]}
-                                    onChange={(e) => changeState(e, service)}/>
-                            }
-                        </div>
-                    )
-                }
-                <Button variant="primary" type="submit" style={submitButtonStyle}>Submit</Button>
-            </BootstrapForm>
+        <div>
+            <div className={"container"} style={mainDivStyle}>
+                <h1 style={h1Style}>Retailer registration</h1>
+                <BootstrapForm onSubmit={(e) => onSubmit(e)} style={formStyle}>
+                    <BootstrapForm.Label>Retailer name: </BootstrapForm.Label>
+                    <BootstrapForm.Control type="text" placeholder="Enter retailer name"
+                                           onChange={(e) => onChangeNameHandler(e)}/>
+                    <h4 style={h4Style}>Payment services</h4>
+                    <p>Choose which payment services you will provide to customers</p>
+                    {
+                        availableServices.map((service) =>
+                            <div key={service} style={serviceDivStyle}>
+                                <BootstrapForm.Check type="checkbox" id={service} label={formatServiceName(service)}
+                                                     onChange={(e) => checkChanged(e)}/>
+                                {checkServices[service] &&
+                                    <ServiceForm
+                                        serviceName={service}
+                                        formFields={formFields[service]}
+                                        onChange={(e) => changeState(e, service)}/>
+                                }
+                            </div>
+                        )
+                    }
+                    <Button variant="primary" type="submit" style={submitButtonStyle}>Submit</Button>
+                </BootstrapForm>
+            </div>
+            {toastData.show ? <Toaster type={toastData.type} message={toastData.message} color={toastData.color}/> : null}
         </div>
     )
 }
