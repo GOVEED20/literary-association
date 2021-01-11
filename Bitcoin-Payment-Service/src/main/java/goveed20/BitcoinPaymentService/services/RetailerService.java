@@ -15,16 +15,21 @@ public class RetailerService {
         ServiceFieldsCheck serviceFieldsCheck = new ServiceFieldsCheck();
         List<RegistrationFieldForm> checkedFields = new ArrayList<>();
         serviceFieldsCheck.setAdditionalFields(checkedFields);
-        for (RegistrationFieldForm registrationFieldForm : payload) {
-            if (registrationFieldForm.getName().equals("coinGateApiKey")) {
-                if (registrationFieldForm.getValue() == null || registrationFieldForm.getValue().equals("")) {
-                    throw new BadRequestException("CoinGate API Key must be provided");
+        String validationMessage = null;
+        try {
+            for (RegistrationFieldForm registrationFieldForm : payload) {
+                if (registrationFieldForm.getName().equals("coinGateApiKey")) {
+                    if (registrationFieldForm.getValue() == null || registrationFieldForm.getValue().equals("")) {
+                        throw new BadRequestException("CoinGate API Key must be provided");
+                    }
                 }
+                serviceFieldsCheck.getAdditionalFields().add(registrationFieldForm);
             }
-            serviceFieldsCheck.getAdditionalFields().add(registrationFieldForm);
+        } catch (Exception e) {
+            validationMessage = e.getMessage();
         }
 
-        serviceFieldsCheck.setValidationMessage("ok");
+        serviceFieldsCheck.setValidationMessage(validationMessage);
         return serviceFieldsCheck;
     }
 }

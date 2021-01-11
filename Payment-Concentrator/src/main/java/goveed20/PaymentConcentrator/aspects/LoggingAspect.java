@@ -65,6 +65,9 @@ public class LoggingAspect {
         String className = joinPoint.getTarget().getClass().getSimpleName();
         String methodName = joinPoint.getSignature().getName();
         String message = error.getMessage();
+        if (message == null) {
+            message = "";
+        }
         try {
             logDTO = generateLog(className, methodName, "ERROR", message);
         } catch (ParseException e) {

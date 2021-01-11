@@ -20,13 +20,6 @@ public class RetailerController implements PluginRetailerController {
 
     @Override
     public ResponseEntity<ServiceFieldsCheck> checkPaymentServiceFields(List<RegistrationFieldForm> payload) {
-        try {
-            return new ResponseEntity<>(retailerService.checkPaymentServiceFields(payload), HttpStatus.OK);
-        } catch (BadRequestException e) {
-            ServiceFieldsCheck serviceFieldsCheck = ServiceFieldsCheck.builder()
-                    .validationMessage(e.getMessage())
-                    .build();
-            return new ResponseEntity<>(serviceFieldsCheck, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(retailerService.checkPaymentServiceFields(payload), HttpStatus.OK);
     }
 }

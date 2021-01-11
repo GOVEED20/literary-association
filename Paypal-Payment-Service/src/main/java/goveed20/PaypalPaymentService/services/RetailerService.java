@@ -15,18 +15,23 @@ public class RetailerService {
         ServiceFieldsCheck serviceFieldsCheck = new ServiceFieldsCheck();
         List<RegistrationFieldForm> checkedFields = new ArrayList<>();
         serviceFieldsCheck.setAdditionalFields(checkedFields);
-        for (RegistrationFieldForm registrationFieldForm : payload) {
-            if (registrationFieldForm.getName().equals("payee")) {
-                if (registrationFieldForm.getValue() == null || registrationFieldForm.getValue().equals("")) {
-                    throw new BadRequestException("Payee email must be provided");
-                } else if (!isValidEmailAddress(registrationFieldForm.getValue())) {
-                    throw new BadRequestException("Bad payee email format");
+        String validationMessage = null;
+        try {
+            for (RegistrationFieldForm registrationFieldForm : payload) {
+                if (registrationFieldForm.getName().equals("payee")) {
+                    if (registrationFieldForm.getValue() == null || registrationFieldForm.getValue().equals("")) {
+                        throw new BadRequestException("Payee email must be provided");
+                    } else if (!isValidEmailAddress(registrationFieldForm.getValue())) {
+                        throw new BadRequestException("Bad payee email format");
+                    }
                 }
+                serviceFieldsCheck.getAdditionalFields().add(registrationFieldForm);
             }
-            serviceFieldsCheck.getAdditionalFields().add(registrationFieldForm);
+        } catch (Exception e) {
+            validationMessage = e.getMessage();
         }
 
-        serviceFieldsCheck.setValidationMessage("ok");
+        serviceFieldsCheck.setValidationMessage(validationMessage);
         return serviceFieldsCheck;
     }
 

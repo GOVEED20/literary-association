@@ -34,7 +34,7 @@ public class RetailerService {
     @Autowired
     private RetailerRepository retailerRepository;
 
-    public String registerRetailer(RetailerData retailerData) {
+    public String registerRetailer(RetailerData retailerData) throws Exception {
         Retailer retailer;
         if (retailerData.getRetailerName() != null && !retailerData.getRetailerName().equals("")) {
             retailer = Retailer.builder()
@@ -57,7 +57,8 @@ public class RetailerService {
             PluginRetailerController service = feignClientBuilder.forType(PluginRetailerController.class, paymentServiceData.getServiceName()).build();
 
             ResponseEntity<ServiceFieldsCheck> validationResponse = service.checkPaymentServiceFields(paymentServiceData.getData());
-            if (validationResponse.getStatusCode().equals(HttpStatus.OK) && validationResponse.getBody().getValidationMessage().equals("ok")) {
+
+            if (validationResponse.getBody() != null && validationResponse.getBody().getValidationMessage() == null) {
                 for (RegistrationFieldForm paymentField : validationResponse.getBody().getAdditionalFields()) {
                     PaymentData paymentData = new PaymentData();
                     if (paymentField.getEncrypted()) {
@@ -81,34 +82,6 @@ public class RetailerService {
 
             retailer.getRetailerDataForPaymentServices().add(retailerDataForPaymentService);
         }
-
-//        retailerData.getPaymentServices().forEach(paymentServiceData -> {
-//            Set<PaymentData> paymentDataSet = new HashSet<>();
-//            paymentServiceData.getData().forEach(paymentField -> {
-//                PaymentData paymentData = new PaymentData();
-//                String validationMsg = validateField(paymentField.getName(), paymentField.getType(), paymentField.getValue());
-//                if (validationMsg.equals("ok")) {
-//                    if (paymentField.getEncrypted()) {
-//                        paymentData.setValue(passwordEncoder.encode(paymentField.getValue()));
-//                    } else {
-//                        paymentData.setValue(paymentField.getValue());
-//                    }
-//                    paymentData.setName(paymentField.getName());
-//                    paymentDataSet.add(paymentData);
-//                } else {
-//                    throw new BadRequestException(validationMsg);
-//                }
-//            });
-//
-//            RetailerDataForPaymentService retailerDataForPaymentService = RetailerDataForPaymentService.builder()
-//                    .paymentService(paymentServiceData.getServiceName())
-//                    .paymentData(paymentDataSet)
-//                    .retailer(retailer)
-//                    .build();
-//
-//            retailer.getRetailerDataForPaymentServices().add(retailerDataForPaymentService);
-//
-//        });
 
         retailerRepository.save(retailer);
 
