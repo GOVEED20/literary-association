@@ -1,6 +1,7 @@
 package goveed20.CardPaymentService.services;
 
 import goveed20.CardPaymentService.exceptions.BadRequestException;
+import goveed20.CardPaymentService.exceptions.InvalidBankClientDataException;
 import goveed20.CardPaymentService.model.Bank;
 import goveed20.CardPaymentService.model.Client;
 import goveed20.CardPaymentService.model.OnlinePaymentData;
