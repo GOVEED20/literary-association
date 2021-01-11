@@ -29,12 +29,6 @@ public class PaypalConfig {
         return sdkConfig;
     }
 
-//    @Bean
-//    public OAuthTokenCredential authTokenCredential() {
-//        OAuthTokenCredential token = new OAuthTokenCredential(clientId, clientSecret, paypalSdkConfig());
-//        return token;
-//    }
-
     @Bean
     public APIContext apiContext() {
         APIContext apiContext = new APIContext(clientId, clientSecret, mode);
