@@ -85,7 +85,7 @@ public class PaymentService {
         }
 
         Retailer retailer = retailerOptional.get();
-        HashMap<String, String> paymentFields = new HashMap<>();
+        HashMap<String, String> paymentFields = new HashMap<>(paymentRequest.getPaymentFields());
 
         retailer.getRetailerDataForPaymentServices()
                 .stream()

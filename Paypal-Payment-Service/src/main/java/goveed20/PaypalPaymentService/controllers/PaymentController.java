@@ -15,7 +15,6 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,7 +27,7 @@ public class PaymentController implements PluginController {
     public ResponseEntity<String> initializePayment(@Valid @RequestBody InitializationPaymentPayload payload) {
         try {
             return new ResponseEntity<>(paymentService.initializePayment(payload), HttpStatus.OK);
-        } catch (PayPalRESTException | UnknownHostException e) {
+        } catch (PayPalRESTException e) {
             return new ResponseEntity<>("Request failed", HttpStatus.BAD_REQUEST);
         } catch (BadRequestException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

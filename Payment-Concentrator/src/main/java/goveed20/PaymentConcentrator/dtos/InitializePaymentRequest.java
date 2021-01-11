@@ -5,6 +5,7 @@ import lombok.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 
 @Getter
 @Setter
@@ -30,4 +31,6 @@ public class InitializePaymentRequest {
 
     @NotBlank
     private String errorURL;
+
+    private HashMap<String, String> paymentFields;
 }

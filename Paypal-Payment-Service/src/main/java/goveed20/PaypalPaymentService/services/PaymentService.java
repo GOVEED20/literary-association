@@ -15,8 +15,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.MalformedURLException;
-import java.net.UnknownHostException;
 import java.util.*;
 
 @Service
@@ -26,6 +24,9 @@ public class PaymentService {
 
     @Autowired
     private PaymentConcentratorFeignClient paymentConcentratorFeignClient;
+
+    @Autowired
+    private PaypalSubscriptionsService paypalSubscriptionsService;
 
     public Set<RegistrationField> getPaymentServiceRegistrationFields() {
         Map<String, String> validationConstraints = new HashMap<>();
@@ -44,8 +45,47 @@ public class PaymentService {
         return registrationFields;
     }
 
-    @SneakyThrows(MalformedURLException.class)
-    public String initializePayment(InitializationPaymentPayload payload) throws PayPalRESTException, UnknownHostException {
+    public String initializePayment(InitializationPaymentPayload payload) throws PayPalRESTException {
+        if (payload.getPaymentFields().containsKey("subscription")) {
+            return createSubscription(payload);
+        } else {
+            Payment payment = createPayment(payload);
+
+            return payment.getLinks()
+                    .stream()
+                    .filter(l -> l.getRel().equals("approval_url"))
+                    .findFirst()
+                    .orElseThrow(() -> new BadRequestException("Bad paypal link"))
+                    .getHref();
+        }
+    }
+
+    public void completePayment(Long transactionId, Map<String, String[]> paramMap) {
+        String[] paymentId = paramMap.getOrDefault("paymentId", null);
+        String[] payerId = paramMap.getOrDefault("PayerID", null);
+        String[] subscriptionId = paramMap.getOrDefault("subscription_id", null);
+
+        try {
+            if (payerId != null && paymentId != null) {
+                Payment payment = new Payment();
+                payment.setId(paymentId[0]);
+
+                PaymentExecution paymentExecution = new PaymentExecution();
+                paymentExecution.setPayerId(payerId[0]);
+
+                payment.execute(apiContext, paymentExecution);
+                sendTransactionResponse(transactionId, TransactionStatus.SUCCESS);
+            } else if (subscriptionId != null && paypalSubscriptionsService.isSubscriptionActive(subscriptionId[0])) {
+                sendTransactionResponse(transactionId, TransactionStatus.SUCCESS);
+            } else {
+                sendTransactionResponse(transactionId, TransactionStatus.FAILED);
+            }
+        } catch (Exception ignored) {
+            sendTransactionResponse(transactionId, TransactionStatus.ERROR);
+        }
+    }
+
+    private Payment createPayment(InitializationPaymentPayload payload) throws PayPalRESTException {
         Amount amount = new Amount();
         amount.setCurrency("USD");
         amount.setTotal(payload.getAmount().toString());
@@ -72,55 +112,44 @@ public class PaymentService {
         payment.setPayer(payer);
         payment.setTransactions(transactions);
 
-        UriComponents context = ServletUriComponentsBuilder.fromCurrentContextPath().build();
-
         RedirectUrls redirectUrls = new RedirectUrls();
 
-        UriComponents uriComponents = UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host(context.getHost())
-                .port(context.getPort())
-                .path(String.format("/api/complete-payment/%d", payload.getTransactionId()))
-                .build();
+        String callbackUrl = buildCallbackUrl(payload.getTransactionId());
 
-        String redirectUrl = uriComponents.toUri().toURL().toString();
-
-        redirectUrls.setReturnUrl(redirectUrl);
-        redirectUrls.setCancelUrl(redirectUrl);
+        redirectUrls.setReturnUrl(callbackUrl);
+        redirectUrls.setCancelUrl(callbackUrl);
 
         payment.setRedirectUrls(redirectUrls);
 
-        Payment initializedPayment = payment.create(apiContext);
-
-        return initializedPayment.getLinks()
-                .stream()
-                .filter(l -> l.getRel().equals("approval_url"))
-                .findFirst()
-                .orElseThrow(() -> new BadRequestException("Bad paypal link"))
-                .getHref();
+        return payment.create(apiContext);
     }
 
-    public void completePayment(Long transactionId, Map<String, String[]> paramMap) {
-        String[] paymentId = paramMap.getOrDefault("paymentId", null);
-        String[] payerId = paramMap.getOrDefault("PayerID", null);
+    private String createSubscription(InitializationPaymentPayload payload) {
+        return paypalSubscriptionsService.createSubscription(
+                paypalSubscriptionsService.createPlan(
+                        paypalSubscriptionsService.createProduct(payload.getPaymentFields().get("name")), payload.getAmount().toString()
+                ), payload.getTransactionId()
+        );
+    }
 
-        if (payerId == null || paymentId == null) {
-            sendTransactionResponse(transactionId, TransactionStatus.FAILED);
-            return;
+    @SneakyThrows
+    public static String buildCallbackUrl(Long transactionId) {
+        UriComponents context = ServletUriComponentsBuilder.fromCurrentContextPath().build();
+
+        String host = context.getHost();
+
+        if (host != null && (host.equals("localhost") || host.equals("host.docker.internal"))) {
+            host = "www.la.com";
         }
 
-        Payment payment = new Payment();
-        payment.setId(paymentId[0]);
+        UriComponents uriComponents = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(host)
+                .port(context.getPort())
+                .path(String.format("/api/complete-payment/%d", transactionId))
+                .build();
 
-        PaymentExecution paymentExecution = new PaymentExecution();
-        paymentExecution.setPayerId(payerId[0]);
-
-        try {
-            payment.execute(apiContext, paymentExecution);
-            sendTransactionResponse(transactionId, TransactionStatus.SUCCESS);
-        } catch (PayPalRESTException e) {
-            sendTransactionResponse(transactionId, TransactionStatus.ERROR);
-        }
+        return uriComponents.toUri().toURL().toString();
     }
 
     @Async
