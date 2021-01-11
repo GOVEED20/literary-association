@@ -32,5 +32,5 @@ public class InitializePaymentRequest {
     @NotBlank
     private String errorURL;
 
-    private HashMap<String, String> paymentFields;
+    private HashMap<String, String> paymentFields = new HashMap<>();
 }

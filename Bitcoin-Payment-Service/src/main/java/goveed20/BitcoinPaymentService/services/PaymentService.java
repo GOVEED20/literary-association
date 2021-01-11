@@ -58,6 +58,9 @@ public class PaymentService {
         ResponseEntity<BitcoinOrder> responseEntity = new RestTemplate().exchange(sandboxUrl, HttpMethod.POST,
                 new HttpEntity<>(bitcoinOrder, headers), BitcoinOrder.class);
 
+        if (responseEntity.getBody() == null) {
+            throw new BadRequestException("Bitcoin service is not available");
+        }
         String paymentUrl = responseEntity.getBody().getPayment_url();
 
         if (paymentUrl == null || paymentUrl.equals("")) {
@@ -71,7 +74,12 @@ public class PaymentService {
 
     public void completePayment(BitcoinOrderData data) {
 
-        Long transactionId = Long.parseLong(data.getOrder_id());
+        Long transactionId;
+        try {
+            transactionId = Long.parseLong(data.getOrder_id());
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Transaction id has wrong format");
+        }
 
         if (data.getStatus().equals("paid")) {
             sendTransactionResponse(transactionId, TransactionStatus.SUCCESS);

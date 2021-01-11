@@ -12,9 +12,11 @@ import goveed20.PaymentConcentrator.repositories.RetailerDataForPaymentServiceRe
 import goveed20.PaymentConcentrator.repositories.RetailerRepository;
 import goveed20.PaymentConcentrator.repositories.TransactionRepository;
 import lombok.SneakyThrows;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.openfeign.FeignClientBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -128,7 +130,11 @@ public class PaymentService {
             throw new StatusCodeException(redirectionUrlResponse.getStatusCode());
         }
 
+        UrlValidator urlValidator = new UrlValidator(new String[]{"http","https"});
         String redirectionUrl = redirectionUrlResponse.getBody();
+        if (!urlValidator.isValid(redirectionUrl)) {
+            throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         transactionRepository.save(newTransaction);
 
@@ -146,6 +152,17 @@ public class PaymentService {
 
         Transaction transaction = transactionOptional.get();
 
+        switch (responsePayload.getTransactionStatus()) {
+            case SUCCESS:
+                informClient(transaction.getSuccessURL());
+                break;
+            case FAILED:
+                informClient(transaction.getFailedURL());
+                break;
+            default:
+                informClient(transaction.getErrorURL());
+        }
+
         if (responsePayload.getTransactionStatus() == TransactionStatus.SUCCESS) {
             transaction.setStatus(goveed20.PaymentConcentrator.model.TransactionStatus.COMPLETED);
         } else {
@@ -160,17 +177,6 @@ public class PaymentService {
         }
 
         transactionRepository.save(transaction);
-
-        switch (responsePayload.getTransactionStatus()) {
-            case SUCCESS:
-                informClient(transaction.getSuccessURL());
-                break;
-            case FAILED:
-                informClient(transaction.getFailedURL());
-                break;
-            default:
-                informClient(transaction.getErrorURL());
-        }
     }
 
     @SneakyThrows
