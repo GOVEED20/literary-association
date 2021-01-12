@@ -4,16 +4,20 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponsePayload extends BasePayload {
+@Builder
+public class ResponsePayload {
 
     @NotNull
     private TransactionStatus transactionStatus;
 
     @NotBlank
-    private String transactionID;
+    private Long transactionID;
+
+    private Map<String, String> paymentData;
 }

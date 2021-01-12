@@ -12,66 +12,30 @@ services:
         ipv4_address: 172.20.128.2
 
   consul2:
-    image: consul
-    ports:
-     - "8501:8500"
-    environment:
-     - CONSUL_BIND_INTERFACE=eth0 
-    command: "agent -dev -join=172.20.128.2"
-    networks:
-      static-network:
-        ipv4_address: 172.20.128.3
-    depends_on: 
-      - consul1
+     image: consul
+     ports:
+      - "8501:8500"
+     environment:
+      - CONSUL_BIND_INTERFACE=eth0
+     command: "agent -dev -join=172.20.128.2"
+     networks:
+       static-network:
+         ipv4_address: 172.20.128.3
+     depends_on:
+       - consul1
 
   consul3:
-    image: consul
-    ports:
-     - "8502:8500"
-    environment:
-     - CONSUL_BIND_INTERFACE=eth0 
-    command: "agent -dev -join=172.20.128.2"
-    networks:
-      static-network:
-        ipv4_address: 172.20.128.4
-    depends_on: 
-      - consul2
-
-  storage:
-    image: ghcr.io/openzipkin/zipkin-mysql:${TAG:-latest}
-    container_name: mysql
-    # Uncomment to expose the storage port for testing
-    ports:
-      - 3307:3306
-
-  # Use MySQL instead of in-memory storage
-  zipkin:
-    # slim doesn't include MySQL support, so switch to the larger image
-    image: ghcr.io/openzipkin/zipkin:${TAG:-latest}
-    environment:
-      - STORAGE_TYPE=mysql
-      - MYSQL_HOST=storage
-      # Add the baked-in username and password for the zipkin-mysql image
-      - MYSQL_USER=zipkin
-      - MYSQL_PASS=zipkin
-    ports:
-      # Port used for the Zipkin UI and HTTP Api
-      - 9411:9411
-    depends_on:
-      - storage
-
-  dependencies:
-    image: ghcr.io/openzipkin/zipkin-dependencies
-    container_name: dependencies
-    entrypoint: crond -f
-    environment:
-      - STORAGE_TYPE=mysql
-      - MYSQL_HOST=storage
-      # Add the baked-in username and password for the zipkin-mysql image
-      - MYSQL_USER=zipkin
-      - MYSQL_PASS=zipkin
-    depends_on:
-      - storage
+     image: consul
+     ports:
+      - "8502:8500"
+     environment:
+      - CONSUL_BIND_INTERFACE=eth0
+     command: "agent -dev -join=172.20.128.2"
+     networks:
+       static-network:
+         ipv4_address: 172.20.128.4
+     depends_on:
+       - consul2
 
 networks:
   static-network:

@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/register")
 public class RegistrationController {
@@ -17,9 +15,9 @@ public class RegistrationController {
     @Autowired
     private RegistrationService registrationService;
 
-    @GetMapping("/form-fields")
-    public ResponseEntity<FormFieldsDTO> getFormFields() {
-        return new ResponseEntity<>(registrationService.getFormFields(), HttpStatus.OK);
+    @GetMapping("/form-fields/{processID}")
+    public ResponseEntity<FormFieldsDTO> getFormFields(@PathVariable String processID) {
+        return new ResponseEntity<>(registrationService.getFormFields(processID), HttpStatus.OK);
     }
 
     @PostMapping
@@ -28,9 +26,9 @@ public class RegistrationController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("/verification")
-    public ResponseEntity<?> verify() {
-        registrationService.verify();
-        return new ResponseEntity<>(HttpStatus.OK);
+    @GetMapping("/verification/{pID}")
+    public ResponseEntity<?> verify(@RequestParam("token") String disHash, @PathVariable String pID) throws Exception {
+        registrationService.verify(disHash, pID);
+        return new ResponseEntity<>("Your account is successfully verified", HttpStatus.OK);
     }
 }

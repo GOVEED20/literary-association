@@ -1,15 +1,22 @@
 package goveed20.LiteraryAssociationApplication.model;
 
-public enum Genre {
-    ADVENTURE,
-    FANTASY,
-    MYSTERY,
-    HISTORICAL,
-    HORROR,
-    ROMANCE,
-    SCIFI,
-    THRILLER,
-    COOKBOOKS,
-    CRIME,
-    EROTIC
+import goveed20.LiteraryAssociationApplication.model.enums.GenreEnum;
+import lombok.*;
+
+import javax.persistence.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+@Entity
+public class Genre {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    @Enumerated(EnumType.STRING)
+    private GenreEnum genre;
 }

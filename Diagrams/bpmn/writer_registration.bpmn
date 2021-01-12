@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0my87cy" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
-  <bpmn:process id="Process_1a122i2" isExecutable="true">
+  <bpmn:process id="Writer_registration" isExecutable="true">
     <bpmn:startEvent id="Event_1fgy1c6">
       <bpmn:outgoing>Flow_12th27c</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="Activity_1ucej54" name="Input registration data" camunda:formKey="registration_data">
+    <bpmn:userTask id="Reg_form_writer" name="Input registration data" camunda:formKey="registration_data">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="username" label="Username" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="minLength" value="8" />
+              <camunda:property id="placeholder" value="Username" />
+            </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
               <camunda:constraint name="minlength" config="8" />
@@ -15,58 +21,91 @@
           </camunda:formField>
           <camunda:formField id="password" label="Password" type="string">
             <camunda:properties>
-              <camunda:property id="pattern" value="/^(?=.\d)(?=.[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/" />
+              <camunda:property id="type" value="password" />
+              <camunda:property id="pattern" value="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#38;])[A-Za-z\d@$!%*?&#38;]{8,}$" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="placeholder" value="Password" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="name" label="Name" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="placeholder" value="Name" />
+            </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="surname" label="Surname" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="placeholder" value="Surname" />
+            </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="country" label="Country" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="placeholder" value="Country" />
+            </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="city" label="City" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="placeholder" value="City" />
+            </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="email" label="Email" type="string">
             <camunda:properties>
-              <camunda:property id="pattern" value="/^(([^&#60;&#62;()[].,;:\s@&#34;]+(.[^&#60;&#62;()[].,;:\s@&#34;]+)*)|(&#34;.+&#34;))@(([^&#60;&#62;()[].,;:\s@&#34;]+.)+[^&#60;&#62;()[].,;:\s@&#34;]{2,})$/" />
+              <camunda:property id="type" value="email" />
+              <camunda:property id="pattern" value="^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="placeholder" value="Email address" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="genres" label="Genres" type="string" />
+          <camunda:formField id="genres" label="Genres" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="select" />
+              <camunda:property id="required" value="required" />
+              <camunda:property id="multiple" value="multiple" />
+            </camunda:properties>
+          </camunda:formField>
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_12th27c</bpmn:incoming>
+      <bpmn:incoming>Flow_17c9hpi</bpmn:incoming>
       <bpmn:outgoing>Flow_0n0d7n8</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="Flow_12th27c" sourceRef="Event_1fgy1c6" targetRef="Activity_1ucej54" />
-    <bpmn:serviceTask id="Activity_04hl6b0" name="Create user" camunda:class="goveed20.LiteraryAssociationApplication.delegates.RegistrationDelegate">
+    <bpmn:sequenceFlow id="Flow_12th27c" sourceRef="Event_1fgy1c6" targetRef="Reg_form_writer" />
+    <bpmn:serviceTask id="Create_user" name="Create user" camunda:class="goveed20.LiteraryAssociationApplication.delegates.RegistrationDelegate">
       <bpmn:incoming>Flow_0n0d7n8</bpmn:incoming>
       <bpmn:outgoing>Flow_0esf2ku</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0do2vc8" name="Send email with activation link" camunda:class="goveed20.LiteraryAssociationApplication.delegates.EmailDelegate">
+    <bpmn:serviceTask id="Send_email_with_activation_link" name="Send email with activation link" camunda:class="goveed20.LiteraryAssociationApplication.delegates.EmailDelegate">
       <bpmn:incoming>Flow_0esf2ku</bpmn:incoming>
       <bpmn:outgoing>Flow_0uzn2ta</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_0esf2ku" sourceRef="Activity_04hl6b0" targetRef="Activity_0do2vc8" />
-    <bpmn:sequenceFlow id="Flow_0n0d7n8" sourceRef="Activity_1ucej54" targetRef="Activity_04hl6b0" />
-    <bpmn:sequenceFlow id="Flow_0uzn2ta" sourceRef="Activity_0do2vc8" targetRef="Confirmation_link_event" />
+    <bpmn:sequenceFlow id="Flow_0esf2ku" sourceRef="Create_user" targetRef="Send_email_with_activation_link" />
+    <bpmn:sequenceFlow id="Flow_0n0d7n8" sourceRef="Reg_form_writer" targetRef="Create_user" />
+    <bpmn:sequenceFlow id="Flow_0uzn2ta" sourceRef="Send_email_with_activation_link" targetRef="Confirmation_link_event" />
     <bpmn:userTask id="Activity_1msg0et" name="Submit writings" camunda:formKey="submit_writings_form">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -226,10 +265,11 @@ execution.setVariable("i", i);
       <bpmn:signalEventDefinition id="SignalEventDefinition_0ee6rrc" signalRef="Signal_0rwpehp" />
     </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="Flow_0hbqi83" sourceRef="Confirmation_link_event" targetRef="Activity_1msg0et" />
-    <bpmn:textAnnotation id="TextAnnotation_09rgn2v">
-      <bpmn:text>Da li pada</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_1brtytf" sourceRef="Activity_04hl6b0" targetRef="TextAnnotation_09rgn2v" />
+    <bpmn:boundaryEvent id="InvalidDataError" name="InvalidDataError" attachedToRef="Reg_form_writer">
+      <bpmn:outgoing>Flow_17c9hpi</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0llsx9l" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_17c9hpi" sourceRef="InvalidDataError" targetRef="Reg_form_writer" />
     <bpmn:textAnnotation id="TextAnnotation_0bbqlfm">
       <bpmn:text>Prepare map/list ${board_members}:
 {
@@ -248,7 +288,17 @@ execution.setVariable("i", i);
   </bpmn:process>
   <bpmn:signal id="Signal_0rwpehp" name="Confirmation_link_signal" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1a122i2">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Writer_registration">
+      <bpmndi:BPMNEdge id="Flow_17c9hpi_di" bpmnElement="Flow_17c9hpi">
+        <di:waypoint x="370" y="378" />
+        <di:waypoint x="370" y="460" />
+        <di:waypoint x="310" y="460" />
+        <di:waypoint x="310" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hbqi83_di" bpmnElement="Flow_0hbqi83">
+        <di:waypoint x="818" y="320" />
+        <di:waypoint x="890" y="320" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0cx4isb_di" bpmnElement="Flow_0cx4isb">
         <di:waypoint x="1910" y="425" />
         <di:waypoint x="1910" y="660" />
@@ -354,15 +404,17 @@ execution.setVariable("i", i);
         <di:waypoint x="198" y="320" />
         <di:waypoint x="293" y="320" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0hbqi83_di" bpmnElement="Flow_0hbqi83">
-        <di:waypoint x="818" y="320" />
-        <di:waypoint x="890" y="320" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1fgy1c6_di" bpmnElement="Event_1fgy1c6">
         <dc:Bounds x="162" y="302" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1ucej54_di" bpmnElement="Activity_1ucej54">
+      <bpmndi:BPMNShape id="Activity_1ucej54_di" bpmnElement="Reg_form_writer">
         <dc:Bounds x="293" y="280" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04hl6b0_di" bpmnElement="Create_user">
+        <dc:Bounds x="460" y="280" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0do2vc8_di" bpmnElement="Send_email_with_activation_link">
+        <dc:Bounds x="620" y="280" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_00gxjnm_di" bpmnElement="Activity_1msg0et">
         <dc:Bounds x="890" y="280" width="100" height="80" />
@@ -406,8 +458,11 @@ execution.setVariable("i", i);
       <bpmndi:BPMNShape id="Gateway_1alw232_di" bpmnElement="Gateway_1alw232" isMarkerVisible="true">
         <dc:Bounds x="1885" y="375" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_09rgn2v_di" bpmnElement="TextAnnotation_09rgn2v">
-        <dc:Bounds x="610" y="193" width="100" height="30" />
+      <bpmndi:BPMNShape id="Event_05mx4ns_di" bpmnElement="Confirmation_link_event">
+        <dc:Bounds x="782" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="760" y="345" width="83" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0bbqlfm_di" bpmnElement="TextAnnotation_0bbqlfm">
         <dc:Bounds x="1130" y="85" width="100" height="180" />
@@ -415,22 +470,12 @@ execution.setVariable("i", i);
       <bpmndi:BPMNShape id="TextAnnotation_1sxv5tp_di" bpmnElement="TextAnnotation_1sxv5tp">
         <dc:Bounds x="1460" y="820" width="99.99510188087774" height="29.976489028213166" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_04hl6b0_di" bpmnElement="Activity_04hl6b0">
-        <dc:Bounds x="460" y="280" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0do2vc8_di" bpmnElement="Activity_0do2vc8">
-        <dc:Bounds x="620" y="280" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_05mx4ns_di" bpmnElement="Confirmation_link_event">
-        <dc:Bounds x="782" y="302" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_1o3kobf_di" bpmnElement="InvalidDataError">
+        <dc:Bounds x="352" y="342" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="760" y="345" width="83" height="27" />
+          <dc:Bounds x="339" y="386" width="81" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1brtytf_di" bpmnElement="Association_1brtytf">
-        <di:waypoint x="558" y="284" />
-        <di:waypoint x="640" y="223" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1gmtgzj_di" bpmnElement="Event_1ta7som">
         <dc:Bounds x="1812" y="682" width="36" height="36" />
         <bpmndi:BPMNLabel>
