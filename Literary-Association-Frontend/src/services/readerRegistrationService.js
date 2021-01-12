@@ -8,7 +8,7 @@ export const getRegistrationFields = async (processId) => {
 }
 
 export const sendRegistrationData = async (processID, state) => {
-    Object.keys(state).map((key) => {
+    Object.keys(state).forEach((key) => {
         if (key === "genres" || key === "beta_genres") {
             state[key] = JSON.stringify(state[key].map(v => {
                 return {

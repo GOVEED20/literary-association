@@ -9,7 +9,6 @@ import goveed20.CardPaymentService.repositories.BankRepository;
 import goveed20.CardPaymentService.repositories.TransactionRepository;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.RegistrationField;
-import goveed20.PaymentConcentrator.payment.concentrator.plugin.RegistrationFieldType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;

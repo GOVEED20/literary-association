@@ -95,7 +95,5 @@ public class RegistrationDelegate implements JavaDelegate {
                 .disposableHash(String.valueOf(UUID.randomUUID().toString().hashCode())).build();
         readerRepository.save(reader);
         verificationTokenRepository.save(vt);
-
-        delegateExecution.setVariable("userRole", "reader");
     }
 }

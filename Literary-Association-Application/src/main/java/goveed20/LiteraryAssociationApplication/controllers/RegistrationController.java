@@ -23,7 +23,7 @@ public class RegistrationController {
     @PostMapping
     public ResponseEntity<?> register(@RequestBody FormSubmissionDTO regData) {
         registrationService.register(regData);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/verification/{pID}")
