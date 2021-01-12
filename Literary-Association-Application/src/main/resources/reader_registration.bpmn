@@ -4,7 +4,6 @@
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_0tt70i1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="Flow_0tt70i1" sourceRef="StartEvent_1" targetRef="Reg_form_reader" />
     <bpmn:userTask id="Reg_form_reader" name="Input registration data" camunda:formKey="registration_data">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -107,13 +106,12 @@
           </camunda:formField>
         </camunda:formData>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0tt70i1</bpmn:incoming>
       <bpmn:incoming>Flow_1615jkv</bpmn:incoming>
-      <bpmn:outgoing>Flow_0cvex4r</bpmn:outgoing>
+      <bpmn:incoming>Flow_0tt70i1</bpmn:incoming>
+      <bpmn:outgoing>Flow_17cnwuu</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="Flow_0cvex4r" sourceRef="Reg_form_reader" targetRef="Create_user" />
     <bpmn:serviceTask id="Create_user" name="Create user" camunda:class="goveed20.LiteraryAssociationApplication.delegates.RegistrationDelegate">
-      <bpmn:incoming>Flow_0cvex4r</bpmn:incoming>
+      <bpmn:incoming>Flow_01gncqt</bpmn:incoming>
       <bpmn:outgoing>Flow_1mw5wlc</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Send_email_with_activation_link" name="Send email with activation link" camunda:class="goveed20.LiteraryAssociationApplication.delegates.EmailDelegate">
@@ -136,6 +134,14 @@
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1h38rc5" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_1615jkv" sourceRef="InvalidDataError" targetRef="Reg_form_reader" />
+    <bpmn:sequenceFlow id="Flow_0tt70i1" sourceRef="StartEvent_1" targetRef="Reg_form_reader" />
+    <bpmn:sequenceFlow id="Flow_17cnwuu" sourceRef="Reg_form_reader" targetRef="Set_user_role" />
+    <bpmn:sequenceFlow id="Flow_01gncqt" sourceRef="Set_user_role" targetRef="Create_user" />
+    <bpmn:scriptTask id="Set_user_role" name="Set user role" scriptFormat="javascript">
+      <bpmn:incoming>Flow_17cnwuu</bpmn:incoming>
+      <bpmn:outgoing>Flow_01gncqt</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("userRole", "reader");</bpmn:script>
+    </bpmn:scriptTask>
   </bpmn:process>
   <bpmn:message id="Message_0aj0kve" name="Message_2lrbfa6" />
   <bpmn:signal id="Signal_189vto0" name="Confirmation_link_signal" />
@@ -148,24 +154,28 @@
         <di:waypoint x="330" y="157" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mjuzcx_di" bpmnElement="Flow_1mjuzcx">
-        <di:waypoint x="838" y="117" />
-        <di:waypoint x="912" y="117" />
+        <di:waypoint x="1008" y="117" />
+        <di:waypoint x="1052" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1gvwvq7_di" bpmnElement="Flow_1gvwvq7">
-        <di:waypoint x="730" y="117" />
-        <di:waypoint x="802" y="117" />
+        <di:waypoint x="930" y="117" />
+        <di:waypoint x="972" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mw5wlc_di" bpmnElement="Flow_1mw5wlc">
-        <di:waypoint x="570" y="117" />
-        <di:waypoint x="630" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0cvex4r_di" bpmnElement="Flow_0cvex4r">
-        <di:waypoint x="410" y="117" />
-        <di:waypoint x="470" y="117" />
+        <di:waypoint x="770" y="117" />
+        <di:waypoint x="830" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0tt70i1_di" bpmnElement="Flow_0tt70i1">
         <di:waypoint x="215" y="117" />
         <di:waypoint x="310" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17cnwuu_di" bpmnElement="Flow_17cnwuu">
+        <di:waypoint x="410" y="117" />
+        <di:waypoint x="480" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01gncqt_di" bpmnElement="Flow_01gncqt">
+        <di:waypoint x="580" y="117" />
+        <di:waypoint x="670" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="99" width="36" height="36" />
@@ -173,20 +183,23 @@
       <bpmndi:BPMNShape id="Activity_0ws2de0_di" bpmnElement="Reg_form_reader">
         <dc:Bounds x="310" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1980bxg_di" bpmnElement="Create_user">
-        <dc:Bounds x="470" y="77" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1xtp2d9_di" bpmnElement="Send_email_with_activation_link">
-        <dc:Bounds x="630" y="77" width="100" height="80" />
+      <bpmndi:BPMNShape id="Event_1gbr2p2_di" bpmnElement="Event_1gbr2p2">
+        <dc:Bounds x="1052" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_191zgey_di" bpmnElement="Confirmation_link_event">
-        <dc:Bounds x="802" y="99" width="36" height="36" />
+        <dc:Bounds x="972" y="99" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="781" y="142" width="83" height="27" />
+          <dc:Bounds x="951" y="142" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1gbr2p2_di" bpmnElement="Event_1gbr2p2">
-        <dc:Bounds x="912" y="99" width="36" height="36" />
+      <bpmndi:BPMNShape id="Activity_1xtp2d9_di" bpmnElement="Send_email_with_activation_link">
+        <dc:Bounds x="830" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1980bxg_di" bpmnElement="Create_user">
+        <dc:Bounds x="670" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ypsv83_di" bpmnElement="Set_user_role">
+        <dc:Bounds x="480" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1dub3v4_di" bpmnElement="InvalidDataError">
         <dc:Bounds x="372" y="139" width="36" height="36" />
