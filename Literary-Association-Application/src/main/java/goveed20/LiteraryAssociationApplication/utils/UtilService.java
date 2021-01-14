@@ -7,21 +7,19 @@ import goveed20.LiteraryAssociationApplication.dtos.OptionDTO;
 import goveed20.LiteraryAssociationApplication.model.Genre;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class UtilService {
 
-    public static HashMap<String, Object> mapListToDto(List<FormSubmissionFieldDTO> list) {
-        HashMap<String, Object> map = new HashMap<>();
-        for (FormSubmissionFieldDTO temp : list) {
-            map.put(temp.getFieldId(), temp.getFieldValue());
-        }
-
-        return map;
+    public static Map<String, Object> mapListToDto(List<FormSubmissionFieldDTO> list) {
+        return list.stream()
+                .collect(
+                        Collectors.toMap(
+                                FormSubmissionFieldDTO::getFieldId,
+                                FormSubmissionFieldDTO::getFieldValue
+                        )
+                );
     }
 
     public static String serializeGenres(Set<Genre> genres) {

@@ -33,9 +33,9 @@ public class EmailDelegate implements JavaDelegate {
                 : writerRepository.findByEmail(email);
 
         String text = String.format("Dear %s %s,%nTo confirm your account please click here: %n" +
-                        "http://localhost:9090/api/register/verification/" + delegateExecution
-                        .getProcessInstanceId() + "?token=" + verificationTokenRepository.findByUser(user)
-                        .getDisposableHash(), user.getName(), user.getSurname());
+                "http://localhost:9090/api/register/verification/" + delegateExecution
+                .getProcessInstanceId() + "?token=" + verificationTokenRepository.findByUser(user)
+                .getDisposableHash(), user.getName(), user.getSurname());
 
         emailService.sendEmail(user.getEmail(), "Complete registration", text);
     }

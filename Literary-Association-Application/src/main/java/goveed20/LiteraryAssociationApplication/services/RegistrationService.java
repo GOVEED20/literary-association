@@ -22,9 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RegistrationService {
@@ -67,17 +67,26 @@ public class RegistrationService {
     }
 
     public void register(FormSubmissionDTO regData) {
-        HashMap<String, Object> map = UtilService.mapListToDto(regData.getFormFields());
-        if (readerRepository.findByUsername(String.valueOf(map.get("username"))) != null) {
-            throw new BpmnError("User with given username already exists");
-        }
-        if (readerRepository.findByEmail(String.valueOf(map.get("email"))) != null) {
-            throw new BpmnError("User with given email address already exists");
-        }
+        Map<String, Object> map = UtilService.mapListToDto(regData.getFormFields());
 
         Task task = taskService.createTaskQuery().processInstanceId(regData.getProcessID()).active().list().get(0);
-        String processInstanceId = task.getProcessInstanceId();
-        runtimeService.setVariable(processInstanceId, "registration", regData.getFormFields());
+
+        if (task.getName().toLowerCase().contains("reader")) {
+            if (readerRepository.findByUsername(String.valueOf(map.get("username"))) != null) {
+                throw new BpmnError("User with given username already exists");
+            }
+            if (readerRepository.findByEmail(String.valueOf(map.get("email"))) != null) {
+                throw new BpmnError("User with given email address already exists");
+            }
+        } else {
+            if (writerRepository.findByUsername(String.valueOf(map.get("username"))).isPresent()) {
+                throw new BpmnError("User with given username already exists");
+            }
+            if (writerRepository.findByEmail(String.valueOf(map.get("email"))) != null) {
+                throw new BpmnError("User with given email address already exists");
+            }
+        }
+        runtimeService.setVariable(regData.getProcessID(), "registration", regData.getFormFields());
         formService.submitTaskForm(task.getId(), map); // complete input registration data task
     }
 
