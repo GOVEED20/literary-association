@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {startProcess} from "../services/processService";
-import {getRegistrationFields, sendRegistrationData} from "../services/readerRegistrationService";
-import Form from "./Form";
+import {getRegistrationFields, sendRegistrationData} from "../services/registrationService";
 import {Spinner} from "react-bootstrap";
+import Form from "./Form";
 
-const Register = () => {
+const WriterRegistration = () => {
     const [processId, setProcessId] = useState(null)
     const [formFields, setFormFields] = useState(null)
 
@@ -19,7 +19,7 @@ const Register = () => {
 
         const getProcessId = async () => {
             let id = JSON.parse(window.localStorage.getItem("processID"))
-            id = id == null ? await startProcess("Reader_registration") : id
+            id = id == null ? await startProcess("Writer_registration") : id
             window.localStorage.setItem("processID", JSON.stringify(id))
 
             return id
@@ -31,6 +31,10 @@ const Register = () => {
 
         getProcessIdAndFormFields().then()
     }, [processId])
+
+    useEffect(() => {
+        window.localStorage.clear()
+    }, [])
 
     const onSubmit = async (state) => {
         await sendRegistrationData(processId, state)
@@ -46,10 +50,10 @@ const Register = () => {
 
     return (
         <div>
-            <h2>Reader registration</h2>
+            <h2>Writer registration</h2>
             <Form form={formFields} onSubmit={onSubmit}/>
         </div>
     )
 }
 
-export default Register;
+export default WriterRegistration

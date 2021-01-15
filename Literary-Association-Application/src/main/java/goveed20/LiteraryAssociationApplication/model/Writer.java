@@ -4,7 +4,6 @@ import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -21,7 +20,7 @@ public class Writer extends BaseUser {
     @Column(nullable = false)
     private Boolean membershipApproved;
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private MembershipApplication membershipApplication;
 
     @OneToMany(cascade = CascadeType.ALL)

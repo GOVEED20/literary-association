@@ -2,6 +2,7 @@ package goveed20.LiteraryAssociationApplication.services;
 
 import goveed20.LiteraryAssociationApplication.dtos.FormFieldsDTO;
 import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionDTO;
+import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessException;
 import goveed20.LiteraryAssociationApplication.model.Reader;
 import goveed20.LiteraryAssociationApplication.model.VerificationToken;
 import goveed20.LiteraryAssociationApplication.model.Writer;
@@ -90,7 +91,7 @@ public class RegistrationService {
         formService.submitTaskForm(task.getId(), map); // complete input registration data task
     }
 
-    public void verify(String disHash, String pID) throws Exception {
+    public void verify(String disHash, String pID) {
         VerificationToken vt = verificationTokenRepository.findByDisposableHash(disHash);
         if (vt == null) {
             throw new EntityNotFoundException("The link is invalid or broken!");
@@ -109,7 +110,7 @@ public class RegistrationService {
         Execution exec = runtimeService.createExecutionQuery()
                 .signalEventSubscriptionName("Confirmation_link_signal")
                 .list().stream().filter(e -> e.getProcessInstanceId().equals(pID)).findFirst()
-                .orElseThrow(() -> new Exception("Does not exist"));
+                .orElseThrow(() -> new BusinessProcessException("Does not exist"));
         runtimeService.createSignalEvent("Confirmation_link_signal").executionId(exec.getId()).send();
     }
 }
