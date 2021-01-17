@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
@@ -7,6 +7,8 @@ const getActiveTasks = async (username) => {
     return response.data
 }
 
-export default {
+const userTaskService = {
     getActiveTasks
 }
+
+export default userTaskService

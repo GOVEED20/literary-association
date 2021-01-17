@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from "react";
-import {startProcess} from "../services/processService";
-import {getRegistrationFields, sendRegistrationData} from "../services/registrationService";
-import Form from "./Form";
-import {Spinner} from "react-bootstrap";
+import React, { useEffect, useState } from 'react'
+import { startProcess } from '../services/processService'
+import { getRegistrationFields, sendRegistrationData } from '../services/registrationService'
+import Form from './Form'
+import { Spinner } from 'react-bootstrap'
 
 const ReaderRegistration = () => {
     const [processId, setProcessId] = useState(null)
@@ -18,9 +18,9 @@ const ReaderRegistration = () => {
         }
 
         const getProcessId = async () => {
-            let id = JSON.parse(window.localStorage.getItem("processID"))
-            id = id == null ? await startProcess("Reader_registration") : id
-            window.localStorage.setItem("processID", JSON.stringify(id))
+            let id = JSON.parse(window.localStorage.getItem('processID'))
+            id = id === null ? await startProcess('Reader_registration') : id
+            window.localStorage.setItem('processID', JSON.stringify(id))
 
             return id
         }
@@ -56,4 +56,4 @@ const ReaderRegistration = () => {
     )
 }
 
-export default ReaderRegistration;
+export default ReaderRegistration

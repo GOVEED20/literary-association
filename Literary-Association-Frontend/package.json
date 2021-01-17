@@ -25,12 +25,6 @@
     "eject": "react-scripts eject",
     "lint": "eslint ."
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -44,6 +38,8 @@
     ]
   },
   "devDependencies": {
+    "eslint": "^7.18.0",
+    "eslint-plugin-react": "^7.22.0",
     "redux-devtools-extension": "^2.13.8"
   }
 }

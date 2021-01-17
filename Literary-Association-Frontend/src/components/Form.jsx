@@ -1,14 +1,14 @@
-import React, {useState} from "react";
-import {Button, Form as BootstrapForm} from 'react-bootstrap'
-import FormField from "./FormField";
+import React, { useState } from 'react'
+import { Button, Form as BootstrapForm } from 'react-bootstrap'
+import FormField from './FormField'
 
-const Form = ({form, onSubmit}) => {
+const Form = ({ form, onSubmit }) => {
     const [state, setState] = useState(createFormState(form.formFields))
 
-    const changeState = ({target}) => {
-        const newState = {...state}
+    const changeState = ({ target }) => {
+        const newState = { ...state }
         if (Array.isArray(newState[target.id])) {
-            if (target.value === "") {
+            if (target.value === '') {
                 return
             }
 
@@ -17,7 +17,7 @@ const Form = ({form, onSubmit}) => {
             } else {
                 newState[target.id] = [...newState[target.id], target.value]
             }
-        } else if (typeof newState[target.id] === "boolean") {
+        } else if (typeof newState[target.id] === 'boolean') {
             newState[target.id] = !newState[target.id]
         } else {
             newState[target.id] = target.value
@@ -26,7 +26,7 @@ const Form = ({form, onSubmit}) => {
     }
 
     const isVisible = (formField) => {
-        if (formField.properties.dependsOn == null) {
+        if (formField.properties.dependsOn === null) {
             return true
         }
         return state[formField.properties.dependsOn]
@@ -42,7 +42,7 @@ const Form = ({form, onSubmit}) => {
             {form.formFields.map((formField) =>
                 isVisible(formField) &&
                 < FormField key={formField.id} formField={formField} onChange={changeState}
-                            value={state[formField.id]}/>
+                    value={state[formField.id]}/>
             )
             }
             <Button variant="primary" type="submit">Submit</Button>
@@ -53,24 +53,24 @@ const Form = ({form, onSubmit}) => {
 const createFormState = (formFields) => {
     const reducer = (accumulator, currentValue) => {
         const field = currentValue.id
-        let value = currentValue.defaultValue;
-        if (value == null) {
+        let value = currentValue.defaultValue
+        if (value === null) {
             switch (currentValue.properties.type) {
-                case "select":
-                    if (currentValue.properties.multiple) {
-                        value = []
-                    } else {
-                        value = ""
-                    }
-                    break
-                case "checkbox":
-                    value = false
-                    break
-                default:
-                    value = ""
+            case 'select':
+                if (currentValue.properties.multiple) {
+                    value = []
+                } else {
+                    value = ''
+                }
+                break
+            case 'checkbox':
+                value = false
+                break
+            default:
+                value = ''
             }
         }
-        const newAccumulator = {...accumulator}
+        const newAccumulator = { ...accumulator }
         newAccumulator[field] = value
         return newAccumulator
     }

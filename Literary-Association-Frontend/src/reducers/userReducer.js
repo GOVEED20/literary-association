@@ -1,5 +1,5 @@
 import loginService from '../services/loginService'
-import * as jwt_decode from 'jwt-decode'
+import jwt_decode from 'jwt-decode'
 
 const local_login = (token, role, subject) => {
     window.localStorage.setItem('token', token)
@@ -32,7 +32,7 @@ export const login = (username, password) => {
     return async dispatch => {
         const token = await loginService.login(username, password)
         const role = jwt_decode(token).role
-        const subject = jwt_decode(token).subject
+        const subject = jwt_decode(token).sub
 
         local_login(token, role, subject)
 
@@ -57,22 +57,22 @@ export const logout = () => {
     }
 }
 
-const reducer = (state = {token: null, role: null, subject: null}, action) => {
+const reducer = (state = { token: null, role: null, subject: null }, action) => {
     switch (action.type) {
-        case 'LOGIN':
-            return {
-                token: action.token,
-                role: action.role,
-                subject: action.subject
-            }
-        case 'LOGOUT':
-            return {
-                token: null,
-                role: null,
-                subject: null
-            }
-        default:
-            return state
+    case 'LOGIN':
+        return {
+            token: action.token,
+            role: action.role,
+            subject: action.subject
+        }
+    case 'LOGOUT':
+        return {
+            token: null,
+            role: null,
+            subject: null
+        }
+    default:
+        return state
     }
 }
 

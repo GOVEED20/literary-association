@@ -55,8 +55,8 @@ public class BaseUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<Authority> authorities = new ArrayList<>();
-        authorities.add(new Authority(this.role));
+        Collection<UserRole> authorities = new ArrayList<>();
+        authorities.add(this.role);
 
         return authorities;
     }

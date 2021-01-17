@@ -1,10 +1,17 @@
 package goveed20.LiteraryAssociationApplication.model.enums;
 
-public enum UserRole {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum UserRole implements GrantedAuthority {
     READER,
     WRITER,
     LECTOR,
     BOARD_MEMBER,
     EDITOR,
-    HEAD_EDITOR
+    HEAD_EDITOR;
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }

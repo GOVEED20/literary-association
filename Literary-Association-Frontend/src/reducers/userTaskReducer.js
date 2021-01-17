@@ -13,10 +13,10 @@ export const getActiveTasks = (username) => {
 
 const reducer = (state = [], action) => {
     switch (action.type) {
-        case 'GET_ACTIVE_TASKS':
-            return action.userTasks
-        default:
-            return state
+    case 'GET_ACTIVE_TASKS':
+        return action.userTasks
+    default:
+        return state
     }
 }
 
