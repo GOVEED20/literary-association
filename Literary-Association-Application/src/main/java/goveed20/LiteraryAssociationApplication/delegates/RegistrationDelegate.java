@@ -49,6 +49,7 @@ public class RegistrationDelegate implements JavaDelegate {
             Writer writer = createWriter(registration);
             user = writer;
             writerRepository.save(writer);
+            delegateExecution.setVariable("user", writer.getUsername());
         }
 
         VerificationToken vt = VerificationToken.builder().user(user)

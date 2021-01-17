@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Button, Form} from "react-bootstrap";
-import {login} from "../services/loginService";
+import {login} from "../reducers/userReducer";
+import {useDispatch} from "react-redux";
 
 const Login = () => {
     const formStyle = {
@@ -10,11 +11,13 @@ const Login = () => {
         marginTop: "5%"
     }
 
+    const dispatch = useDispatch()
+
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
     const submitForm = async () => {
-        await login(username, password)
+        dispatch(login(username, password))
     }
 
     return (

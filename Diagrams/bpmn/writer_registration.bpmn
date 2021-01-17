@@ -105,7 +105,7 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0esf2ku" sourceRef="Create_user" targetRef="Send_email_with_activation_link" />
     <bpmn:sequenceFlow id="Flow_0n0d7n8" sourceRef="Reg_form_writer" targetRef="Set_user_role" />
-    <bpmn:userTask id="Activity_1msg0et" name="Submit writings" camunda:formKey="submit_writings_form">
+    <bpmn:userTask id="Activity_1msg0et" name="Submit writings" camunda:formKey="submit_writings_form" camunda:assignee="${user}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="writing1" label="First writing" type="string">
@@ -124,6 +124,7 @@
         </camunda:executionListener>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1yx68fj</bpmn:incoming>
+      <bpmn:incoming>Flow_0qfe1cs</bpmn:incoming>
       <bpmn:outgoing>Flow_13uw9l5</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:userTask id="Activity_135oed2" name="Review writings" camunda:formKey="review_writings_form" camunda:candidateUsers="${board_members}">
@@ -193,7 +194,7 @@ execution.setVariable("further_review", further_review &gt; 0)</bpmn:script>
       <bpmn:outgoing>Flow_1bejw6x</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1bejw6x" sourceRef="Activity_0n8zl7e" targetRef="Gateway_0h1nu6p" />
-    <bpmn:userTask id="Activity_0tp2u2y" name="Pay membership">
+    <bpmn:userTask id="Activity_0tp2u2y" name="Pay membership" camunda:assignee="${writer}">
       <bpmn:extensionElements>
         <camunda:executionListener class="MembershipDelegate" event="start" />
       </bpmn:extensionElements>
@@ -225,7 +226,7 @@ execution.setVariable("further_review", further_review &gt; 0)</bpmn:script>
     <bpmn:sequenceFlow id="Flow_147nc8h" name="Writer is unsuitable" sourceRef="Gateway_0h1nu6p" targetRef="Activity_0wlpdko">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${suitable == false &amp;&amp; further_review == false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="Activity_1flwtkz" name="Submit more writings">
+    <bpmn:userTask id="Activity_1flwtkz" name="Submit more writings" camunda:assignee="${writer}">
       <bpmn:extensionElements>
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="javascript">var i = execution.getVariable("i");
@@ -235,6 +236,7 @@ execution.setVariable("i", i);
         </camunda:executionListener>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0cx4isb</bpmn:incoming>
+      <bpmn:incoming>Flow_1qk69lh</bpmn:incoming>
       <bpmn:outgoing>Flow_1jjk1vb</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:boundaryEvent id="Event_1ta7som" name="New writings not submitted" attachedToRef="Activity_1flwtkz">
@@ -278,6 +280,16 @@ execution.setVariable("i", i);
     <bpmn:sequenceFlow id="Flow_1d8s9zr" sourceRef="Send_email_with_activation_link" targetRef="Confirmation_link_event" />
     <bpmn:sequenceFlow id="Flow_1yx68fj" sourceRef="Confirmation_link_event" targetRef="Activity_1msg0et" />
     <bpmn:sequenceFlow id="Flow_13uw9l5" sourceRef="Activity_1msg0et" targetRef="Activity_1nd5m05" />
+    <bpmn:boundaryEvent id="Event_1fcbex6" name="InvalidDataError" attachedToRef="Activity_1msg0et">
+      <bpmn:outgoing>Flow_0qfe1cs</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0qyrrml" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0qfe1cs" sourceRef="Event_1fcbex6" targetRef="Activity_1msg0et" />
+    <bpmn:boundaryEvent id="Event_0ugj8j4" name="InvalidDataError">
+      <bpmn:outgoing>Flow_1qk69lh</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1a32usn" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1qk69lh" sourceRef="Event_0ugj8j4" targetRef="Activity_1flwtkz" />
     <bpmn:textAnnotation id="TextAnnotation_0bbqlfm">
       <bpmn:text>Prepare map/list ${board_members}:
 {
@@ -418,6 +430,19 @@ execution.setVariable("i", i);
         <di:waypoint x="198" y="320" />
         <di:waypoint x="293" y="320" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qfe1cs_di" bpmnElement="Flow_0qfe1cs">
+        <di:waypoint x="1070" y="398" />
+        <di:waypoint x="1070" y="450" />
+        <di:waypoint x="1010" y="450" />
+        <di:waypoint x="1010" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qk69lh_di" bpmnElement="Flow_1qk69lh">
+        <di:waypoint x="1810" y="602" />
+        <di:waypoint x="1810" y="582" />
+        <di:waypoint x="1740" y="582" />
+        <di:waypoint x="1740" y="660" />
+        <di:waypoint x="1760" y="660" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1fgy1c6_di" bpmnElement="Event_1fgy1c6">
         <dc:Bounds x="162" y="302" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -513,6 +538,18 @@ execution.setVariable("i", i);
         <di:waypoint x="1810" y="700" />
         <di:waypoint x="1543" y="820" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1fcbex6_di" bpmnElement="Event_1fcbex6">
+        <dc:Bounds x="1052" y="362" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1039" y="406" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ugj8j4_di" bpmnElement="Event_0ugj8j4">
+        <dc:Bounds x="1792" y="602" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1747" y="593" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
