@@ -4,9 +4,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,9 +22,12 @@ public class TokenService {
     @Value("${spring.mail.username}")
     private String SECRET;
 
+    @Value("Authorization")
+    private String AUTH_HEADER;
+
     private static final long JWT_TOKEN_VALIDITY = 30 * 60 * 60;
 
-    public String getEmailFromToken(String token) {
+    public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
@@ -30,14 +35,14 @@ public class TokenService {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(Authentication authentication) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", userDetails.getAuthorities());
-        return doGenerateToken(claims, userDetails.getUsername());
+        claims.put("role", authentication.getAuthorities());
+        return doGenerateToken(claims, authentication.getName());
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getEmailFromToken(token);
+        final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
@@ -63,5 +68,19 @@ public class TokenService {
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
+    }
+
+    public String getToken(HttpServletRequest request) {
+        String authHeader = getAuthHeaderFromHeader(request);
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+
+        return null;
+    }
+
+    public String getAuthHeaderFromHeader(HttpServletRequest request) {
+        return request.getHeader(AUTH_HEADER);
     }
 }

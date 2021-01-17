@@ -3,8 +3,8 @@ package goveed20.LiteraryAssociationApplication.controllers;
 import goveed20.LiteraryAssociationApplication.dtos.LoginDTO;
 import goveed20.LiteraryAssociationApplication.services.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +20,11 @@ public class LoginController {
 
     @PostMapping
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginData) {
-
+        try {
+            return new ResponseEntity<>(loginService.login(loginData), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
     }
 
 }
