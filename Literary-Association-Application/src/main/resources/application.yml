@@ -13,10 +13,10 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   mail:
     host: smtp.gmail.com
-    password: 'LDDmuumuu2020'
+    password: ENC(ADCd7T3iSrmU4tUdsL9RYu4ALBP8A20D)
     port: 587
     properties:
       mail:

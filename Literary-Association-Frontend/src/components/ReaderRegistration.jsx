@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
-import {startProcess} from "../services/processService";
-import {getRegistrationFields, sendRegistrationData} from "../services/readerRegistrationService";
-import Form from "./Form";
-import {Spinner} from "react-bootstrap";
+import React, { useEffect, useState } from 'react'
+import { startProcess } from '../services/processService'
+import { getRegistrationFields, sendRegistrationData } from '../services/registrationService'
+import Form from './Form'
+import { Spinner } from 'react-bootstrap'
 
-const Register = () => {
+const ReaderRegistration = () => {
     const [processId, setProcessId] = useState(null)
     const [formFields, setFormFields] = useState(null)
 
@@ -18,9 +18,9 @@ const Register = () => {
         }
 
         const getProcessId = async () => {
-            let id = JSON.parse(window.localStorage.getItem("processID"))
-            id = id == null ? await startProcess("Reader_registration") : id
-            window.localStorage.setItem("processID", JSON.stringify(id))
+            let id = JSON.parse(window.localStorage.getItem('reader_registration_process'))
+            id = id === null ? await startProcess('Reader_registration') : id
+            window.localStorage.setItem('reader_registration_process', JSON.stringify(id))
 
             return id
         }
@@ -38,7 +38,7 @@ const Register = () => {
 
     if (!formFields) {
         return (
-            <Spinner animation="border" role="status">
+            <Spinner className='d-flex flex-column align-items-center' animation="border" role="status">
                 <span className="sr-only">Loading...</span>
             </Spinner>
         )
@@ -52,4 +52,4 @@ const Register = () => {
     )
 }
 
-export default Register;
+export default ReaderRegistration

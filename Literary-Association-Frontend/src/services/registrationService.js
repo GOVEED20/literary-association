@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 
 const BASE_URL = process.env.REACT_APP_BASE_URL
 
@@ -9,7 +9,7 @@ export const getRegistrationFields = async (processId) => {
 
 export const sendRegistrationData = async (processID, state) => {
     Object.keys(state).forEach((key) => {
-        if (key === "genres" || key === "beta_genres") {
+        if (key === 'genres' || key === 'beta_genres') {
             state[key] = JSON.stringify(state[key].map(v => {
                 return {
                     genre: v

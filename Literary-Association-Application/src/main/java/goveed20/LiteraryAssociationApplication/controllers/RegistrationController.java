@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/register")
 public class RegistrationController {
@@ -27,8 +30,8 @@ public class RegistrationController {
     }
 
     @GetMapping("/verification/{pID}")
-    public ResponseEntity<?> verify(@RequestParam("token") String disHash, @PathVariable String pID) throws Exception {
+    public void verify(@RequestParam("token") String disHash, @PathVariable String pID, HttpServletResponse response) throws IOException {
         registrationService.verify(disHash, pID);
-        return new ResponseEntity<>("Your account is successfully verified", HttpStatus.OK);
+        response.sendRedirect("http://localhost:3000/login");
     }
 }

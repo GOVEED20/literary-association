@@ -20,7 +20,7 @@ public class Writer extends BaseUser {
     @Column(nullable = false)
     private Boolean membershipApproved;
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private MembershipApplication membershipApplication;
 
     @OneToMany(cascade = CascadeType.ALL)
