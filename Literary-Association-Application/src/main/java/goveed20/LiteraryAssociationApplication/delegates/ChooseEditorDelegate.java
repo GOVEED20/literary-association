@@ -27,7 +27,7 @@ public class ChooseEditorDelegate implements JavaDelegate {
 
         delegateExecution.setVariable("editor", editor.getUsername());
 
-        String text = String.format("Dear %s %s,%nNew book request is received from %s", editor.getName(),
+        String text = String.format("Dear %s %s,\nNew book request is received from %s", editor.getName(),
                 editor.getSurname(), delegateExecution.getVariable("writer"));
         emailService.sendEmail(editor.getEmail(), "New book request", text);
     }

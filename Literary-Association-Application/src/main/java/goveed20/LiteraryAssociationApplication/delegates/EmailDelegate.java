@@ -32,7 +32,7 @@ public class EmailDelegate implements JavaDelegate {
         BaseUser user = userRole.equalsIgnoreCase("reader") ? readerRepository.findByEmail(email)
                 : writerRepository.findByEmail(email);
 
-        String text = String.format("Dear %s %s,%nTo confirm your account please click here: %n" +
+        String text = String.format("Dear %s %s,\nTo confirm your account please click here: \n" +
                 "http://localhost:9090/api/register/verification/" + delegateExecution
                 .getProcessInstanceId() + "?token=" + verificationTokenRepository.findByUser(user)
                 .getDisposableHash(), user.getName(), user.getSurname());
