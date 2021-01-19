@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Form as BootstrapForm } from 'react-bootstrap'
+import { Button, Col, Form as BootstrapForm, Row } from 'react-bootstrap'
 import FormField from './FormField'
 
 const Form = ({ form, onSubmit }) => {
@@ -26,10 +26,7 @@ const Form = ({ form, onSubmit }) => {
     }
 
     const isVisible = (formField) => {
-        if (formField.properties.dependsOn === null) {
-            return true
-        }
-        return state[formField.properties.dependsOn]
+        return formField.properties.dependsOn === undefined ? true : state[formField.properties.dependsOn]
     }
 
     const submit = (event) => {
@@ -38,15 +35,21 @@ const Form = ({ form, onSubmit }) => {
     }
 
     return (
-        <BootstrapForm onSubmit={submit}>
-            {form.formFields.map((formField) =>
-                isVisible(formField) &&
-                < FormField key={formField.id} formField={formField} onChange={changeState}
-                    value={state[formField.id]}/>
-            )
-            }
-            <Button variant="primary" type="submit">Submit</Button>
-        </BootstrapForm>
+        <div>
+            <BootstrapForm onSubmit={submit}>
+                {
+                    form.formFields.map((formField) =>
+                        isVisible(formField) &&
+                        <FormField key={formField.id} formField={formField} onChange={changeState} value={state[formField.id]}/>
+                    )
+                }
+                <BootstrapForm.Group as={Row}>
+                    <Col sm={{ span: 4, offset: 2 }}>
+                        <Button size="lg" variant="primary" type="submit">Submit</Button>
+                    </Col>
+                </BootstrapForm.Group>
+            </BootstrapForm>
+        </div>
     )
 }
 

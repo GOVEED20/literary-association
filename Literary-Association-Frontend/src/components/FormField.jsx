@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form } from 'react-bootstrap'
+import { Col, Form, Row } from 'react-bootstrap'
 
 const FormField = ({ formField, onChange, value }) => {
     switch (formField.properties.type) {
@@ -10,9 +10,9 @@ const FormField = ({ formField, onChange, value }) => {
         }
 
         return (
-            <Form.Row>
-                <Form.Group controlId={formField.id}>
-                    <Form.Label>{formField.label}</Form.Label>
+            <Form.Group as={Row} controlId={formField.id}>
+                <Form.Label sm={1} column>{formField.label}</Form.Label>
+                <Col sm={3}>
                     <Form.Control as="select" {...nativeProps} onChange={onChange} value={value}>
                         {
                             JSON.parse(formField.properties.options)
@@ -21,18 +21,18 @@ const FormField = ({ formField, onChange, value }) => {
                                 )
                         }
                     </Form.Control>
-                </Form.Group>
-            </Form.Row>
+                </Col>
+            </Form.Group>
         )
     }
     default: {
         return (
-            <Form.Row>
-                <Form.Group controlId={formField.id}>
-                    <Form.Label>{formField.label}</Form.Label>
+            <Form.Group as={Row} controlId={formField.id}>
+                <Form.Label sm={1} column>{formField.label}</Form.Label>
+                <Col sm={3}>
                     <Form.Control {...formField.properties} onChange={onChange} value={value}/>
-                </Form.Group>
-            </Form.Row>
+                </Col>
+            </Form.Group>
         )
     }
     }

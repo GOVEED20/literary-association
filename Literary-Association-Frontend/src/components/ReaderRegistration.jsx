@@ -18,9 +18,9 @@ const ReaderRegistration = () => {
         }
 
         const getProcessId = async () => {
-            let id = JSON.parse(window.localStorage.getItem('processID'))
+            let id = JSON.parse(window.localStorage.getItem('reader_registration_process'))
             id = id === null ? await startProcess('Reader_registration') : id
-            window.localStorage.setItem('processID', JSON.stringify(id))
+            window.localStorage.setItem('reader_registration_process', JSON.stringify(id))
 
             return id
         }
@@ -32,17 +32,13 @@ const ReaderRegistration = () => {
         getProcessIdAndFormFields().then()
     }, [processId])
 
-    useEffect(() => {
-        window.localStorage.clear()
-    }, [])
-
     const onSubmit = async (state) => {
         await sendRegistrationData(processId, state)
     }
 
     if (!formFields) {
         return (
-            <Spinner animation="border" role="status">
+            <Spinner className='d-flex flex-column align-items-center' animation="border" role="status">
                 <span className="sr-only">Loading...</span>
             </Spinner>
         )

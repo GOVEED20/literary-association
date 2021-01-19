@@ -18,9 +18,9 @@ const WriterRegistration = () => {
         }
 
         const getProcessId = async () => {
-            let id = JSON.parse(window.localStorage.getItem('processID'))
+            let id = JSON.parse(window.localStorage.getItem('writer_registration_process'))
             id = id === null ? await startProcess('Writer_registration') : id
-            window.localStorage.setItem('processID', JSON.stringify(id))
+            window.localStorage.setItem('writer_registration_process', JSON.stringify(id))
 
             return id
         }
@@ -31,10 +31,6 @@ const WriterRegistration = () => {
 
         getProcessIdAndFormFields().then()
     }, [processId])
-
-    useEffect(() => {
-        window.localStorage.clear()
-    }, [])
 
     const onSubmit = async (state) => {
         await sendRegistrationData(processId, state)

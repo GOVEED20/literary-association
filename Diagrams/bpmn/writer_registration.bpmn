@@ -210,9 +210,9 @@ execution.setVariable("further_review", further_review &gt; 0)</bpmn:script>
     <bpmn:sequenceFlow id="Flow_0ewnskb" sourceRef="Event_0bgvvef" targetRef="Activity_0wlpdko" />
     <bpmn:serviceTask id="Activity_0wlpdko" name="Notify writer" camunda:class="NotificationDelegate">
       <bpmn:incoming>Flow_0ewnskb</bpmn:incoming>
-      <bpmn:incoming>Flow_06rwfaz</bpmn:incoming>
       <bpmn:incoming>Flow_0hjieci</bpmn:incoming>
       <bpmn:incoming>Flow_147nc8h</bpmn:incoming>
+      <bpmn:incoming>Flow_1pl9941</bpmn:incoming>
       <bpmn:outgoing>Flow_0rx8woe</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:endEvent id="Event_1t0obmw" name="Writer is not registered">
@@ -242,12 +242,11 @@ execution.setVariable("i", i);
       <bpmn:outgoing>Flow_1jjk1vb</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:boundaryEvent id="Event_1ta7som" name="New writings not submitted" attachedToRef="Activity_1flwtkz">
-      <bpmn:outgoing>Flow_06rwfaz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1pl9941</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_1nv2xqb">
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${review_duration}</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_06rwfaz" sourceRef="Event_1ta7som" targetRef="Activity_0wlpdko" />
     <bpmn:sequenceFlow id="Flow_1jjk1vb" sourceRef="Activity_1flwtkz" targetRef="Activity_1nd5m05" />
     <bpmn:exclusiveGateway id="Gateway_1alw232">
       <bpmn:incoming>Flow_1281tdc</bpmn:incoming>
@@ -287,12 +286,12 @@ execution.setVariable("i", i);
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0qyrrml" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_0qfe1cs" sourceRef="Invalid_writings_event" targetRef="Activity_1msg0et" />
-    <bpmn:boundaryEvent id="Event_0ugj8j4" name="InvalidDataError">
+    <bpmn:boundaryEvent id="Event_0ugj8j4" name="InvalidDataError" attachedToRef="Reg_form_writer">
       <bpmn:outgoing>Flow_1qk69lh</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1a32usn" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_1qk69lh" sourceRef="Event_0ugj8j4" targetRef="Activity_1flwtkz" />
-    <bpmn:boundaryEvent id="Invalid_writings_event2" name="Invalid writings event">
+    <bpmn:boundaryEvent id="Invalid_writings_event2" name="Invalid writings event" attachedToRef="Activity_1flwtkz">
       <bpmn:outgoing>Flow_0yq4isp</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1rqjwjc" />
     </bpmn:boundaryEvent>
@@ -302,6 +301,7 @@ execution.setVariable("i", i);
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0za4fg0" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_0mtyfuq" sourceRef="Invalid_writings_2" targetRef="Activity_1flwtkz" />
+    <bpmn:sequenceFlow id="Flow_1pl9941" sourceRef="Event_1ta7som" targetRef="Activity_0wlpdko" />
     <bpmn:textAnnotation id="TextAnnotation_0bbqlfm">
       <bpmn:text>Prepare map/list ${board_members}:
 {
@@ -349,10 +349,10 @@ execution.setVariable("i", i);
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0cx4isb_di" bpmnElement="Flow_0cx4isb">
         <di:waypoint x="1910" y="425" />
-        <di:waypoint x="1910" y="660" />
-        <di:waypoint x="1860" y="660" />
+        <di:waypoint x="1910" y="730" />
+        <di:waypoint x="1850" y="730" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1884" y="540" width="83" height="27" />
+          <dc:Bounds x="1884" y="578" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0hjieci_di" bpmnElement="Flow_0hjieci">
@@ -372,15 +372,9 @@ execution.setVariable("i", i);
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jjk1vb_di" bpmnElement="Flow_1jjk1vb">
-        <di:waypoint x="1760" y="670" />
-        <di:waypoint x="1170" y="670" />
+        <di:waypoint x="1750" y="740" />
+        <di:waypoint x="1170" y="740" />
         <di:waypoint x="1170" y="380" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_06rwfaz_di" bpmnElement="Flow_06rwfaz">
-        <di:waypoint x="1830" y="718" />
-        <di:waypoint x="1830" y="739" />
-        <di:waypoint x="2140" y="740" />
-        <di:waypoint x="2140" y="340" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_147nc8h_di" bpmnElement="Flow_147nc8h">
         <di:waypoint x="1788" y="365" />
@@ -445,11 +439,17 @@ execution.setVariable("i", i);
         <di:waypoint x="293" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0mtyfuq_di" bpmnElement="Flow_0mtyfuq">
-        <di:waypoint x="1790" y="602" />
-        <di:waypoint x="1790" y="582" />
-        <di:waypoint x="1740" y="582" />
-        <di:waypoint x="1740" y="630" />
-        <di:waypoint x="1760" y="630" />
+        <di:waypoint x="1812" y="672" />
+        <di:waypoint x="1812" y="652" />
+        <di:waypoint x="1730" y="652" />
+        <di:waypoint x="1730" y="720" />
+        <di:waypoint x="1750" y="720" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pl9941_di" bpmnElement="Flow_1pl9941">
+        <di:waypoint x="1802" y="788" />
+        <di:waypoint x="1802" y="808" />
+        <di:waypoint x="2170" y="808" />
+        <di:waypoint x="2170" y="340" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1fgy1c6_di" bpmnElement="Event_1fgy1c6">
         <dc:Bounds x="162" y="302" width="36" height="36" />
@@ -499,9 +499,6 @@ execution.setVariable("i", i);
           <dc:Bounds x="2146" y="215" width="49" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0oxwzd4_di" bpmnElement="Activity_1flwtkz">
-        <dc:Bounds x="1760" y="620" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1alw232_di" bpmnElement="Gateway_1alw232" isMarkerVisible="true">
         <dc:Bounds x="1885" y="375" width="50" height="50" />
       </bpmndi:BPMNShape>
@@ -517,6 +514,9 @@ execution.setVariable("i", i);
       <bpmndi:BPMNShape id="TextAnnotation_0bbqlfm_di" bpmnElement="TextAnnotation_0bbqlfm">
         <dc:Bounds x="1130" y="85" width="100" height="180" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oxwzd4_di" bpmnElement="Activity_1flwtkz">
+        <dc:Bounds x="1750" y="690" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1fcbex6_di" bpmnElement="Invalid_writings_event">
         <dc:Bounds x="1052" y="362" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -527,12 +527,6 @@ execution.setVariable("i", i);
         <dc:Bounds x="352" y="342" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="339" y="386" width="81" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1gmtgzj_di" bpmnElement="Event_1ta7som">
-        <dc:Bounds x="1812" y="682" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1809" y="725" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0yf182p_di" bpmnElement="Event_0bgvvef">
@@ -546,9 +540,15 @@ execution.setVariable("i", i);
         <di:waypoint x="1164" y="265" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_0e66qlt_di" bpmnElement="Invalid_writings_2">
-        <dc:Bounds x="1772" y="602" width="36" height="36" />
+        <dc:Bounds x="1794" y="672" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1703" y="583" width="73" height="14" />
+          <dc:Bounds x="1725" y="653" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gmtgzj_di" bpmnElement="Event_1ta7som">
+        <dc:Bounds x="1784" y="752" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1781" y="795" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
