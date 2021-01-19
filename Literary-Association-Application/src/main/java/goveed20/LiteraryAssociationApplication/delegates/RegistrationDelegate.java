@@ -5,6 +5,7 @@ import goveed20.LiteraryAssociationApplication.model.*;
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import goveed20.LiteraryAssociationApplication.repositories.*;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
+import org.camunda.bpm.engine.IdentityService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class RegistrationDelegate implements JavaDelegate {
     @Autowired
     private WriterRepository writerRepository;
 
+    @Autowired
+    private IdentityService identityService;
+
     @SuppressWarnings("unchecked")
     @Override
     public void execute(DelegateExecution delegateExecution) {
@@ -44,10 +48,12 @@ public class RegistrationDelegate implements JavaDelegate {
         if (userRole.equals("reader")) {
             Reader reader = createReader(registration);
             user = reader;
+            identityService.saveUser(reader);
             readerRepository.save(reader);
         } else {
             Writer writer = createWriter(registration);
             user = writer;
+            identityService.saveUser(writer);
             writerRepository.save(writer);
             delegateExecution.setVariable("user", writer.getUsername());
         }

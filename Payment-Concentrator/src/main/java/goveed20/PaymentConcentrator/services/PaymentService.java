@@ -12,7 +12,6 @@ import goveed20.PaymentConcentrator.repositories.RetailerDataForPaymentServiceRe
 import goveed20.PaymentConcentrator.repositories.RetailerRepository;
 import goveed20.PaymentConcentrator.repositories.TransactionRepository;
 import lombok.SneakyThrows;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.openfeign.FeignClientBuilder;
@@ -25,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -130,9 +130,9 @@ public class PaymentService {
             throw new StatusCodeException(redirectionUrlResponse.getStatusCode());
         }
 
-        UrlValidator urlValidator = new UrlValidator(new String[]{"http","https"});
+        Pattern p = Pattern.compile("(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
         String redirectionUrl = redirectionUrlResponse.getBody();
-        if (!urlValidator.isValid(redirectionUrl)) {
+        if (redirectionUrl == null || !p.matcher(redirectionUrl).matches()) {
             throw new StatusCodeException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -182,6 +182,7 @@ public class PaymentService {
     @SneakyThrows
     @Async
     public void informClient(String url) {
-        restTemplate.getForEntity(url, Void.class);
+        System.out.println(url);
+        //restTemplate.getForEntity(url, Void.class);
     }
 }
