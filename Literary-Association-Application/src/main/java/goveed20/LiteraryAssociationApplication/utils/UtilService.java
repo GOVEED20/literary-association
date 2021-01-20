@@ -5,6 +5,12 @@ import com.google.gson.reflect.TypeToken;
 import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionFieldDTO;
 import goveed20.LiteraryAssociationApplication.dtos.OptionDTO;
 import goveed20.LiteraryAssociationApplication.model.Genre;
+import org.camunda.bpm.engine.FormService;
+import org.camunda.bpm.engine.TaskService;
+import org.camunda.bpm.engine.form.FormField;
+import org.camunda.bpm.engine.form.TaskFormData;
+import org.camunda.bpm.engine.task.Task;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -24,8 +30,12 @@ public class UtilService {
 
     public static String serializeGenres(Set<Genre> genres) {
         Gson gson = new Gson();
-        return gson.toJson(genres.stream().map(g -> new OptionDTO(g.getGenre().serbianName, g.getGenre()))
-                .collect(Collectors.toList()));
+        return gson.toJson(genres.stream().map(g -> new OptionDTO(g.getGenre().serbianName, g.getGenre())));
+    }
+
+    public static String serializeOptions(Set<String> options) {
+        Gson gson = new Gson();
+        return gson.toJson(options.stream().map(o -> OptionDTO.builder().name(o).value(o).build()));
     }
 
     public static Set<Genre> parseGenres(String genres) {
@@ -36,5 +46,15 @@ public class UtilService {
         Type genreSet = new TypeToken<Set<Genre>>() {
         }.getType();
         return gson.fromJson(genres, genreSet);
+    }
+
+    public static void setOptions(String optionField, Set<String> options, List<FormField> properties) {
+        properties.forEach(p -> {
+            if (p.getId().equals(optionField)) {
+                p.getProperties().put("options", UtilService
+                        .serializeOptions(options));
+            }
+        });
+
     }
 }

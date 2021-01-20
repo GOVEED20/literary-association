@@ -63,7 +63,6 @@ public class RegistrationService {
             }
         });
 
-
         return new FormFieldsDTO(processID, task.getId(), properties);
     }
 

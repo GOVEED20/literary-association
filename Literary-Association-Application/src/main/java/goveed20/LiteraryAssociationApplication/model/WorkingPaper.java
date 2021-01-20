@@ -11,7 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 public class WorkingPaper extends ApplicationPaper {
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     protected String title;
 
     @ManyToOne(fetch = FetchType.EAGER)

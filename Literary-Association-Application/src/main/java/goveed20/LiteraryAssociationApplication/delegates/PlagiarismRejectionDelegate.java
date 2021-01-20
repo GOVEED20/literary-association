@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RejectionNotificationDelegate implements JavaDelegate {
+public class PlagiarismRejectionDelegate implements JavaDelegate {
 
     @Autowired
     private WriterRepository writerRepository;
@@ -21,10 +21,11 @@ public class RejectionNotificationDelegate implements JavaDelegate {
     public void execute(DelegateExecution delegateExecution) {
         Writer writer = writerRepository.findByUsername((String) delegateExecution
                 .getVariable("writer")).get();
-        String text = String.format("Dear %s %s,\nYour working paper is rejected.\nRejection comment:\n%s",
+        String text = String.format("Dear %s %s,\nYour working paper is rejected as a plagiarism." +
+                        "\nRejection comment:\n%s",
                 writer.getName(),
                 writer.getSurname(),
-                delegateExecution.getVariable("rejectionComment"));
+                delegateExecution.getVariable("plagiarism_reject_comment"));
 
         emailService.sendEmail(writer.getEmail(), "Working paper rejection", text);
     }
