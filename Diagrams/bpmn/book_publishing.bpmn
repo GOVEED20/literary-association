@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1c1fx8j" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
-  <bpmn:process id="Process_08esjg0" isExecutable="true">
+  <bpmn:process id="Book_publishing" name="Book publishing" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_0mj3olh</bpmn:outgoing>
     </bpmn:startEvent>
@@ -116,7 +116,7 @@
     <bpmn:userTask id="Activity_1g9nbu1" name="Submit full working paper" camunda:formKey="full_paper_form" camunda:assignee="${writer}">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="full_paper" label="Working paper" type="filetype">
+          <camunda:formField id="full_paper" label="Full paper" type="string">
             <camunda:properties>
               <camunda:property id="type" value="file" />
               <camunda:property id="required" value="required" />
@@ -572,7 +572,7 @@ Set correct_mistakes process variable.</bpmn:text>
     <bpmn:association id="Association_1mp7qk8" sourceRef="Set_writer" targetRef="TextAnnotation_1ouwnb6" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_08esjg0">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Book_publishing">
       <bpmndi:BPMNShape id="TextAnnotation_1ouwnb6_di" bpmnElement="TextAnnotation_1ouwnb6">
         <dc:Bounds x="250" y="81" width="100" height="54" />
       </bpmndi:BPMNShape>

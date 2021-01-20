@@ -130,6 +130,13 @@ public class BookService {
         return "Rejection comment successfully sent";
     }
 
+    public FormFieldsDTO getFormFieldsForSubmittingFullWorkingPaper(String processID) {
+        Task task = taskService.createTaskQuery().processInstanceId(processID).list().get(0);
+        TaskFormData tfd = formService.getTaskFormData(task.getId());
+
+        return new FormFieldsDTO(processID, task.getId(), tfd.getFormFields());
+    }
+
     public String submitFullWorkingPaper(String processID, MultipartFile file) throws IOException {
         Task task = taskService.createTaskQuery().processInstanceId(processID).active().list().get(0);
 

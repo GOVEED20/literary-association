@@ -5,15 +5,13 @@ import com.google.gson.reflect.TypeToken;
 import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionFieldDTO;
 import goveed20.LiteraryAssociationApplication.dtos.OptionDTO;
 import goveed20.LiteraryAssociationApplication.model.Genre;
-import org.camunda.bpm.engine.FormService;
-import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.form.FormField;
-import org.camunda.bpm.engine.form.TaskFormData;
-import org.camunda.bpm.engine.task.Task;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UtilService {
@@ -30,10 +28,11 @@ public class UtilService {
 
     public static String serializeGenres(Set<Genre> genres) {
         Gson gson = new Gson();
-        return gson.toJson(genres.stream().map(g -> new OptionDTO(g.getGenre().serbianName, g.getGenre())));
+        return gson.toJson(genres.stream().map(g -> OptionDTO.builder().name(g.getGenre().serbianName)
+                .value(g.getGenre()).build()));
     }
 
-    public static String serializeOptions(Set<String> options) {
+    private static String serializeOptions(Set<String> options) {
         Gson gson = new Gson();
         return gson.toJson(options.stream().map(o -> OptionDTO.builder().name(o).value(o).build()));
     }
