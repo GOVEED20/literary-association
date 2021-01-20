@@ -16,9 +16,6 @@ import java.util.Base64;
 @Service
 public class SetWriterDelegate implements JavaDelegate {
 
-    @Autowired
-    private BaseUserRepository userRepository;
-
     @Override
     public void execute(DelegateExecution delegateExecution) {
         BaseUser writer = (BaseUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

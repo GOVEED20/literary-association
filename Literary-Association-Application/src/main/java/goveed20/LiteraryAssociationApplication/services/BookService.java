@@ -9,7 +9,9 @@ import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
 import goveed20.LiteraryAssociationApplication.model.enums.GenreEnum;
 import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
+import goveed20.LiteraryAssociationApplication.utils.CustomFormField;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
@@ -21,7 +23,9 @@ import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,7 +53,7 @@ public class BookService {
     private GenreRepository genreRepository;
 
     private PropertiesDTO getProperties(String processID) {
-        Task task = taskService.createTaskQuery().processInstanceId(processID).list().get(0);
+        Task task = taskService.createTaskQuery().processInstanceId(processID).active().list().get(0);
         TaskFormData tfd = formService.getTaskFormData(task.getId());
 
         return PropertiesDTO.builder().properties(tfd.getFormFields()).taskID(task.getId()).build();
@@ -61,7 +65,7 @@ public class BookService {
         TaskFormData tfd = formService.getTaskFormData(task.getId());
         List<FormField> properties = tfd.getFormFields();
         properties.forEach(p -> {
-            if (p.getId().equals("genres")) {
+            if (p.getId().equals("genre")) {
                 p.getProperties().put("options", UtilService
                         .serializeGenres(new HashSet<>(genreRepository.findAll())));
             }
@@ -79,10 +83,10 @@ public class BookService {
             throw new BpmnError("Book with given title already exists");
         }
 
-        runtimeService.setVariable(paper.getProcessID(), "working_paper", map.get("title"));
+        runtimeService.setVariable(paper.getProcessID(), "working_paper", title);
         formService.submitTaskForm(task.getId(), map);
 
-        WorkingPaper workingPaper = WorkingPaper.workingPaperBuilder().title((String) map.get("title"))
+        WorkingPaper workingPaper = WorkingPaper.workingPaperBuilder().title(title)
                 .synopsis((String) map.get("synopsis")).genre(Genre.builder()
                         .genre(GenreEnum.valueOf((String) map.get("genre"))).build()).build();
         workingPaperRepository.save(workingPaper);
@@ -95,6 +99,16 @@ public class BookService {
         Set<String> options = new HashSet<>();
         options.add("Accept");
         options.add("Reject");
+
+        Map<String, String> buttonProperties = new HashMap<>();
+        buttonProperties.put("type", "button");
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        buttonProperties.put("downloadURL", baseUrl + "/book/download/" + runtimeService.getVariable(processID,
+                "working_paper"));
+
+        FormField downloadButton = CustomFormField.builder().id("downloadButton").label("Download paper")
+                .typeName("button").properties(buttonProperties).validationConstraints(new ArrayList<>()).build();
+        properties.getProperties().add(downloadButton);
 
         UtilService.setOptions("accept_option", options, properties.getProperties());
 
@@ -200,6 +214,7 @@ public class BookService {
         options.add("Accept");
         options.add("Reject");
 
+
         UtilService.setOptions("accept_paper_option", options, properties.getProperties());
 
         return new FormFieldsDTO(processID, properties.getTaskID(), properties.getProperties());
@@ -245,5 +260,25 @@ public class BookService {
         boolean sendToBetaReaders = map.get("include_beta_reader_option").equals("Send");
         runtimeService.setVariable(options.getProcessID(), "include_beta_readers", sendToBetaReaders);
         formService.submitTaskForm(task.getId(), map);
+    }
+
+    public String downloadBook(String bookTitle) throws Exception {
+        WorkingPaper paper = workingPaperRepository.findByTitle(bookTitle);
+        if (paper == null) {
+            throw new EntityNotFoundException("Book with given title does not exist");
+        }
+
+        File file = new File(paper.getFile());
+        FileOutputStream outputStream;
+
+        try {
+            outputStream = new FileOutputStream(paper.getTitle() + ".pdf");
+            outputStream.write(FileUtils.readFileToByteArray(file));
+            outputStream.close();
+        } catch (IOException e) {
+            throw new Exception("Book file does not exist");
+        }
+
+        return "Successful download";
     }
 }
