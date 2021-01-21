@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0hgnzr9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="Process_0g9rcob" isExecutable="true">
+    <bpmn:startEvent id="Event_0ixw2ma">
+      <bpmn:outgoing>Flow_19srjin</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Activity_1ngsh3r" name="Input beta reader comment" camunda:formKey="beta_reader_comment_form">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="beta_reader_comment" label="Comment" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="textarea" />
+              <camunda:property id="required" value="required" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19srjin</bpmn:incoming>
+      <bpmn:outgoing>Flow_1er35mq</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_0w1qg0g">
+      <bpmn:incoming>Flow_1er35mq</bpmn:incoming>
+      <bpmn:incoming>Flow_094iijd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_1tqgfyt" name="Beta reader penalty" camunda:class="goveed20.LiteraryAssociationApplication.delegates.BetaReaderPenaltyDelegate">
+      <bpmn:incoming>Flow_0aobxcn</bpmn:incoming>
+      <bpmn:outgoing>Flow_094iijd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1y8fwgi" attachedToRef="Activity_1ngsh3r">
+      <bpmn:outgoing>Flow_0aobxcn</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_135zvad" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_19srjin" sourceRef="Event_0ixw2ma" targetRef="Activity_1ngsh3r" />
+    <bpmn:sequenceFlow id="Flow_1er35mq" sourceRef="Activity_1ngsh3r" targetRef="Event_0w1qg0g" />
+    <bpmn:sequenceFlow id="Flow_094iijd" sourceRef="Activity_1tqgfyt" targetRef="Event_0w1qg0g" />
+    <bpmn:sequenceFlow id="Flow_0aobxcn" sourceRef="Event_1y8fwgi" targetRef="Activity_1tqgfyt" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0g9rcob">
+      <bpmndi:BPMNEdge id="Flow_19srjin_di" bpmnElement="Flow_19srjin">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="240" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1er35mq_di" bpmnElement="Flow_1er35mq">
+        <di:waypoint x="340" y="120" />
+        <di:waypoint x="502" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_094iijd_di" bpmnElement="Flow_094iijd">
+        <di:waypoint x="460" y="240" />
+        <di:waypoint x="520" y="240" />
+        <di:waypoint x="520" y="138" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aobxcn_di" bpmnElement="Flow_0aobxcn">
+        <di:waypoint x="320" y="178" />
+        <di:waypoint x="320" y="240" />
+        <di:waypoint x="360" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0ixw2ma_di" bpmnElement="Event_0ixw2ma">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ngsh3r_di" bpmnElement="Activity_1ngsh3r">
+        <dc:Bounds x="240" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0w1qg0g_di" bpmnElement="Event_0w1qg0g">
+        <dc:Bounds x="502" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tqgfyt_di" bpmnElement="Activity_1tqgfyt">
+        <dc:Bounds x="360" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1y8fwgi_di" bpmnElement="Event_1y8fwgi">
+        <dc:Bounds x="302" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

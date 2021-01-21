@@ -1,12 +1,12 @@
 package goveed20.LiteraryAssociationApplication.services;
 
-import goveed20.LiteraryAssociationApplication.dtos.FormFieldsDTO;
-import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionDTO;
-import goveed20.LiteraryAssociationApplication.dtos.PropertiesDTO;
+import goveed20.LiteraryAssociationApplication.dtos.*;
 import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessException;
-import goveed20.LiteraryAssociationApplication.model.Genre;
-import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
+import goveed20.LiteraryAssociationApplication.model.*;
+import goveed20.LiteraryAssociationApplication.model.enums.CommentType;
 import goveed20.LiteraryAssociationApplication.model.enums.GenreEnum;
+import goveed20.LiteraryAssociationApplication.repositories.BetaReaderStatusRepository;
+import goveed20.LiteraryAssociationApplication.repositories.CommentRepository;
 import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
 import goveed20.LiteraryAssociationApplication.utils.CustomFormField;
@@ -21,6 +21,7 @@ import org.camunda.bpm.engine.form.FormField;
 import org.camunda.bpm.engine.form.TaskFormData;
 import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -35,7 +36,7 @@ import java.util.*;
 @Service
 public class BookService {
 
-    private static String booksFolder = "Literary-Association-Application/src/main/resources/workingPapers/";
+    private static final String booksFolder = "Literary-Association-Application/src/main/resources/workingPapers/";
 
     @Autowired
     private RuntimeService runtimeService;
@@ -51,6 +52,12 @@ public class BookService {
 
     @Autowired
     private GenreRepository genreRepository;
+
+    @Autowired
+    private BetaReaderStatusRepository betaReaderStatusRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     private PropertiesDTO getProperties(String processID) {
         Task task = taskService.createTaskQuery().processInstanceId(processID).active().list().get(0);
@@ -126,7 +133,7 @@ public class BookService {
         return "Working paper successfully " + (accepted ? "accepted" : "rejected");
     }
 
-    /* For rejection comment, plagiarism comment, full paper rejection comment */
+    /* For rejection comment, plagiarism comment, full paper rejection comment, beta reader comment */
     public FormFieldsDTO getFormFieldsForComments(String processID) {
         Task task = taskService.createTaskQuery().processInstanceId(processID).list().get(0);
         TaskFormData tfd = formService.getTaskFormData(task.getId());
@@ -260,6 +267,65 @@ public class BookService {
         boolean sendToBetaReaders = map.get("include_beta_reader_option").equals("Send");
         runtimeService.setVariable(options.getProcessID(), "include_beta_readers", sendToBetaReaders);
         formService.submitTaskForm(task.getId(), map);
+    }
+
+    public FormFieldsDTO getFormFieldsForBetaReaders(String processID) {
+        PropertiesDTO properties = getProperties(processID);
+
+        // TODO: Get beta readers by boolean value
+        properties.getProperties().forEach(p -> {
+            if (p.getId().equals("beta_readers")) {
+                p.getProperties().put("options", UtilService
+                        .serializeBetaReaders(new HashSet<>(betaReaderStatusRepository.findAll())));
+            }
+        });
+
+        return new FormFieldsDTO(processID, properties.getTaskID(), properties.getProperties());
+    }
+
+    public String chooseBetaReaders(FormSubmissionDTO betaReadersSubmission) {
+        Map<String, Object> map = UtilService.mapListToDto(betaReadersSubmission.getFormFields());
+        Task task = taskService.createTaskQuery().processInstanceId(betaReadersSubmission.getProcessID()).active().list().get(0);
+        Set<String> betaReaders = UtilService.parseBetaReaders((String) map.get("beta_readers"));
+        if (betaReaders.size() == 0) {
+            return "There are no selected beta readers";
+        }
+
+        runtimeService.setVariable(betaReadersSubmission.getProcessID(), "beta_readers", new ArrayList<>(betaReaders));
+//        Map<String, String> betaReadersComments = new HashMap<>();
+//        betaReaders.forEach(betaReader -> betaReadersComments.put(betaReader, ""));
+//        runtimeService.setVariable(betaReadersSubmission.getProcessID(), "beta_readers_comments", betaReadersComments);
+        formService.submitTaskForm(task.getId(), map);
+        return "Beta readers chosen successfully";
+    }
+
+    public String submitBetaReaderComment(FormSubmissionDTO betaReaderComment) {
+        Map<String, Object> map = UtilService.mapListToDto(betaReaderComment.getFormFields());
+        Task task = taskService.createTaskQuery().processInstanceId(betaReaderComment.getProcessID()).active().list().get(0);
+        // TODO: Try with updating parent process variable, not using database
+
+        BaseUser writer = (BaseUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (writer == null) {
+            return "There is no logged-in user";
+        }
+
+        String workingPaperTitle = (String) runtimeService.getVariable(betaReaderComment.getProcessID(), "working_paper");
+        WorkingPaper workingPaper = workingPaperRepository.findByTitle(workingPaperTitle);
+        if (workingPaper == null) {
+            return "Working paper that was commented is not found";
+        }
+        Set<ApplicationPaper> paperSet = new HashSet<>();
+        paperSet.add(workingPaper);
+        Comment comment = Comment.builder()
+                .applicationPapers(paperSet)
+                .content((String) map.get("beta_reader_comment"))
+                .type(CommentType.BETA_READER_COMMENT)
+                .user(writer)
+                .build();
+        commentRepository.save(comment);
+        formService.submitTaskForm(task.getId(), map);
+
+        return "Comment successfully sent";
     }
 
     public String downloadBook(String bookTitle) throws Exception {

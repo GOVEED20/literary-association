@@ -4,6 +4,7 @@ import goveed20.LiteraryAssociationApplication.model.enums.CommentType;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -28,5 +29,5 @@ public class Comment {
     private BaseUser user;
 
     @OneToMany
-    private Set<ApplicationPaper> applicationPapers;
+    private Set<ApplicationPaper> applicationPapers = new HashSet<>();
 }
