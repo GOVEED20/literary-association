@@ -151,6 +151,7 @@ public class BookService {
         return "Rejection comment successfully sent";
     }
 
+    // this can be used also for submitting paper after beta readers comments
     public FormFieldsDTO getFormFieldsForSubmittingFullWorkingPaper(String processID) {
         Task task = taskService.createTaskQuery().processInstanceId(processID).list().get(0);
         TaskFormData tfd = formService.getTaskFormData(task.getId());
@@ -326,6 +327,53 @@ public class BookService {
         formService.submitTaskForm(task.getId(), map);
 
         return "Comment successfully sent";
+    }
+
+    public String submitChangedFullWorkingPaper(String processID, MultipartFile file) throws IOException {
+        // TODO: Implement one method for submitting full paper
+        Task task = taskService.createTaskQuery().processInstanceId(processID).active().list().get(0);
+
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        if (extension == null || !extension.equals("pdf")) {
+            throw new BusinessProcessException("Invalid file type. It should be a PDF file");
+        }
+
+        String workingPaperTitle = (String) runtimeService.getVariable(processID, "working_paper");
+        WorkingPaper paper = workingPaperRepository.findByTitle(workingPaperTitle);
+        File filePaper = new File(booksFolder + workingPaperTitle + ".pdf");
+        try (OutputStream os = new FileOutputStream(filePaper)) {
+            os.write(file.getBytes());
+        }
+        paper.setFile(filePaper.getPath());
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("changed_paper", file.getName());
+        formService.submitTaskForm(task.getId(), map);
+        workingPaperRepository.save(paper);
+
+        return "Full working paper successfully changed";
+    }
+
+    public FormFieldsDTO getFormFieldsForRequestingChangesOnChangedFullWorkingPaper(String processID) {
+        PropertiesDTO properties = getProperties(processID);
+        Set<String> options = new HashSet<>();
+        options.add("Request changes");
+        options.add("Everything is fine");
+
+        UtilService.setOptions("editor_request_changes", options, properties.getProperties());
+
+        return new FormFieldsDTO(processID, properties.getTaskID(), properties.getProperties());
+    }
+
+    public String requestChangesOnChangedFullWorkingPaper(FormSubmissionDTO options) {
+        Map<String, Object> map = UtilService.mapListToDto(options.getFormFields());
+        Task task = taskService.createTaskQuery().processInstanceId(options.getProcessID()).active().list().get(0);
+
+        boolean requested = map.get("editor_request_changes").equals("Request changes");
+        runtimeService.setVariable(options.getProcessID(), "editor_requested_changes", requested);
+        formService.submitTaskForm(task.getId(), map);
+
+        return "Changes " + (requested ? "requested" : "not requested" + " for given paper");
     }
 
     public String downloadBook(String bookTitle) throws Exception {
