@@ -1,6 +1,7 @@
 package goveed20.LiteraryAssociationApplication.delegates;
 
 import goveed20.LiteraryAssociationApplication.model.Reader;
+import goveed20.LiteraryAssociationApplication.repositories.BetaReaderStatusRepository;
 import goveed20.LiteraryAssociationApplication.repositories.ReaderRepository;
 import goveed20.LiteraryAssociationApplication.services.EmailService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -14,6 +15,9 @@ public class BetaReaderPenaltyDelegate implements JavaDelegate {
 
     @Autowired
     private ReaderRepository readerRepository;
+
+    @Autowired
+    private BetaReaderStatusRepository betaReaderStatusRepository;
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
@@ -29,13 +33,12 @@ public class BetaReaderPenaltyDelegate implements JavaDelegate {
                         reader.getSurname());
                 emailService.sendEmail(reader.getEmail(), "Beta reader status lost", text);
                 reader.setBetaReader(false);
-                // TODO: What to do with BetaReaderStatus object (physically delete, assign status, ...)
-                readerRepository.save(reader);
+                betaReaderStatusRepository.delete(reader.getBetaReaderStatus());
             }
             else {
                 reader.getBetaReaderStatus().setPenaltyPoints(penaltyPoints);
-                readerRepository.save(reader);
             }
+            readerRepository.save(reader);
         }
     }
 }

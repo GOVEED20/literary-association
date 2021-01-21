@@ -7,12 +7,10 @@ import goveed20.LiteraryAssociationApplication.dtos.OptionDTO;
 import goveed20.LiteraryAssociationApplication.model.BetaReaderStatus;
 import goveed20.LiteraryAssociationApplication.model.Genre;
 import org.camunda.bpm.engine.form.FormField;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class UtilService {
@@ -69,6 +67,15 @@ public class UtilService {
                         .serializeOptions(options));
             }
         });
+    }
 
+    public static FormField getDownloadFormField(String processID, String workingPaperTitle) {
+        Map<String, String> buttonProperties = new HashMap<>();
+        buttonProperties.put("type", "button");
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        buttonProperties.put("downloadURL", baseUrl + "/book/download/" + workingPaperTitle);
+
+        return CustomFormField.builder().id("downloadButton").label("Download paper")
+                .typeName("button").properties(buttonProperties).validationConstraints(new ArrayList<>()).build();
     }
 }
