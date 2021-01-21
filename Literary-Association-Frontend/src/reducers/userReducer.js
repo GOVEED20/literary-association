@@ -2,9 +2,9 @@ import loginService from '../services/loginService'
 import jwt_decode from 'jwt-decode'
 
 const local_login = (token, role, subject) => {
-    window.localStorage.setItem('token', token)
-    window.localStorage.setItem('role', role)
-    window.localStorage.setItem('subject', subject)
+    window.localStorage.setItem('token', JSON.stringify(token))
+    window.localStorage.setItem('role', JSON.stringify(role))
+    window.localStorage.setItem('subject', JSON.stringify(subject))
 }
 
 const local_logout = () => {
@@ -15,9 +15,9 @@ const local_logout = () => {
 
 export const restore_login = () => {
     return async dispatch => {
-        const token = window.localStorage.getItem('token')
-        const role = window.localStorage.getItem('role')
-        const subject = window.localStorage.getItem('subject')
+        const token = JSON.parse(window.localStorage.getItem('token'))
+        const role = JSON.parse(window.localStorage.getItem('role'))
+        const subject = JSON.parse(window.localStorage.getItem('subject'))
 
         dispatch({
             type: 'LOGIN',
@@ -31,7 +31,7 @@ export const restore_login = () => {
 export const login = (username, password) => {
     return async dispatch => {
         const token = await loginService.login(username, password)
-        const role = jwt_decode(token).role
+        const role = jwt_decode(token).role[0]
         const subject = jwt_decode(token).sub
 
         local_login(token, role, subject)

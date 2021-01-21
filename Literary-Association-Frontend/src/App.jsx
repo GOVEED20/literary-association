@@ -3,7 +3,7 @@ import ReaderRegistration from './components/ReaderRegistration'
 import WriterRegistration from './components/WriterRegistration'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import Login from './components/Login'
-import TaskList from './components/TaskList'
+import Dashboard from './components/Dashboard'
 
 const App = () => {
     return (
@@ -18,8 +18,8 @@ const App = () => {
                 <Route path='/writer-registration'>
                     <WriterRegistration/>
                 </Route>
-                <Route path='/dashboard/tasks'>
-                    <TaskList/>
+                <Route path='/dashboard'>
+                    <Dashboard/>
                 </Route>
                 <Route exact path='/'>
                     <Redirect to='/login'/>

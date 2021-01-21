@@ -4,10 +4,8 @@ import { ListGroup } from 'react-bootstrap'
 import TaskListItem from './TaskListItem'
 import { getActiveTasks } from '../reducers/userTaskReducer'
 
-const TaskList = () => {
+const TaskList = ({username}) => {
     const dispatch = useDispatch()
-
-    const username = useSelector(state => state.user.subject)
 
     useEffect(() => {
         dispatch(getActiveTasks(username))

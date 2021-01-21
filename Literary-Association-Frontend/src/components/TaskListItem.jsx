@@ -1,7 +1,16 @@
 import React from 'react'
+import { Button, Col, Row } from 'react-bootstrap'
 
 const TaskListItem = ({ name, dueDate }) => (
-    <span>{name} <b>{dueDate === null ? 'no due date' : `due to ${dueDate}`}</b></span>
+    <Row>
+        <Col>{name}</Col>
+        <Col>
+            <b>{dueDate === null ? 'no due date' : `due to ${dueDate}`}</b>
+        </Col>
+        <Col>
+            <Button>Details</Button>
+        </Col>
+    </Row>
 )
 
 export default TaskListItem
