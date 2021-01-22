@@ -108,11 +108,19 @@
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="writing1" label="First writing" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="file" />
+              <camunda:property id="required" value="required" />
+            </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
             </camunda:validation>
           </camunda:formField>
           <camunda:formField id="writing2" label="Second writing" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="file" />
+              <camunda:property id="required" value="required" />
+            </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
             </camunda:validation>
@@ -123,6 +131,7 @@
         </camunda:executionListener>
         <camunda:properties>
           <camunda:property name="blocking" value="true" />
+          <camunda:property name="submitUrl" value="/writer/writings" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1yx68fj</bpmn:incoming>
@@ -133,6 +142,10 @@
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="status" label="Decision" type="enum">
+            <camunda:properties>
+              <camunda:property id="type" value="select" />
+              <camunda:property id="required" value="required" />
+            </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" />
             </camunda:validation>
@@ -140,19 +153,16 @@
             <camunda:value id="UNSUITABLE" name="Unsuitable" />
             <camunda:value id="REQUIRES_FURTHER_REVIEW" name="Requires further review" />
           </camunda:formField>
-          <camunda:formField id="comments" label="Comments" type="string" />
+          <camunda:formField id="comments" label="Comments" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="text" />
+            </camunda:properties>
+          </camunda:formField>
         </camunda:formData>
-        <camunda:executionListener event="end">
-          <camunda:script scriptFormat="javascript">var results = execution.getVariable("board_members");
-var status = execution.getVariable("status");
-var comment = execution.getVariable("comment");
-var currentBoardMember = execution.getVariable("current_board_member");
-results[currentBoardMember] = {
-	status: status,
-	comment: comment
-};
-execution.setVariable("board_members", results);</camunda:script>
-        </camunda:executionListener>
+        <camunda:properties>
+          <camunda:property name="blocking" value="true" />
+          <camunda:property name="submitUrl" value="/writer/writings/review" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1cpt5bg</bpmn:incoming>
       <bpmn:outgoing>Flow_1lwznmo</bpmn:outgoing>
@@ -162,8 +172,8 @@ execution.setVariable("board_members", results);</camunda:script>
     <bpmn:scriptTask id="evaluate_reviews_script_task" name="Evaluate reviews" scriptFormat="javascript">
       <bpmn:incoming>Flow_1lwznmo</bpmn:incoming>
       <bpmn:outgoing>Flow_1iney65</bpmn:outgoing>
-      <bpmn:script>var results = execution.getVariable("board_members");
-var total = results.length;
+      <bpmn:script>var board_members = execution.getVariable("board_members");
+var total = board_members.length;
 var suitable, further_review = 0;
 for(var result of results) {
 	if(result['status'] === "SUITABLE") {
@@ -175,32 +185,17 @@ for(var result of results) {
 execution.setVariable("suitable", suitable &gt;= total/2);
 execution.setVariable("further_review", further_review &gt; 0)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="Activity_1nd5m05" name="Prepare review data" camunda:class="ReviewDelegate">
+    <bpmn:serviceTask id="Activity_1nd5m05" name="Prepare review data" camunda:class="goveed20.LiteraryAssociationApplication.delegates.ReviewDelegate">
       <bpmn:incoming>Flow_1jjk1vb</bpmn:incoming>
       <bpmn:incoming>Flow_13uw9l5</bpmn:incoming>
       <bpmn:outgoing>Flow_1cpt5bg</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1cpt5bg" sourceRef="Activity_1nd5m05" targetRef="Activity_135oed2" />
-    <bpmn:sequenceFlow id="Flow_0bt3qlv" name="Writer is suitable" sourceRef="Gateway_0h1nu6p" targetRef="Activity_0tp2u2y">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${suitable == true}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:exclusiveGateway id="Gateway_0h1nu6p">
-      <bpmn:incoming>Flow_1bejw6x</bpmn:incoming>
-      <bpmn:outgoing>Flow_0bt3qlv</bpmn:outgoing>
-      <bpmn:outgoing>Flow_147nc8h</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1281tdc</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1iney65" sourceRef="evaluate_reviews_script_task" targetRef="Activity_0n8zl7e" />
-    <bpmn:serviceTask id="Activity_0n8zl7e" name="Notify writer" camunda:class="NotificationDelegate">
-      <bpmn:incoming>Flow_1iney65</bpmn:incoming>
-      <bpmn:outgoing>Flow_1bejw6x</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1bejw6x" sourceRef="Activity_0n8zl7e" targetRef="Gateway_0h1nu6p" />
     <bpmn:userTask id="Activity_0tp2u2y" name="Pay membership" camunda:assignee="${writer}">
       <bpmn:extensionElements>
         <camunda:executionListener class="MembershipDelegate" event="start" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0bt3qlv</bpmn:incoming>
+      <bpmn:incoming>Flow_1o6xo41</bpmn:incoming>
       <bpmn:outgoing>Flow_141qozr</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:boundaryEvent id="Event_0bgvvef" name="Membership not paid in time" attachedToRef="Activity_0tp2u2y">
@@ -209,25 +204,19 @@ execution.setVariable("further_review", further_review &gt; 0)</bpmn:script>
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P14D</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_0ewnskb" sourceRef="Event_0bgvvef" targetRef="Activity_0wlpdko" />
     <bpmn:serviceTask id="Activity_0wlpdko" name="Notify writer" camunda:class="NotificationDelegate">
-      <bpmn:incoming>Flow_0ewnskb</bpmn:incoming>
-      <bpmn:incoming>Flow_0hjieci</bpmn:incoming>
-      <bpmn:incoming>Flow_147nc8h</bpmn:incoming>
       <bpmn:incoming>Flow_1pl9941</bpmn:incoming>
+      <bpmn:incoming>Flow_0ewnskb</bpmn:incoming>
       <bpmn:outgoing>Flow_0rx8woe</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:endEvent id="Event_1t0obmw" name="Writer is not registered">
       <bpmn:incoming>Flow_0rx8woe</bpmn:incoming>
+      <bpmn:incoming>Flow_147nc8h</bpmn:incoming>
+      <bpmn:incoming>Flow_1281tdc</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0rx8woe" sourceRef="Activity_0wlpdko" targetRef="Event_1t0obmw" />
     <bpmn:endEvent id="Event_08b1qfp" name="Writer is registered">
       <bpmn:incoming>Flow_141qozr</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_141qozr" sourceRef="Activity_0tp2u2y" targetRef="Event_08b1qfp" />
-    <bpmn:sequenceFlow id="Flow_147nc8h" name="Writer is unsuitable" sourceRef="Gateway_0h1nu6p" targetRef="Activity_0wlpdko">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${suitable == false &amp;&amp; further_review == false}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
     <bpmn:userTask id="Activity_1flwtkz" name="Submit more writings" camunda:assignee="${writer}">
       <bpmn:extensionElements>
         <camunda:executionListener event="start">
@@ -236,11 +225,14 @@ i++;
 execution.setVariable("i", i);
 }</camunda:script>
         </camunda:executionListener>
+        <camunda:properties>
+          <camunda:property name="blocking" value="true" />
+        </camunda:properties>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0cx4isb</bpmn:incoming>
       <bpmn:incoming>Flow_1qk69lh</bpmn:incoming>
       <bpmn:incoming>Flow_0yq4isp</bpmn:incoming>
       <bpmn:incoming>Flow_0mtyfuq</bpmn:incoming>
+      <bpmn:incoming>Flow_0cx4isb</bpmn:incoming>
       <bpmn:outgoing>Flow_1jjk1vb</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:boundaryEvent id="Event_1ta7som" name="New writings not submitted" attachedToRef="Activity_1flwtkz">
@@ -250,20 +242,6 @@ execution.setVariable("i", i);
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_1jjk1vb" sourceRef="Activity_1flwtkz" targetRef="Activity_1nd5m05" />
-    <bpmn:exclusiveGateway id="Gateway_1alw232">
-      <bpmn:incoming>Flow_1281tdc</bpmn:incoming>
-      <bpmn:outgoing>Flow_0hjieci</bpmn:outgoing>
-      <bpmn:outgoing>Flow_0cx4isb</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1281tdc" name="Needs further review" sourceRef="Gateway_0h1nu6p" targetRef="Gateway_1alw232">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${further_review == true}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0hjieci" name="Reviewed more than 3 times" sourceRef="Gateway_1alw232" targetRef="Activity_0wlpdko">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${i &gt;= 3}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0cx4isb" name="Can be reviewed again" sourceRef="Gateway_1alw232" targetRef="Activity_1flwtkz">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${i &lt; 3}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
     <bpmn:intermediateCatchEvent id="Confirmation_link_event" name="Confirmation link event">
       <bpmn:incoming>Flow_1d8s9zr</bpmn:incoming>
       <bpmn:outgoing>Flow_1yx68fj</bpmn:outgoing>
@@ -303,7 +281,6 @@ execution.setVariable("i", i);
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0za4fg0" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_0mtyfuq" sourceRef="Invalid_writings_2" targetRef="Activity_1flwtkz" />
-    <bpmn:sequenceFlow id="Flow_1pl9941" sourceRef="Event_1ta7som" targetRef="Activity_0wlpdko" />
     <bpmn:sequenceFlow id="Flow_1rpe5z7" sourceRef="Activity_0xdez2j" targetRef="Set_user_role" />
     <bpmn:sequenceFlow id="Flow_1001c7p" sourceRef="Reg_form_writer" targetRef="Activity_0xdez2j" />
     <bpmn:scriptTask id="Activity_0xdez2j" name="Set bpmn file" scriptFormat="javascript">
@@ -311,6 +288,40 @@ execution.setVariable("i", i);
       <bpmn:outgoing>Flow_1rpe5z7</bpmn:outgoing>
       <bpmn:script>execution.setVariable("bpmnFile", "writer_registration");</bpmn:script>
     </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1pl9941" sourceRef="Event_1ta7som" targetRef="Activity_0wlpdko" />
+    <bpmn:sequenceFlow id="Flow_0rx8woe" sourceRef="Activity_0wlpdko" targetRef="Event_1t0obmw" />
+    <bpmn:sequenceFlow id="Flow_141qozr" sourceRef="Activity_0tp2u2y" targetRef="Event_08b1qfp" />
+    <bpmn:sequenceFlow id="Flow_0ewnskb" sourceRef="Event_0bgvvef" targetRef="Activity_0wlpdko" />
+    <bpmn:sequenceFlow id="Flow_1iney65" sourceRef="evaluate_reviews_script_task" targetRef="Activity_0n8zl7e" />
+    <bpmn:exclusiveGateway id="Gateway_0h1nu6p">
+      <bpmn:incoming>Flow_1bejw6x</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bt3qlv</bpmn:outgoing>
+      <bpmn:outgoing>Flow_147nc8h</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1281tdc</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0cx4isb</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0bt3qlv" name="Writer is suitable" sourceRef="Gateway_0h1nu6p" targetRef="Activity_0enuqnf">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${suitable == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_147nc8h" name="Writer is unsuitable" sourceRef="Gateway_0h1nu6p" targetRef="Event_1t0obmw">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${suitable == false &amp;&amp; further_review == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_0n8zl7e" name="Notify writer" camunda:class="NotificationDelegate">
+      <bpmn:incoming>Flow_1iney65</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bejw6x</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1bejw6x" sourceRef="Activity_0n8zl7e" targetRef="Gateway_0h1nu6p" />
+    <bpmn:sequenceFlow id="Flow_1o6xo41" sourceRef="Activity_0enuqnf" targetRef="Activity_0tp2u2y" />
+    <bpmn:serviceTask id="Activity_0enuqnf" name="Prepare membership transaction">
+      <bpmn:incoming>Flow_0bt3qlv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1o6xo41</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0cx4isb" name="Can be reviewed again" sourceRef="Gateway_0h1nu6p" targetRef="Activity_1flwtkz">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${further_review == true &amp;&amp; i &lt; 3}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1281tdc" name="Needs further review but review more than 3 times" sourceRef="Gateway_0h1nu6p" targetRef="Event_1t0obmw">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${further_review == true &amp;&amp; i &gt; 3}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:textAnnotation id="TextAnnotation_0bbqlfm">
       <bpmn:text>Prepare map/list ${board_members}:
 {
@@ -326,21 +337,19 @@ execution.setVariable("i", i);
   <bpmn:signal id="Signal_0rwpehp" name="Confirmation_link_signal" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Writer_registration">
-      <bpmndi:BPMNShape id="TextAnnotation_0bbqlfm_di" bpmnElement="TextAnnotation_0bbqlfm">
-        <dc:Bounds x="1290" y="85" width="100" height="180" />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1001c7p_di" bpmnElement="Flow_1001c7p">
+        <di:waypoint x="380" y="320" />
+        <di:waypoint x="430" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rpe5z7_di" bpmnElement="Flow_1rpe5z7">
+        <di:waypoint x="530" y="320" />
+        <di:waypoint x="620" y="320" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1pl9941_di" bpmnElement="Flow_1pl9941">
-        <di:waypoint x="1962" y="788" />
-        <di:waypoint x="1962" y="808" />
+        <di:waypoint x="1822" y="778" />
+        <di:waypoint x="1822" y="808" />
         <di:waypoint x="2330" y="808" />
         <di:waypoint x="2330" y="340" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0mtyfuq_di" bpmnElement="Flow_0mtyfuq">
-        <di:waypoint x="1972" y="672" />
-        <di:waypoint x="1972" y="652" />
-        <di:waypoint x="1890" y="652" />
-        <di:waypoint x="1890" y="720" />
-        <di:waypoint x="1910" y="720" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0qfe1cs_di" bpmnElement="Flow_0qfe1cs">
         <di:waypoint x="1230" y="398" />
@@ -366,42 +375,41 @@ execution.setVariable("i", i);
         <di:waypoint x="720" y="320" />
         <di:waypoint x="740" y="320" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0cx4isb_di" bpmnElement="Flow_0cx4isb">
-        <di:waypoint x="2070" y="425" />
-        <di:waypoint x="2070" y="730" />
-        <di:waypoint x="2010" y="730" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2044" y="578" width="83" height="27" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_17c9hpi_di" bpmnElement="Flow_17c9hpi">
+        <di:waypoint x="357" y="378" />
+        <di:waypoint x="357" y="460" />
+        <di:waypoint x="297" y="460" />
+        <di:waypoint x="297" y="360" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0hjieci_di" bpmnElement="Flow_0hjieci">
-        <di:waypoint x="2095" y="400" />
-        <di:waypoint x="2260" y="400" />
-        <di:waypoint x="2260" y="340" />
+      <bpmndi:BPMNEdge id="Flow_0cx4isb_di" bpmnElement="Flow_0cx4isb">
+        <di:waypoint x="1930" y="347" />
+        <di:waypoint x="1930" y="720" />
+        <di:waypoint x="1870" y="720" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2140" y="382" width="77" height="27" />
+          <dc:Bounds x="1888" y="691" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1281tdc_di" bpmnElement="Flow_1281tdc">
         <di:waypoint x="1973" y="340" />
-        <di:waypoint x="2070" y="340" />
-        <di:waypoint x="2070" y="375" />
+        <di:waypoint x="2193" y="340" />
+        <di:waypoint x="2193" y="370" />
+        <di:waypoint x="2415" y="370" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1988" y="322" width="68" height="27" />
+          <dc:Bounds x="1978" y="322" width="89" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jjk1vb_di" bpmnElement="Flow_1jjk1vb">
-        <di:waypoint x="1910" y="740" />
-        <di:waypoint x="1330" y="740" />
+        <di:waypoint x="1770" y="730" />
+        <di:waypoint x="1330" y="730" />
         <di:waypoint x="1330" y="380" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_147nc8h_di" bpmnElement="Flow_147nc8h">
         <di:waypoint x="1948" y="365" />
         <di:waypoint x="1948" y="570" />
-        <di:waypoint x="2280" y="570" />
-        <di:waypoint x="2280" y="340" />
+        <di:waypoint x="2430" y="570" />
+        <di:waypoint x="2430" y="378" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1948" y="557" width="51" height="27" />
+          <dc:Bounds x="1960" y="557" width="51" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_141qozr_di" bpmnElement="Flow_141qozr">
@@ -431,8 +439,9 @@ execution.setVariable("i", i);
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0bt3qlv_di" bpmnElement="Flow_0bt3qlv">
         <di:waypoint x="1948" y="315" />
-        <di:waypoint x="1948" y="190" />
-        <di:waypoint x="2090" y="190" />
+        <di:waypoint x="1948" y="273" />
+        <di:waypoint x="2010" y="273" />
+        <di:waypoint x="2010" y="230" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1924" y="252" width="81" height="14" />
         </bpmndi:BPMNLabel>
@@ -453,20 +462,23 @@ execution.setVariable("i", i);
         <di:waypoint x="188" y="320" />
         <di:waypoint x="280" y="320" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1rpe5z7_di" bpmnElement="Flow_1rpe5z7">
-        <di:waypoint x="530" y="320" />
-        <di:waypoint x="620" y="320" />
+      <bpmndi:BPMNEdge id="Flow_1o6xo41_di" bpmnElement="Flow_1o6xo41">
+        <di:waypoint x="2060" y="190" />
+        <di:waypoint x="2090" y="190" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1001c7p_di" bpmnElement="Flow_1001c7p">
-        <di:waypoint x="380" y="320" />
-        <di:waypoint x="430" y="320" />
+      <bpmndi:BPMNEdge id="Flow_0mtyfuq_di" bpmnElement="Flow_0mtyfuq">
+        <di:waypoint x="1832" y="662" />
+        <di:waypoint x="1832" y="642" />
+        <di:waypoint x="1750" y="642" />
+        <di:waypoint x="1750" y="710" />
+        <di:waypoint x="1770" y="710" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_17c9hpi_di" bpmnElement="Flow_17c9hpi">
-        <di:waypoint x="357" y="378" />
-        <di:waypoint x="357" y="460" />
-        <di:waypoint x="297" y="460" />
-        <di:waypoint x="297" y="360" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1fgy1c6_di" bpmnElement="Event_1fgy1c6">
+        <dc:Bounds x="152" y="302" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ucej54_di" bpmnElement="Reg_form_writer">
+        <dc:Bounds x="280" y="280" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_04hl6b0_di" bpmnElement="Create_user">
         <dc:Bounds x="740" y="280" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -509,12 +521,6 @@ execution.setVariable("i", i);
           <dc:Bounds x="2306" y="215" width="49" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0oxwzd4_di" bpmnElement="Activity_1flwtkz">
-        <dc:Bounds x="1910" y="690" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1alw232_di" bpmnElement="Gateway_1alw232" isMarkerVisible="true">
-        <dc:Bounds x="2045" y="375" width="50" height="50" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_05mx4ns_di" bpmnElement="Confirmation_link_event">
         <dc:Bounds x="1052" y="302" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -524,24 +530,17 @@ execution.setVariable("i", i);
       <bpmndi:BPMNShape id="Activity_1dck42m_di" bpmnElement="Set_user_role">
         <dc:Bounds x="620" y="280" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1fgy1c6_di" bpmnElement="Event_1fgy1c6">
-        <dc:Bounds x="152" y="302" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0rihjae_di" bpmnElement="Activity_0xdez2j">
         <dc:Bounds x="430" y="280" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1ucej54_di" bpmnElement="Reg_form_writer">
-        <dc:Bounds x="280" y="280" width="100" height="80" />
+      <bpmndi:BPMNShape id="TextAnnotation_0bbqlfm_di" bpmnElement="TextAnnotation_0bbqlfm">
+        <dc:Bounds x="1290" y="85" width="100" height="180" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1tozv98_di" bpmnElement="Association_1tozv98">
-        <di:waypoint x="1327" y="300" />
-        <di:waypoint x="1324" y="265" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Event_0e66qlt_di" bpmnElement="Invalid_writings_2">
-        <dc:Bounds x="1954" y="672" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1885" y="653" width="73" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNShape id="Activity_0l0a5fu_di" bpmnElement="Activity_0enuqnf">
+        <dc:Bounds x="1960" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oxwzd4_di" bpmnElement="Activity_1flwtkz">
+        <dc:Bounds x="1770" y="680" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1fcbex6_di" bpmnElement="Invalid_writings_event">
         <dc:Bounds x="1212" y="362" width="36" height="36" />
@@ -549,10 +548,10 @@ execution.setVariable("i", i);
           <dc:Bounds x="1204" y="406" width="73" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1gmtgzj_di" bpmnElement="Event_1ta7som">
-        <dc:Bounds x="1944" y="752" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_1o3kobf_di" bpmnElement="InvalidDataError">
+        <dc:Bounds x="339" y="342" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1941" y="795" width="82" height="27" />
+          <dc:Bounds x="326" y="386" width="81" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0yf182p_di" bpmnElement="Event_0bgvvef">
@@ -561,10 +560,20 @@ execution.setVariable("i", i);
           <dc:Bounds x="2131" y="255" width="80" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1o3kobf_di" bpmnElement="InvalidDataError">
-        <dc:Bounds x="339" y="342" width="36" height="36" />
+      <bpmndi:BPMNEdge id="Association_1tozv98_di" bpmnElement="Association_1tozv98">
+        <di:waypoint x="1327" y="300" />
+        <di:waypoint x="1324" y="265" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0e66qlt_di" bpmnElement="Invalid_writings_2">
+        <dc:Bounds x="1814" y="662" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="326" y="386" width="81" height="14" />
+          <dc:Bounds x="1745" y="643" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gmtgzj_di" bpmnElement="Event_1ta7som">
+        <dc:Bounds x="1804" y="742" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1801" y="785" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

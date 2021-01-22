@@ -69,6 +69,7 @@ public class UserTaskService {
 
         TaskDTO dto = new TaskDTO();
         dto.setId(id);
+        dto.setName(task.getName());
         dto.setSubmitUrl(taskExtensions.get("submitUrl"));
 
         if (task.getFormKey() != null) {
