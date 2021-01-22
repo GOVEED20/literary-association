@@ -49,7 +49,8 @@ public class UserTaskService {
                                     .id(task.getId())
                                     .name(task.getName())
                                     .dueDate((task.getDueDate()))
-                                    .blocking(taskExtensionsService.getExtensions(bpmnFile, task.getTaskDefinitionKey()).containsKey("blocking"))
+                                    .blocking(taskExtensionsService.getExtensions(bpmnFile, task.getTaskDefinitionKey())
+                                            .containsKey("blocking"))
                                     .build();
                         }
                 )

@@ -38,6 +38,9 @@
           </camunda:formField>
         </camunda:formData>
         <camunda:executionListener class="" event="start" />
+        <camunda:properties>
+          <camunda:property name="genre_select" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0k6isss</bpmn:incoming>
       <bpmn:incoming>Flow_0by85g3</bpmn:incoming>
@@ -67,6 +70,9 @@
             </camunda:validation>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="basic_select" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1o480h4</bpmn:incoming>
       <bpmn:outgoing>Flow_0ht0dzh</bpmn:outgoing>
@@ -160,6 +166,9 @@
             </camunda:validation>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="basic_select" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1gsalfv</bpmn:incoming>
       <bpmn:outgoing>Flow_1awftqr</bpmn:outgoing>
@@ -215,6 +224,10 @@
             </camunda:validation>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="basic_select" />
+          <camunda:property name="download_file" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0idk8aq</bpmn:incoming>
       <bpmn:outgoing>Flow_0h8n1hv</bpmn:outgoing>
@@ -271,6 +284,9 @@
             </camunda:validation>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="basic_select" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0paeqcv</bpmn:incoming>
       <bpmn:outgoing>Flow_0uec0be</bpmn:outgoing>
@@ -688,9 +704,10 @@ Set lector_comment process variable.</bpmn:text>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Book_publishing">
-      <bpmndi:BPMNShape id="TextAnnotation_1ouwnb6_di" bpmnElement="TextAnnotation_1ouwnb6">
-        <dc:Bounds x="360" y="151" width="100" height="54" />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0by85g3_di" bpmnElement="Flow_0by85g3">
+        <di:waypoint x="490" y="350" />
+        <di:waypoint x="540" y="350" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1iz0vxc_di" bpmnElement="Flow_1iz0vxc">
         <di:waypoint x="4960" y="358" />
         <di:waypoint x="4960" y="410" />
@@ -907,10 +924,9 @@ Set lector_comment process variable.</bpmn:text>
         <di:waypoint x="640" y="350" />
         <di:waypoint x="720" y="350" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0by85g3_di" bpmnElement="Flow_0by85g3">
-        <di:waypoint x="490" y="350" />
-        <di:waypoint x="540" y="350" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1v4fs30_di" bpmnElement="Activity_03o1ucy">
         <dc:Bounds x="540" y="310" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -982,15 +998,6 @@ Set lector_comment process variable.</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ajhn8f_di" bpmnElement="Activity_1f9ykb0">
         <dc:Bounds x="2430" y="600" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="152" y="332" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1idsj6f_di" bpmnElement="Set_writer">
-        <dc:Bounds x="230" y="310" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1jm6bfw_di" bpmnElement="Activity_1jm6bfw">
-        <dc:Bounds x="390" y="310" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ei8rxz_di" bpmnElement="Activity_0oc7pmu" isExpanded="true">
         <dc:Bounds x="2670" y="521" width="500" height="290" />
@@ -1070,8 +1077,14 @@ Set lector_comment process variable.</bpmn:text>
       <bpmndi:BPMNShape id="Event_13ke29v_di" bpmnElement="Event_13ke29v">
         <dc:Bounds x="5062" y="282" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1idsj6f_di" bpmnElement="Set_writer">
+        <dc:Bounds x="230" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0z203tr_di" bpmnElement="Activity_0t7cx1p">
         <dc:Bounds x="4880" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jm6bfw_di" bpmnElement="Activity_1jm6bfw">
+        <dc:Bounds x="390" y="310" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_00ahcj7_di" bpmnElement="TextAnnotation_00ahcj7">
         <dc:Bounds x="530" y="123" width="100" height="82" />
@@ -1106,6 +1119,9 @@ Set lector_comment process variable.</bpmn:text>
       <bpmndi:BPMNShape id="TextAnnotation_1nsmkuv_di" bpmnElement="TextAnnotation_1nsmkuv">
         <dc:Bounds x="4500" y="166" width="100" height="67" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1ouwnb6_di" bpmnElement="TextAnnotation_1ouwnb6">
+        <dc:Bounds x="360" y="151" width="100" height="54" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1q1xpd2_di" bpmnElement="TextAnnotation_1q1xpd2">
         <dc:Bounds x="790" y="455" width="210" height="67" />
       </bpmndi:BPMNShape>
@@ -1115,10 +1131,6 @@ Set lector_comment process variable.</bpmn:text>
       <bpmndi:BPMNShape id="TextAnnotation_1tr37zh_di" bpmnElement="TextAnnotation_1tr37zh">
         <dc:Bounds x="1880" y="455" width="180" height="39" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1mp7qk8_di" bpmnElement="Association_1mp7qk8">
-        <di:waypoint x="310" y="310" />
-        <di:waypoint x="390" y="205" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_036z2by_di" bpmnElement="Event_0syyely">
         <dc:Bounds x="4942" y="322" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -1183,6 +1195,10 @@ Set lector_comment process variable.</bpmn:text>
       <bpmndi:BPMNEdge id="Association_01fbdoq_di" bpmnElement="Association_01fbdoq">
         <di:waypoint x="4550" y="260" />
         <di:waypoint x="4550" y="233" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1mp7qk8_di" bpmnElement="Association_1mp7qk8">
+        <di:waypoint x="310" y="310" />
+        <di:waypoint x="390" y="205" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0afoi43_di" bpmnElement="Association_0afoi43">
         <di:waypoint x="1060" y="477" />

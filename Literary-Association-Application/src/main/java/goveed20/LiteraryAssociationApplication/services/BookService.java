@@ -6,10 +6,11 @@ import goveed20.LiteraryAssociationApplication.model.*;
 import goveed20.LiteraryAssociationApplication.model.enums.CommentType;
 import goveed20.LiteraryAssociationApplication.model.enums.GenreEnum;
 import goveed20.LiteraryAssociationApplication.model.enums.WorkingPaperStatus;
-import goveed20.LiteraryAssociationApplication.repositories.*;
+import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
+import goveed20.LiteraryAssociationApplication.repositories.CommentRepository;
+import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
@@ -18,7 +19,6 @@ import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.File;
@@ -45,26 +45,20 @@ public class BookService {
     private WorkingPaperRepository workingPaperRepository;
 
     @Autowired
-    private GenreRepository genreRepository;
-
-    @Autowired
-    private BetaReaderStatusRepository betaReaderStatusRepository;
-
-    @Autowired
     private CommentRepository commentRepository;
 
     @Autowired
     private BookRepository bookRepository;
 
-    public String submitWorkingPaperTemplate(FormSubmissionDTO paper) {
-        Map<String, Object> map = UtilService.mapListToDto(paper.getFormFields());
-        Task task = taskService.createTaskQuery().processInstanceId(paper.getProcessID()).active().list().get(0);
+    public String submitWorkingPaperTemplate(FormSubmissionDTO formSubmission) {
+        Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
         String title = (String) map.get("title");
         if (workingPaperRepository.findByTitle(title) != null) {
             throw new BpmnError("Book with given title already exists");
         }
 
-        runtimeService.setVariable(paper.getProcessID(), "working_paper", title);
+        runtimeService.setVariable(task.getProcessInstanceId(), "working_paper", title);
         formService.submitTaskForm(task.getId(), map);
 
         WorkingPaper workingPaper = WorkingPaper.workingPaperBuilder().title(title)
@@ -75,24 +69,24 @@ public class BookService {
         return "Working paper successfully submitted";
     }
 
-    public String chooseBetaReaders(FormSubmissionDTO betaReadersSubmission) {
-        Map<String, Object> map = UtilService.mapListToDto(betaReadersSubmission.getFormFields());
-        Task task = taskService.createTaskQuery().processInstanceId(betaReadersSubmission.getProcessID()).active().list().get(0);
+    public String chooseBetaReaders(FormSubmissionDTO formSubmission) {
+        Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
         Set<String> betaReaders = UtilService.parseBetaReaders((String) map.get("beta_readers"));
         if (betaReaders.size() == 0) {
             return "There are no selected beta readers";
         }
 
-        runtimeService.setVariable(betaReadersSubmission.getProcessID(), "beta_readers", new ArrayList<>(betaReaders));
+        runtimeService.setVariable(task.getProcessInstanceId(), "beta_readers", new ArrayList<>(betaReaders));
         formService.submitTaskForm(task.getId(), map);
         return "Beta readers chosen successfully";
     }
 
-    public String publishBook(FormSubmissionDTO publishBookData) {
-        Map<String, Object> map = UtilService.mapListToDto(publishBookData.getFormFields());
-        Task task = taskService.createTaskQuery().processInstanceId(publishBookData.getProcessID()).active().list().get(0);
+    public String publishBook(FormSubmissionDTO formSubmission) {
+        Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
         WorkingPaper workingPaper = workingPaperRepository.findByTitle(
-                (String) runtimeService.getVariable(publishBookData.getProcessID(), "working_paper"));
+                (String) runtimeService.getVariable(task.getProcessInstanceId(), "working_paper"));
         if (workingPaper == null) {
             throw new BpmnError("Working paper with given title does not exist");
         }
@@ -118,16 +112,16 @@ public class BookService {
         return "Book successfully published";
     }
 
-    public String submitBetaReaderComment(FormSubmissionDTO betaReaderComment) {
-        Map<String, Object> map = UtilService.mapListToDto(betaReaderComment.getFormFields());
-        Task task = taskService.createTaskQuery().processInstanceId(betaReaderComment.getProcessID()).active().list().get(0);
+    public String submitBetaReaderComment(FormSubmissionDTO formSubmission) {
+        Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
 
         BaseUser writer = (BaseUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (writer == null) {
             return "There is no logged-in user";
         }
 
-        String workingPaperTitle = (String) runtimeService.getVariable(betaReaderComment.getProcessID(), "working_paper");
+        String workingPaperTitle = (String) runtimeService.getVariable(task.getProcessInstanceId(), "working_paper");
         WorkingPaper workingPaper = workingPaperRepository.findByTitle(workingPaperTitle);
         if (workingPaper == null) {
             return "Working paper that was commented is not found";
@@ -146,9 +140,9 @@ public class BookService {
         return "Comment successfully sent";
     }
 
-    public String submitSelectFormFields(FormSubmissionDTO options) {
-        Map<String, Object> map = UtilService.mapListToDto(options.getFormFields());
-        Task task = taskService.createTaskQuery().processInstanceId(options.getProcessID()).active().list().get(0);
+    public String submitSelectFormFields(FormSubmissionDTO formSubmission) {
+        Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
         String retVal;
         String processVariable;
         boolean processVariableValue;
@@ -185,7 +179,7 @@ public class BookService {
                 processVariableValue = false;
         }
 
-        runtimeService.setVariable(options.getProcessID(), processVariable, processVariableValue);
+        runtimeService.setVariable(task.getProcessInstanceId(), processVariable, processVariableValue);
         formService.submitTaskForm(task.getId(), map);
 
         return retVal;
@@ -193,7 +187,7 @@ public class BookService {
 
     public String submitCommentForm(FormSubmissionDTO formSubmission) {
         Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
-        Task task = taskService.createTaskQuery().processInstanceId(formSubmission.getProcessID()).active().list().get(0);
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
         String retVal;
         String processVariableCommentName;
         String processVariableCommentValue;
@@ -218,14 +212,14 @@ public class BookService {
                 processVariableCommentName = "lector_comment";
                 processVariableCommentValue = (String) map.get("mistake_comment");
                 retVal = "Comment for lexicographic mistakes successfully sent";
-                runtimeService.setVariable(formSubmission.getProcessID(), "correct_mistakes",
+                runtimeService.setVariable(formSubmission.getID(), "correct_mistakes",
                         !map.get("mistake_comment").equals(""));
                 break;
             case "editor_suggestions_form":
                 processVariableCommentName = "editor_suggestion_comment";
                 processVariableCommentValue = (String) map.get("editor_suggestions");
                 retVal = "Suggestions on working paper successfully delivered";
-                runtimeService.setVariable(formSubmission.getProcessID(), "editor_suggested",
+                runtimeService.setVariable(formSubmission.getID(), "editor_suggested",
                         !map.get("editor_suggestions").equals(""));
                 break;
             default:
@@ -234,23 +228,16 @@ public class BookService {
                 processVariableCommentValue = "";
         }
 
-        runtimeService.setVariable(formSubmission.getProcessID(), processVariableCommentName,
-                processVariableCommentValue);
+        runtimeService
+                .setVariable(task.getProcessInstanceId(), processVariableCommentName, processVariableCommentValue);
         formService.submitTaskForm(task.getId(), map);
 
         return retVal;
     }
 
-    public String submitFile(String processID, MultipartFile file) {
-        Task task = taskService.createTaskQuery().processInstanceId(processID).active().list().get(0);
-        WorkingPaper paper;
-        try {
-            paper = submitPaper(processID, file);
-        } catch (BusinessProcessException | EntityNotFoundException e) {
-            return e.getMessage();
-        } catch (IOException e) {
-            return "Working paper not found";
-        }
+    public String submitFile(FormSubmissionDTO formSubmission) {
+        Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
 
         String retVal;
         String formFieldName;
@@ -277,17 +264,24 @@ public class BookService {
                 retVal = "";
         }
 
-        Map<String, Object> map = new HashMap<>();
-        map.put(formFieldName, file.getName());
+        WorkingPaper paper;
+        try {
+            paper = submitPaper(task.getProcessInstanceId(), (String) map.get(formFieldName));
+        } catch (BusinessProcessException | EntityNotFoundException e) {
+            return e.getMessage();
+        } catch (IOException e) {
+            return "Working paper not found";
+        }
+
         formService.submitTaskForm(task.getId(), map);
         workingPaperRepository.save(paper);
 
         return retVal;
     }
 
-    private WorkingPaper submitPaper(String processID, MultipartFile file) throws IOException {
-        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-        if (extension == null || !extension.equals("pdf")) {
+    private WorkingPaper submitPaper(String processID, String base64File) throws IOException {
+        byte[] pdfDecoded = Base64.getDecoder().decode(base64File);
+        if (pdfDecoded[0] != 0x25 || pdfDecoded[1] != 0x50 || pdfDecoded[2] != 0x44 || pdfDecoded[3] != 0x46) {
             throw new BusinessProcessException("Invalid file type. It should be a PDF file");
         }
 
@@ -296,9 +290,12 @@ public class BookService {
         if (paper == null) {
             throw new EntityNotFoundException("Working paper is not found");
         }
+
         File filePaper = new File(booksFolder + workingPaperTitle + ".pdf");
         OutputStream os = new FileOutputStream(filePaper);
-        os.write(file.getBytes());
+        os.write(pdfDecoded);
+        os.flush();
+        os.close();
 
         paper.setFile(filePaper.getPath());
         return paper;
