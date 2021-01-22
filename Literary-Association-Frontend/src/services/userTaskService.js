@@ -7,8 +7,14 @@ const getActiveTasks = async (username) => {
     return response.data
 }
 
+const getTask = async (id) => {
+    const response = await axios.get(`${BASE_URL}/task/${id}`)
+    return response.data
+}
+
 const userTaskService = {
-    getActiveTasks
+    getActiveTasks,
+    getTask
 }
 
 export default userTaskService

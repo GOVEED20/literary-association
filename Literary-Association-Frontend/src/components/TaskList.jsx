@@ -11,7 +11,7 @@ const TaskList = ({username}) => {
         dispatch(getActiveTasks(username))
     }, [dispatch, username])
 
-    const tasks = useSelector(state => state.userTasks)
+    const tasks = useSelector(state => state.userTasks.list)
 
     return (
         <div>
@@ -20,7 +20,7 @@ const TaskList = ({username}) => {
                 {
                     tasks.map(task =>
                         <ListGroup.Item key={task.id}>
-                            <TaskListItem dueDate={task.dueDate} name={task.name}/>
+                            <TaskListItem dueDate={task.dueDate} name={task.name} id={task.id}/>
                         </ListGroup.Item>)
                 }
             </ListGroup>

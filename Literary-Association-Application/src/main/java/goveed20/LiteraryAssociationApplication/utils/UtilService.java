@@ -24,7 +24,9 @@ public class UtilService {
 
     public static String serializeGenres(Set<Genre> genres) {
         Gson gson = new Gson();
-        return gson.toJson(genres.stream().map(g -> new OptionDTO(g.getGenre().serbianName, g.getGenre()))
+        return gson.toJson(genres.stream()
+                .map(g -> new OptionDTO(g.getGenre().serbianName, g.getGenre()))
+                .sorted(Comparator.comparing(OptionDTO::getName))
                 .collect(Collectors.toList()));
     }
 

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Navbar from './Navbar'
 import { Spinner } from 'react-bootstrap'
 import { restore_login } from '../reducers/userReducer'
+import Task from './Task'
 
 const Dashboard = () => {
     const history = useHistory()
@@ -37,6 +38,9 @@ const Dashboard = () => {
         <div>
             <Navbar role={role}/>
             <div>
+                <Route path='/dashboard/tasks/:id'>
+                    <Task/>
+                </Route>
                 <Route path='/dashboard/tasks'>
                     <TaskList username={username}/>
                 </Route>

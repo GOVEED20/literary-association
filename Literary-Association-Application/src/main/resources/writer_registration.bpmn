@@ -122,6 +122,9 @@
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="javascript">execution.setVariable("i", 0);</camunda:script>
         </camunda:executionListener>
+        <camunda:properties>
+          <camunda:property name="blocking" value="true" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1yx68fj</bpmn:incoming>
       <bpmn:incoming>Flow_0qfe1cs</bpmn:incoming>
@@ -317,6 +320,19 @@ execution.setVariable("i", i);
   <bpmn:signal id="Signal_0rwpehp" name="Confirmation_link_signal" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Writer_registration">
+      <bpmndi:BPMNEdge id="Flow_1pl9941_di" bpmnElement="Flow_1pl9941">
+        <di:waypoint x="1802" y="788" />
+        <di:waypoint x="1802" y="808" />
+        <di:waypoint x="2170" y="808" />
+        <di:waypoint x="2170" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mtyfuq_di" bpmnElement="Flow_0mtyfuq">
+        <di:waypoint x="1812" y="672" />
+        <di:waypoint x="1812" y="652" />
+        <di:waypoint x="1730" y="652" />
+        <di:waypoint x="1730" y="720" />
+        <di:waypoint x="1750" y="720" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0qfe1cs_di" bpmnElement="Flow_0qfe1cs">
         <di:waypoint x="1070" y="398" />
         <di:waypoint x="1070" y="450" />
@@ -438,19 +454,6 @@ execution.setVariable("i", i);
         <di:waypoint x="198" y="320" />
         <di:waypoint x="293" y="320" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0mtyfuq_di" bpmnElement="Flow_0mtyfuq">
-        <di:waypoint x="1812" y="672" />
-        <di:waypoint x="1812" y="652" />
-        <di:waypoint x="1730" y="652" />
-        <di:waypoint x="1730" y="720" />
-        <di:waypoint x="1750" y="720" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1pl9941_di" bpmnElement="Flow_1pl9941">
-        <di:waypoint x="1802" y="788" />
-        <di:waypoint x="1802" y="808" />
-        <di:waypoint x="2170" y="808" />
-        <di:waypoint x="2170" y="340" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1fgy1c6_di" bpmnElement="Event_1fgy1c6">
         <dc:Bounds x="162" y="302" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -499,6 +502,9 @@ execution.setVariable("i", i);
           <dc:Bounds x="2146" y="215" width="49" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oxwzd4_di" bpmnElement="Activity_1flwtkz">
+        <dc:Bounds x="1750" y="690" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1alw232_di" bpmnElement="Gateway_1alw232" isMarkerVisible="true">
         <dc:Bounds x="1885" y="375" width="50" height="50" />
       </bpmndi:BPMNShape>
@@ -514,8 +520,11 @@ execution.setVariable("i", i);
       <bpmndi:BPMNShape id="TextAnnotation_0bbqlfm_di" bpmnElement="TextAnnotation_0bbqlfm">
         <dc:Bounds x="1130" y="85" width="100" height="180" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0oxwzd4_di" bpmnElement="Activity_1flwtkz">
-        <dc:Bounds x="1750" y="690" width="100" height="80" />
+      <bpmndi:BPMNShape id="Event_0e66qlt_di" bpmnElement="Invalid_writings_2">
+        <dc:Bounds x="1794" y="672" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1725" y="653" width="73" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1fcbex6_di" bpmnElement="Invalid_writings_event">
         <dc:Bounds x="1052" y="362" width="36" height="36" />
@@ -529,6 +538,12 @@ execution.setVariable("i", i);
           <dc:Bounds x="339" y="386" width="81" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gmtgzj_di" bpmnElement="Event_1ta7som">
+        <dc:Bounds x="1784" y="752" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1781" y="795" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0yf182p_di" bpmnElement="Event_0bgvvef">
         <dc:Bounds x="1992" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -539,18 +554,6 @@ execution.setVariable("i", i);
         <di:waypoint x="1167" y="300" />
         <di:waypoint x="1164" y="265" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Event_0e66qlt_di" bpmnElement="Invalid_writings_2">
-        <dc:Bounds x="1794" y="672" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1725" y="653" width="73" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1gmtgzj_di" bpmnElement="Event_1ta7som">
-        <dc:Bounds x="1784" y="752" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1781" y="795" width="82" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
