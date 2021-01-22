@@ -1,8 +1,6 @@
 package goveed20.LiteraryAssociationApplication.services;
 
-import goveed20.LiteraryAssociationApplication.dtos.FormFieldsDTO;
 import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionDTO;
-import goveed20.LiteraryAssociationApplication.dtos.PropertiesDTO;
 import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessException;
 import goveed20.LiteraryAssociationApplication.model.*;
 import goveed20.LiteraryAssociationApplication.model.enums.CommentType;
@@ -16,7 +14,6 @@ import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.BpmnError;
-import org.camunda.bpm.engine.form.TaskFormData;
 import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -59,13 +56,6 @@ public class BookService {
     @Autowired
     private BookRepository bookRepository;
 
-    private PropertiesDTO getProperties(String processID) {
-        Task task = taskService.createTaskQuery().processInstanceId(processID).active().list().get(0);
-        TaskFormData tfd = formService.getTaskFormData(task.getId());
-
-        return PropertiesDTO.builder().properties(tfd.getFormFields()).taskID(task.getId()).build();
-    }
-
     public String submitWorkingPaperTemplate(FormSubmissionDTO paper) {
         Map<String, Object> map = UtilService.mapListToDto(paper.getFormFields());
         Task task = taskService.createTaskQuery().processInstanceId(paper.getProcessID()).active().list().get(0);
@@ -96,26 +86,6 @@ public class BookService {
         runtimeService.setVariable(betaReadersSubmission.getProcessID(), "beta_readers", new ArrayList<>(betaReaders));
         formService.submitTaskForm(task.getId(), map);
         return "Beta readers chosen successfully";
-    }
-
-    /* Method used for getting fields of:
-     *       working paper rejection comment
-     *       plagiarism comment
-     *       full paper rejection comment
-     *       beta reader comment
-     *       submit paper after beta readers comments
-     *       submit paper after lector corrections
-     *       book publishing
-     *  */
-    public FormFieldsDTO getFormFieldsForCommentsAndSubmitting(String processID) {
-        PropertiesDTO properties = getProperties(processID);
-        return new FormFieldsDTO(processID, properties.getTaskID(), properties.getProperties());
-    }
-
-    public FormFieldsDTO getFormFieldsForLectorComment(String processID) {
-        PropertiesDTO properties = getProperties(processID);
-        properties.getProperties().add(UtilService.getDownloadFormField(processID, (String) runtimeService.getVariable(processID, "working_paper")));
-        return new FormFieldsDTO(processID, properties.getTaskID(), properties.getProperties());
     }
 
     public String publishBook(FormSubmissionDTO publishBookData) {
@@ -174,44 +144,6 @@ public class BookService {
         formService.submitTaskForm(task.getId(), map);
 
         return "Comment successfully sent";
-    }
-
-    public FormFieldsDTO getSelectFormFields(String processID) {
-        Task task = taskService.createTaskQuery().processInstanceId(processID).active().list().get(0);
-        TaskFormData tfd = formService.getTaskFormData(task.getId());
-        Set<String> options;
-        String selectName;
-        switch (task.getFormKey()) {
-            case "accept_reject_working_paper":
-                options = new HashSet<>(Arrays.asList("Accept", "Reject"));
-                selectName = "accept_working_paper_option";
-                break;
-            case "plagiarism_form":
-                options = new HashSet<>(Arrays.asList("Plagiarism", "Original"));
-                selectName = "plagiarism_option";
-                break;
-            case "accept_reject_full_paper":
-                options = new HashSet<>(Arrays.asList("Accept", "Reject"));
-                selectName = "accept_full_paper_option";
-                tfd.getFormFields().add(UtilService.getDownloadFormField(processID, (String) runtimeService.getVariable(processID,
-                        "working_paper")));
-                break;
-            case "include_beta_readers_form":
-                options = new HashSet<>(Arrays.asList("Send", "Do not send"));
-                selectName = "include_beta_reader_option";
-                break;
-            case "editor_request_changes_form":
-                options = new HashSet<>(Arrays.asList("Request changes", "Everything is fine"));
-                selectName = "editor_request_changes_option";
-                break;
-            default:
-                options = new HashSet<>();
-                selectName = "";
-        }
-
-        UtilService.setOptions(selectName, options, tfd.getFormFields());
-
-        return new FormFieldsDTO(processID, task.getId(), tfd.getFormFields());
     }
 
     public String submitSelectFormFields(FormSubmissionDTO options) {
@@ -390,21 +322,5 @@ public class BookService {
         }
 
         return "Successful download";
-    }
-
-    // Getting fields for: Submit working paper template, Choose beta readers
-    public FormFieldsDTO getSerializedFormFields(String processID) {
-        PropertiesDTO properties = getProperties(processID);
-        properties.getProperties().forEach(p -> {
-            if (p.getId().equals("genre")) {
-                p.getProperties().put("options", UtilService
-                        .serializeGenres(new HashSet<>(genreRepository.findAll())));
-            } else if (p.getId().equals("beta_readers")) {
-                p.getProperties().put("options", UtilService
-                        .serializeBetaReaders(new HashSet<>(betaReaderStatusRepository.findAll())));
-            }
-        });
-
-        return new FormFieldsDTO(processID, properties.getTaskID(), properties.getProperties());
     }
 }

@@ -7,10 +7,13 @@ import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
+import org.camunda.bpm.engine.form.FormField;
 import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,9 @@ public class UserTaskService {
 
     @Autowired
     private TaskExtensionsService taskExtensionsService;
+
+    @Autowired
+    private FormFieldsService formFieldsService;
 
     // add support for blocking tasks later
     public Set<TaskPreviewDTO> getActiveTasksForUser(String username) {
@@ -64,12 +70,28 @@ public class UserTaskService {
         if (task.getFormKey() != null) {
             dto.setType(TaskType.FORM);
             // use extensions to setup form fields later
-            dto.setFormFields(formService.getTaskFormData(id).getFormFields());
+            dto.setFormFields(getFormFields(task));
         } else {
             dto.setType(TaskType.PAYMENT);
             dto.setTransactionId(null); // supporting only FORM tasks for now
         }
 
         return dto;
+    }
+
+    private List<FormField> getFormFields(Task task) {
+        Map<String, String> taskExtensions = taskExtensionsService.getExtensions(
+                (String) runtimeService.getVariable(task.getProcessInstanceId(), "bpmnFile"), task.getId());
+        if (taskExtensions.containsKey("basic_select")) {
+            formFieldsService.setSelectFormFields(task);
+        }
+        if (taskExtensions.containsKey("genre_select") || taskExtensions.containsKey("beta_reader_select")) {
+            formFieldsService.setSerializedFormFields(task);
+        }
+        if (taskExtensions.containsKey("download_file")) {
+            formFieldsService.setDownloadFormField(task);
+        }
+
+        return formService.getTaskFormData(task.getId()).getFormFields();
     }
 }

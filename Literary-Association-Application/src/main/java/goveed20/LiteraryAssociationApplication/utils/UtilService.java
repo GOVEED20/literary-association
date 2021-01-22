@@ -70,14 +70,4 @@ public class UtilService {
             }
         });
     }
-
-    public static FormField getDownloadFormField(String processID, String workingPaperTitle) {
-        Map<String, String> buttonProperties = new HashMap<>();
-        buttonProperties.put("type", "button");
-        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        buttonProperties.put("downloadURL", baseUrl + "/book/download/" + workingPaperTitle);
-
-        return CustomFormField.builder().id("downloadButton").label("Download paper")
-                .typeName("button").properties(buttonProperties).validationConstraints(new ArrayList<>()).build();
-    }
 }
