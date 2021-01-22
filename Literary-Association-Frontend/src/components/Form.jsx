@@ -25,13 +25,26 @@ const Form = ({ form, onSubmit }) => {
         setState(newState)
     }
 
+    const toBase64 = (file) => new Promise((resolve) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+    })
+
     const isVisible = (formField) => {
         return formField.properties.dependsOn === undefined ? true : state[formField.properties.dependsOn]
     }
 
     const submit = (event) => {
         event.preventDefault()
-        onSubmit(state)
+        const preparedState = { ...state }
+        Promise.all(form.formFields.filter(ff => ff.properties.type === 'file')
+            .map(ff => new Promise(() => {
+                toBase64(document.getElementById(ff.id).files[0])
+                    .then(base64 => {
+                        preparedState[ff.id] = base64
+                    })
+            }))).then(onSubmit(preparedState))
     }
 
     return (
@@ -40,7 +53,8 @@ const Form = ({ form, onSubmit }) => {
                 {
                     form.formFields.map((formField) =>
                         isVisible(formField) &&
-                        <FormField key={formField.id} formField={formField} onChange={changeState} value={state[formField.id]}/>
+                        <FormField key={formField.id} formField={formField} onChange={changeState}
+                                   value={state[formField.id]}/>
                     )
                 }
                 <BootstrapForm.Group as={Row}>

@@ -12,5 +12,5 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class FormSubmissionDTO implements Serializable {
     private List<FormSubmissionFieldDTO> formFields;
-    private String processID;
+    private String ID;
 }

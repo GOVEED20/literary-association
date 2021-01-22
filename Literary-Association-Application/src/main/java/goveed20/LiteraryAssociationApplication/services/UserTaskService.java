@@ -35,7 +35,6 @@ public class UserTaskService {
     @Autowired
     private FormFieldsService formFieldsService;
 
-    // add support for blocking tasks later
     public Set<TaskPreviewDTO> getActiveTasksForUser(String username) {
         return taskService
                 .createTaskQuery()
@@ -64,12 +63,15 @@ public class UserTaskService {
             throw new NotFoundException(String.format("Task with id '%s' not found", id));
         }
 
+        Map<String, String> taskExtensions = taskExtensionsService.getExtensions(
+                (String) runtimeService.getVariable(task.getProcessInstanceId(), "bpmnFile"), task.getId());
+
         TaskDTO dto = new TaskDTO();
         dto.setId(id);
+        dto.setSubmitUrl(taskExtensions.get("submitUrl"));
 
         if (task.getFormKey() != null) {
             dto.setType(TaskType.FORM);
-            // use extensions to setup form fields later
             dto.setFormFields(getFormFields(task));
         } else {
             dto.setType(TaskType.PAYMENT);

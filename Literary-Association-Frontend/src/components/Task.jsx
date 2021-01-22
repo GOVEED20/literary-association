@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouteMatch } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { setTask } from '../reducers/userTaskReducer'
+import { setTask, submitTask } from '../reducers/userTaskReducer'
 import Form from './Form'
 
 const Task = () => {
@@ -11,7 +11,7 @@ const Task = () => {
     const idMatch = useRouteMatch('/dashboard/tasks/:id')
     idMatch && dispatch(setTask(idMatch.params.id))
 
-    const onSubmit = () => console.log('pozdraav')
+    const onSubmit = async (state) => await submitTask(task.submitUrl, task.id, state)
 
     switch (task.type) {
     case 'FORM': {

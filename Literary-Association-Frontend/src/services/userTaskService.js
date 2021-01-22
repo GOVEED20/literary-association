@@ -12,9 +12,25 @@ const getTask = async (id) => {
     return response.data
 }
 
+const submitTask = async (submitUrl, taskId, state) => {
+    const payload = {
+        ID: taskId,
+        formFields: Object.entries(state).map((value) => {
+            return {
+                fieldId: value[0],
+                fieldValue: value[1]
+            }
+        })
+    }
+
+    const response = await axios.post(`${BASE_URL}${submitUrl}`, payload)
+    return response.data
+}
+
 const userTaskService = {
     getActiveTasks,
-    getTask
+    getTask,
+    submitTask
 }
 
 export default userTaskService

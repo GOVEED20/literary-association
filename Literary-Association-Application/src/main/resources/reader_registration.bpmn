@@ -147,6 +147,18 @@
   <bpmn:signal id="Signal_189vto0" name="Confirmation_link_signal" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Reader_registration">
+      <bpmndi:BPMNEdge id="Flow_01gncqt_di" bpmnElement="Flow_01gncqt">
+        <di:waypoint x="580" y="117" />
+        <di:waypoint x="670" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17cnwuu_di" bpmnElement="Flow_17cnwuu">
+        <di:waypoint x="410" y="117" />
+        <di:waypoint x="480" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tt70i1_di" bpmnElement="Flow_0tt70i1">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="310" y="117" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1615jkv_di" bpmnElement="Flow_1615jkv">
         <di:waypoint x="390" y="175" />
         <di:waypoint x="390" y="240" />
@@ -165,26 +177,17 @@
         <di:waypoint x="770" y="117" />
         <di:waypoint x="830" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0tt70i1_di" bpmnElement="Flow_0tt70i1">
-        <di:waypoint x="215" y="117" />
-        <di:waypoint x="310" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_17cnwuu_di" bpmnElement="Flow_17cnwuu">
-        <di:waypoint x="410" y="117" />
-        <di:waypoint x="480" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_01gncqt_di" bpmnElement="Flow_01gncqt">
-        <di:waypoint x="580" y="117" />
-        <di:waypoint x="670" y="117" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ws2de0_di" bpmnElement="Reg_form_reader">
         <dc:Bounds x="310" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1gbr2p2_di" bpmnElement="Event_1gbr2p2">
-        <dc:Bounds x="1052" y="99" width="36" height="36" />
+      <bpmndi:BPMNShape id="Activity_1980bxg_di" bpmnElement="Create_user">
+        <dc:Bounds x="670" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xtp2d9_di" bpmnElement="Send_email_with_activation_link">
+        <dc:Bounds x="830" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_191zgey_di" bpmnElement="Confirmation_link_event">
         <dc:Bounds x="972" y="99" width="36" height="36" />
@@ -192,11 +195,8 @@
           <dc:Bounds x="951" y="142" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1xtp2d9_di" bpmnElement="Send_email_with_activation_link">
-        <dc:Bounds x="830" y="77" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1980bxg_di" bpmnElement="Create_user">
-        <dc:Bounds x="670" y="77" width="100" height="80" />
+      <bpmndi:BPMNShape id="Event_1gbr2p2_di" bpmnElement="Event_1gbr2p2">
+        <dc:Bounds x="1052" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ypsv83_di" bpmnElement="Set_user_role">
         <dc:Bounds x="480" y="77" width="100" height="80" />

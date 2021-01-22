@@ -19,7 +19,7 @@ export const sendRegistrationData = async (processID, state) => {
     })
 
     const payload = {
-        processID,
+        ID: processID,
         formFields: Object.entries(state).map((value) => {
             return {
                 fieldId: value[0],
