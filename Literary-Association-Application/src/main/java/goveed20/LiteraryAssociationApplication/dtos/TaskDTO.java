@@ -1,8 +1,9 @@
 package goveed20.LiteraryAssociationApplication.dtos;
 
 import lombok.*;
+import org.camunda.bpm.engine.form.FormField;
 
-import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -10,7 +11,8 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class TaskDTO {
+    private TaskType type;
     private String id;
-    private String name;
-    private Date dueDate;
+    private List<FormField> formFields;
+    private Long transactionId;
 }

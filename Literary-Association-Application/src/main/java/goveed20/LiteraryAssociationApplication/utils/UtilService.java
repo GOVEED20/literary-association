@@ -27,8 +27,10 @@ public class UtilService {
 
     public static String serializeGenres(Set<Genre> genres) {
         Gson gson = new Gson();
-        return gson.toJson(genres.stream().map(g -> OptionDTO.builder().name(g.getGenre().serbianName)
-                .value(g.getGenre()).build()));
+        return gson.toJson(genres.stream()
+                .map(g -> new OptionDTO(g.getGenre().serbianName, g.getGenre()))
+                .sorted(Comparator.comparing(OptionDTO::getName))
+                .collect(Collectors.toList()));
     }
 
     public static String serializeBetaReaders(HashSet<BetaReaderStatus> betaReaderStatuses) {

@@ -11,10 +11,29 @@ export const getActiveTasks = (username) => {
     }
 }
 
-const reducer = (state = [], action) => {
+export const setTask = (id) => {
+    return async dispatch => {
+        const task = await userTaskService.getTask(id)
+
+        dispatch({
+            type: 'SET_TASK',
+            task
+        })
+    }
+}
+
+const reducer = (state = { list: [], active: null }, action) => {
     switch (action.type) {
     case 'GET_ACTIVE_TASKS':
-        return action.userTasks
+        return {
+            ...state,
+            list: action.userTasks
+        }
+    case 'SET_TASK':
+        return {
+            ...state,
+            active: action.task
+        }
     default:
         return state
     }

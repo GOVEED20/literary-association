@@ -1,6 +1,8 @@
 package goveed20.LiteraryAssociationApplication.controllers;
 
 import goveed20.LiteraryAssociationApplication.dtos.TaskDTO;
+import goveed20.LiteraryAssociationApplication.dtos.TaskPreviewDTO;
+import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
 import goveed20.LiteraryAssociationApplication.services.UserTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +19,17 @@ public class UserTaskController {
     private UserTaskService userTaskService;
 
     @GetMapping("/{username}/active")
-    public ResponseEntity<Set<TaskDTO>> getActiveTasksForUser(@PathVariable String username) {
+    public ResponseEntity<Set<TaskPreviewDTO>> getActiveTasksForUser(@PathVariable String username) {
         return new ResponseEntity<>(userTaskService.getActiveTasksForUser(username), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getTask(@PathVariable("id") String id) {
+        try {
+            return new ResponseEntity<>(userTaskService.getTask(id), HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
 }

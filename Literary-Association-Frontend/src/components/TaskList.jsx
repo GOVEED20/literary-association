@@ -4,16 +4,14 @@ import { ListGroup } from 'react-bootstrap'
 import TaskListItem from './TaskListItem'
 import { getActiveTasks } from '../reducers/userTaskReducer'
 
-const TaskList = () => {
+const TaskList = ({username}) => {
     const dispatch = useDispatch()
-
-    const username = useSelector(state => state.user.subject)
 
     useEffect(() => {
         dispatch(getActiveTasks(username))
     }, [dispatch, username])
 
-    const tasks = useSelector(state => state.userTasks)
+    const tasks = useSelector(state => state.userTasks.list)
 
     return (
         <div>
@@ -22,7 +20,7 @@ const TaskList = () => {
                 {
                     tasks.map(task =>
                         <ListGroup.Item key={task.id}>
-                            <TaskListItem dueDate={task.dueDate} name={task.name}/>
+                            <TaskListItem dueDate={task.dueDate} name={task.name} id={task.id}/>
                         </ListGroup.Item>)
                 }
             </ListGroup>
