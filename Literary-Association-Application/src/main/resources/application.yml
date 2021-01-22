@@ -4,7 +4,7 @@ spring:
   datasource:
     driver-class-name: org.h2.Driver
     password: ENC(DJV5MsDLF/6adraw4pj3ZQ==)
-    url: jdbc:h2:~/database
+    url: jdbc:h2:file:./la-db
     username: dzabic
   h2:
     console:

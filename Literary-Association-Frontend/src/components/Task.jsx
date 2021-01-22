@@ -11,10 +11,12 @@ const Task = () => {
     const idMatch = useRouteMatch('/dashboard/tasks/:id')
     idMatch && dispatch(setTask(idMatch.params.id))
 
+    const onSubmit = () => console.log('pozdraav')
+
     switch (task.type) {
     case 'FORM': {
         return (
-            <Form form={task.formFields} onSubmit={}/>
+            <Form form={task.formFields} onSubmit={onSubmit}/>
         )
     }
     case 'PAYMENT': {

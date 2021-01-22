@@ -278,7 +278,7 @@ execution.setVariable("i", i);
     <bpmn:scriptTask id="Set_user_role" name="Set user role" scriptFormat="javascript">
       <bpmn:incoming>Flow_0n0d7n8</bpmn:incoming>
       <bpmn:outgoing>Flow_1s3wu6d</bpmn:outgoing>
-      <bpmn:script>execution.setVariable("userRole", "writer");</bpmn:script>
+      <bpmn:script>execution.setVariable("bpmnFile", "src/main/resources/writer_registration.bpmn");</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_1s3wu6d" sourceRef="Set_user_role" targetRef="Create_user" />
     <bpmn:sequenceFlow id="Flow_1d8s9zr" sourceRef="Send_email_with_activation_link" targetRef="Confirmation_link_event" />

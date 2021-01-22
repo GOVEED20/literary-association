@@ -13,5 +13,5 @@ public class TaskPreviewDTO {
     private String id;
     private String name;
     private Date dueDate;
-    // will be used later on private Boolean blocking;
+    private Boolean blocking;
 }

@@ -5,6 +5,7 @@ import goveed20.LiteraryAssociationApplication.dtos.TaskPreviewDTO;
 import goveed20.LiteraryAssociationApplication.dtos.TaskType;
 import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
 import org.camunda.bpm.engine.FormService;
+import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,12 @@ public class UserTaskService {
     @Autowired
     private FormService formService;
 
+    @Autowired
+    private RuntimeService runtimeService;
+
+    @Autowired
+    private TaskExtensionsService taskExtensionsService;
+
     // add support for blocking tasks later
     public Set<TaskPreviewDTO> getActiveTasksForUser(String username) {
         return taskService
@@ -30,11 +37,16 @@ public class UserTaskService {
                 .active()
                 .list()
                 .stream()
-                .map(task -> TaskPreviewDTO.builder()
-                        .id(task.getId())
-                        .name(task.getName())
-                        .dueDate((task.getDueDate())
-                        ).build()
+                .map(task -> {
+                            String bpmnFile = (String) runtimeService.getVariable(task.getProcessInstanceId(), "bpmnFile");
+
+                            return TaskPreviewDTO.builder()
+                                    .id(task.getId())
+                                    .name(task.getName())
+                                    .dueDate((task.getDueDate()))
+                                    .blocking(taskExtensionsService.getExtensions(bpmnFile, task.getTaskDefinitionKey()).containsKey("blocking"))
+                                    .build();
+                        }
                 )
                 .collect(Collectors.toSet());
     }
@@ -51,6 +63,7 @@ public class UserTaskService {
 
         if (task.getFormKey() != null) {
             dto.setType(TaskType.FORM);
+            // use extensions to setup form fields later
             dto.setFormFields(formService.getTaskFormData(id).getFormFields());
         } else {
             dto.setType(TaskType.PAYMENT);
