@@ -311,6 +311,9 @@
             </camunda:properties>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="beta_reader_select" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0mh7w1n</bpmn:incoming>
       <bpmn:outgoing>Flow_1elyt5y</bpmn:outgoing>
@@ -357,6 +360,10 @@
         <bpmn:outgoing>Flow_0kiodko</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:sequenceFlow id="Flow_0kiodko" sourceRef="Activity_03wy8r6" targetRef="Event_1b5cyl3" />
+      <bpmn:textAnnotation id="TextAnnotation_1t9tcce">
+        <bpmn:text>Save comments in database</bpmn:text>
+      </bpmn:textAnnotation>
+      <bpmn:association id="Association_1tsqdib" sourceRef="Activity_0pq7zsh" targetRef="TextAnnotation_1t9tcce" />
     </bpmn:subProcess>
     <bpmn:userTask id="Activity_0ugvt5l" name="Change paper according to comments" camunda:formKey="paper_change_form" camunda:assignee="${writer}">
       <bpmn:extensionElements>
@@ -645,7 +652,7 @@
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1prp8m2" sourceRef="Choose_editor" targetRef="TextAnnotation_0611wn5" />
     <bpmn:textAnnotation id="TextAnnotation_1j27ufc">
-      <bpmn:text>Set working_paper_accepteded process variable</bpmn:text>
+      <bpmn:text>Set working_paper_accepted process variable</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0csrrop" sourceRef="Activity_1red3gc" targetRef="TextAnnotation_1j27ufc" />
     <bpmn:textAnnotation id="TextAnnotation_030drbt">
@@ -661,9 +668,7 @@
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1jtzfvc" sourceRef="Activity_1mx49c4" targetRef="TextAnnotation_07i7sp0" />
     <bpmn:textAnnotation id="TextAnnotation_1abq2mq">
-      <bpmn:text>Set beta_readers process variable
-
-Set beta_readers_comments process variable</bpmn:text>
+      <bpmn:text>Set beta_readers process variable</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0pbx07j" sourceRef="Activity_1f9ykb0" targetRef="TextAnnotation_1abq2mq" />
     <bpmn:textAnnotation id="TextAnnotation_0r9ibyw">
@@ -675,8 +680,7 @@ Set beta_readers_comments process variable</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0h9oe7v" sourceRef="Activity_1np7cx0" targetRef="TextAnnotation_0b2t3bt" />
     <bpmn:textAnnotation id="TextAnnotation_1w7034c">
-      <bpmn:text>Save comments in database.
-Set correct_mistakes process variable.
+      <bpmn:text>Set correct_mistakes process variable.
 
 Set lector_comment process variable.</bpmn:text>
     </bpmn:textAnnotation>
@@ -790,19 +794,18 @@ Set lector_comment process variable.</bpmn:text>
         <di:waypoint x="3675" y="300" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1tmlbjc_di" bpmnElement="Flow_1tmlbjc">
-        <di:waypoint x="3650" y="605" />
-        <di:waypoint x="3650" y="300" />
-        <di:waypoint x="3675" y="300" />
+        <di:waypoint x="3700" y="605" />
+        <di:waypoint x="3700" y="325" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0e1fxqh_di" bpmnElement="Flow_0e1fxqh">
-        <di:waypoint x="3650" y="655" />
-        <di:waypoint x="3650" y="790" />
+        <di:waypoint x="3700" y="655" />
+        <di:waypoint x="3700" y="790" />
         <di:waypoint x="3310" y="790" />
         <di:waypoint x="3310" y="670" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1vhjiec_di" bpmnElement="Flow_1vhjiec">
         <di:waypoint x="3550" y="630" />
-        <di:waypoint x="3625" y="630" />
+        <di:waypoint x="3675" y="630" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0h1jyks_di" bpmnElement="Flow_0h1jyks">
         <di:waypoint x="3360" y="630" />
@@ -999,8 +1002,14 @@ Set lector_comment process variable.</bpmn:text>
       <bpmndi:BPMNShape id="Activity_0ajhn8f_di" bpmnElement="Activity_1f9ykb0">
         <dc:Bounds x="2430" y="600" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0xorkyo_di" bpmnElement="Gateway_0xorkyo" isMarkerVisible="true">
+        <dc:Bounds x="3675" y="605" width="50" height="50" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ei8rxz_di" bpmnElement="Activity_0oc7pmu" isExpanded="true">
-        <dc:Bounds x="2670" y="521" width="500" height="290" />
+        <dc:Bounds x="2670" y="520" width="500" height="291" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1t9tcce_di" bpmnElement="TextAnnotation_1t9tcce">
+        <dc:Bounds x="2710" y="713" width="100" height="55" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0kiodko_di" bpmnElement="Flow_0kiodko">
         <di:waypoint x="3040" y="741" />
@@ -1032,6 +1041,10 @@ Set lector_comment process variable.</bpmn:text>
       <bpmndi:BPMNShape id="Activity_0o3fhsx_di" bpmnElement="Activity_03wy8r6">
         <dc:Bounds x="2940" y="701" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1tsqdib_di" bpmnElement="Association_1tsqdib">
+        <di:waypoint x="2829" y="661" />
+        <di:waypoint x="2775" y="713" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1v9enpm_di" bpmnElement="Event_05x9u7n">
         <dc:Bounds x="2882" y="643" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -1040,9 +1053,6 @@ Set lector_comment process variable.</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1miby6j_di" bpmnElement="Activity_1sachd9">
         <dc:Bounds x="3450" y="590" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0xorkyo_di" bpmnElement="Gateway_0xorkyo" isMarkerVisible="true">
-        <dc:Bounds x="3625" y="605" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1qpbh15_di" bpmnElement="Gateway_1qpbh15" isMarkerVisible="true">
         <dc:Bounds x="3675" y="275" width="50" height="50" />
@@ -1093,7 +1103,7 @@ Set lector_comment process variable.</bpmn:text>
         <dc:Bounds x="720" y="180" width="100" height="41" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1j27ufc_di" bpmnElement="TextAnnotation_1j27ufc">
-        <dc:Bounds x="870" y="180" width="160" height="53" />
+        <dc:Bounds x="870" y="180" width="160" height="55" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_030drbt_di" bpmnElement="TextAnnotation_030drbt">
         <dc:Bounds x="1580" y="195" width="100" height="70" />
@@ -1105,7 +1115,7 @@ Set lector_comment process variable.</bpmn:text>
         <dc:Bounds x="2260" y="195" width="140" height="55" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1abq2mq_di" bpmnElement="TextAnnotation_1abq2mq">
-        <dc:Bounds x="2240" y="590" width="160" height="151" />
+        <dc:Bounds x="2240" y="590" width="160" height="41" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0r9ibyw_di" bpmnElement="TextAnnotation_0r9ibyw">
         <dc:Bounds x="3300" y="438" width="160" height="84" />
@@ -1114,7 +1124,7 @@ Set lector_comment process variable.</bpmn:text>
         <dc:Bounds x="3870" y="166" width="100" height="55" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1w7034c_di" bpmnElement="TextAnnotation_1w7034c">
-        <dc:Bounds x="4120" y="83" width="110" height="137" />
+        <dc:Bounds x="4120" y="83" width="110" height="113" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1nsmkuv_di" bpmnElement="TextAnnotation_1nsmkuv">
         <dc:Bounds x="4500" y="166" width="100" height="67" />
@@ -1162,7 +1172,7 @@ Set lector_comment process variable.</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0csrrop_di" bpmnElement="Association_0csrrop">
         <di:waypoint x="942" y="310" />
-        <di:waypoint x="925" y="233" />
+        <di:waypoint x="925" y="235" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1qreoql_di" bpmnElement="Association_1qreoql">
         <di:waypoint x="1630" y="310" />
@@ -1190,7 +1200,7 @@ Set lector_comment process variable.</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1rotclk_di" bpmnElement="Association_1rotclk">
         <di:waypoint x="4170" y="260" />
-        <di:waypoint x="4170" y="220" />
+        <di:waypoint x="4170" y="196" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_01fbdoq_di" bpmnElement="Association_01fbdoq">
         <di:waypoint x="4550" y="260" />
