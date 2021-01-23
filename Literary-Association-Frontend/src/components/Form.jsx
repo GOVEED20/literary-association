@@ -53,8 +53,7 @@ const Form = ({ form, onSubmit }) => {
                 {
                     form.formFields.map((formField) =>
                         isVisible(formField) &&
-                        <FormField key={formField.id} formField={formField} onChange={changeState}
-                                   value={state[formField.id]}/>
+                        <FormField key={formField.id} formField={formField} onChange={changeState} value={state[formField.id]}/>
                     )
                 }
                 <BootstrapForm.Group as={Row}>
