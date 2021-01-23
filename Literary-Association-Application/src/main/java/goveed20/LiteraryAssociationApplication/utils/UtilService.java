@@ -7,7 +7,6 @@ import goveed20.LiteraryAssociationApplication.dtos.OptionDTO;
 import goveed20.LiteraryAssociationApplication.model.BetaReaderStatus;
 import goveed20.LiteraryAssociationApplication.model.Genre;
 import org.camunda.bpm.engine.form.FormField;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -36,7 +35,7 @@ public class UtilService {
     public static String serializeBetaReaders(HashSet<BetaReaderStatus> betaReaderStatuses) {
         Gson gson = new Gson();
         return gson.toJson(betaReaderStatuses.stream().map(b -> OptionDTO.builder().name(b.getReader().getUsername())
-                .value(b.getReader().getFirstName() + " " + b.getReader().getSurname())));
+                .value(b.getReader().getName() + " " + b.getReader().getSurname())));
     }
 
     private static String serializeOptions(Set<String> options) {

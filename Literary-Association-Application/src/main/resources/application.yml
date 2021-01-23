@@ -38,3 +38,8 @@ server:
 jasypt:
   encryptor:
     password: goveed20
+
+camunda:
+  bpm:
+    database:
+      schema-update: drop-create

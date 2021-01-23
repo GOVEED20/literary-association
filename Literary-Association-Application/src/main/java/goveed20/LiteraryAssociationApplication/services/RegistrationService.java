@@ -69,7 +69,7 @@ public class RegistrationService {
     public void register(FormSubmissionDTO regData) {
         Map<String, Object> map = UtilService.mapListToDto(regData.getFormFields());
 
-        Task task = taskService.createTaskQuery().processInstanceId(regData.getID()).active().list().get(0);
+        Task task = taskService.createTaskQuery().processInstanceId(regData.getId()).active().list().get(0);
 
         if (task.getName().toLowerCase().contains("reader")) {
             if (readerRepository.findByUsername(String.valueOf(map.get("username"))) != null) {
@@ -86,8 +86,8 @@ public class RegistrationService {
                 throw new BpmnError("User with given email address already exists");
             }
         }
-        runtimeService.setVariable(regData.getID(), "registration", regData.getFormFields());
-        formService.submitTaskForm(task.getId(), map); // complete input registration data task
+        runtimeService.setVariable(regData.getId(), "registration", regData.getFormFields());
+        formService.submitTaskForm(task.getId(), map);
     }
 
     public void verify(String disHash, String pID) {
