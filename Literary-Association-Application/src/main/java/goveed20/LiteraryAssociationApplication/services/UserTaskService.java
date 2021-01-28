@@ -60,19 +60,15 @@ public class UserTaskService {
     }
 
     public TaskDTO getTask(String id) {
-        Task task = taskService.createTaskQuery().taskId(id).singleResult();
+        Task task = taskService.createTaskQuery().taskId(id).initializeFormKeys().singleResult();
 
         if (task == null) {
             throw new NotFoundException(String.format("Task with id '%s' not found", id));
         }
 
-        Map<String, String> taskExtensions = taskExtensionsService.getExtensions(
-                (String) runtimeService.getVariable(task.getProcessInstanceId(), "bpmnFile"), task.getTaskDefinitionKey());
-
         TaskDTO dto = new TaskDTO();
         dto.setId(id);
         dto.setName(task.getName());
-        dto.setSubmitUrl(taskExtensions.get("submitUrl"));
 
         if (task.getFormKey() != null) {
             dto.setType(TaskType.FORM);
@@ -87,7 +83,7 @@ public class UserTaskService {
 
     private List<FormField> getFormFields(Task task) {
         Map<String, String> taskExtensions = taskExtensionsService.getExtensions(
-                (String) runtimeService.getVariable(task.getProcessInstanceId(), "bpmnFile"), task.getId());
+                (String) runtimeService.getVariable(task.getProcessInstanceId(), "bpmnFile"), task.getTaskDefinitionKey());
         if (taskExtensions.containsKey("basic_select")) {
             formFieldsService.setSelectFormFields(task);
         }
