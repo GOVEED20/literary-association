@@ -4,6 +4,7 @@ import goveed20.PaymentConcentrator.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -32,8 +33,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configureAuthentication(
             AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
-                .userDetailsService(userDetailsService()).passwordEncoder(
-                passwordEncoder);
+                .userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder);
     }
 
     @Bean
@@ -43,11 +43,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         firewall.setAllowSemicolon(true);
         return firewall;
     }
-
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
 
     @Bean
     public UserDetailsServiceImpl userDetailsService() {
@@ -83,18 +78,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .clearAuthentication(true)
                 .and()
                 .authorizeRequests()
+                .antMatchers("/api/login/*")
+                .permitAll()
                 .anyRequest()
                 .permitAll()
                 .and()
                 .httpBasic()
                 .and()
+                .cors()
+                .and()
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+
+        httpSecurity.csrf().disable();
+        httpSecurity.headers().frameOptions().disable();
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         super.configure(web);
         web.httpFirewall(allowUrlEncodedSlashHttpFirewall());
-        //web.ignoring().antMatchers("/api/register/**", "/api/process/start");
+        web.ignoring().antMatchers(HttpMethod.POST, "/api/login");
     }
 }

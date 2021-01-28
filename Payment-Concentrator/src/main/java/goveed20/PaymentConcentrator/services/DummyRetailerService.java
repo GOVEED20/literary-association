@@ -1,9 +1,8 @@
 package goveed20.PaymentConcentrator.services;
 
-import goveed20.PaymentConcentrator.model.PaymentData;
-import goveed20.PaymentConcentrator.model.Retailer;
-import goveed20.PaymentConcentrator.model.RetailerDataForPaymentService;
+import goveed20.PaymentConcentrator.model.*;
 import goveed20.PaymentConcentrator.repositories.RetailerRepository;
+import goveed20.PaymentConcentrator.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -15,6 +14,12 @@ import org.springframework.stereotype.Service;
 public class DummyRetailerService {
     @Autowired
     private RetailerRepository retailerRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @EventListener(ApplicationReadyEvent.class)
     public void addDummyRetailer() {
@@ -74,7 +79,16 @@ public class DummyRetailerService {
             retailer.getRetailerDataForPaymentServices().add(dataForBitcoinService);
             retailer.getRetailerDataForPaymentServices().add(dataForCardPaymentService);
 
+            User admin = User.builder()
+                    .name("Admin")
+                    .surname("Admirovic")
+                    .username("admin")
+                    .password(passwordEncoder.encode("Admin123!")) //Admin123!
+                    .role(UserRole.ADMIN)
+                    .build();
+
             retailerRepository.save(retailer);
+            userRepository.save(admin);
 
         }
     }
