@@ -24,7 +24,7 @@ public class RejectionNotificationDelegate implements JavaDelegate {
         String text = String.format("Dear %s %s,\nYour working paper is rejected.\nRejection comment:\n%s",
                 writer.getName(),
                 writer.getSurname(),
-                delegateExecution.getVariable("rejectionComment"));
+                delegateExecution.getVariable("working_paper_rejection_comment "));
 
         emailService.sendEmail(writer.getEmail(), "Working paper rejection", text);
     }
