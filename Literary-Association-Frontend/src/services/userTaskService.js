@@ -23,7 +23,7 @@ const submitTask = async (submitUrl, taskId, state) => {
         })
     }
 
-    const response = await axios.post(`${BASE_URL}${submitUrl}`, payload)
+    const response = await axios.post(`${BASE_URL}/task`, payload)
     return response.data
 }
 

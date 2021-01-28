@@ -113,7 +113,7 @@ public class UserTaskService {
         }
 
         Map<String, Object> map = UtilService.mapListToDto(data.getFormFields());
+        runtimeService.setVariable(task.getProcessInstanceId(), "data", UtilService.mapListToDto(data.getFormFields()));
         formService.submitTaskForm(task.getId(), map);
-        runtimeService.setVariable(task.getId(), "data", data.getFormFields());
     }
 }

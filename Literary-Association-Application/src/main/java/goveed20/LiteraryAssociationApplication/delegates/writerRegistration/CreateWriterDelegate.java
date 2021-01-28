@@ -3,6 +3,7 @@ package goveed20.LiteraryAssociationApplication.delegates.writerRegistration;
 import goveed20.LiteraryAssociationApplication.model.VerificationToken;
 import goveed20.LiteraryAssociationApplication.model.Writer;
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
+import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
 import goveed20.LiteraryAssociationApplication.repositories.VerificationTokenRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WriterRepository;
 import goveed20.LiteraryAssociationApplication.services.CamundaUserService;
@@ -36,6 +37,9 @@ public class CreateWriterDelegate implements JavaDelegate {
     @Autowired
     private LocationService locationService;
 
+    @Autowired
+    private GenreRepository genreRepository;
+
     @SuppressWarnings("unchecked")
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
@@ -59,7 +63,7 @@ public class CreateWriterDelegate implements JavaDelegate {
     }
 
     private Writer createWriter(Map<String, Object> data) {
-        return Writer.writerBuilder()
+        Writer writer = Writer.writerBuilder()
                 .role(UserRole.WRITER)
                 .genres(new HashSet<>())
                 .location(locationService.createLocation(String.valueOf(data.get("country")), String.valueOf(data.get("city"))))
@@ -74,7 +78,12 @@ public class CreateWriterDelegate implements JavaDelegate {
                 .name(String.valueOf(data.get("name")))
                 .surname(String.valueOf(data.get("surname")))
                 .email(String.valueOf(data.get("email")))
-                .genres(UtilService.parseGenres(String.valueOf(data.get("genres"))))
+                .genres(new HashSet<>())
                 .build();
+
+        UtilService.parseGenres(String.valueOf(data.get("genres")))
+                .forEach(g -> writer.getGenres().add(genreRepository.findByGenre(g.getGenre())));
+
+        return writer;
     }
 }
