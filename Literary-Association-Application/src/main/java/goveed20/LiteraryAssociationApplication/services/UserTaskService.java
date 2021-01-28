@@ -1,9 +1,11 @@
 package goveed20.LiteraryAssociationApplication.services;
 
+import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionDTO;
 import goveed20.LiteraryAssociationApplication.dtos.TaskDTO;
 import goveed20.LiteraryAssociationApplication.dtos.TaskPreviewDTO;
 import goveed20.LiteraryAssociationApplication.dtos.TaskType;
 import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
+import goveed20.LiteraryAssociationApplication.utils.UtilService;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
@@ -65,7 +67,7 @@ public class UserTaskService {
         }
 
         Map<String, String> taskExtensions = taskExtensionsService.getExtensions(
-                (String) runtimeService.getVariable(task.getProcessInstanceId(), "bpmnFile"), task.getId());
+                (String) runtimeService.getVariable(task.getProcessInstanceId(), "bpmnFile"), task.getTaskDefinitionKey());
 
         TaskDTO dto = new TaskDTO();
         dto.setId(id);
@@ -97,5 +99,21 @@ public class UserTaskService {
         }
 
         return formService.getTaskFormData(task.getId()).getFormFields();
+    }
+
+    public void submitForm(FormSubmissionDTO data) {
+        Task task = taskService.createTaskQuery().processInstanceId(data.getId()).active().list().get(0);
+
+        if (task == null) {
+            task = taskService.createTaskQuery().taskId(data.getId()).singleResult();
+        }
+
+        if (task == null) {
+            throw new NotFoundException(String.format("Task or process with id '%s' not found", data.getId()));
+        }
+
+        Map<String, Object> map = UtilService.mapListToDto(data.getFormFields());
+        formService.submitTaskForm(task.getId(), map);
+        runtimeService.setVariable(task.getId(), "data", data.getFormFields());
     }
 }

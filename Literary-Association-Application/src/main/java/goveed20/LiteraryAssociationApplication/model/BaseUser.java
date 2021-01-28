@@ -2,7 +2,6 @@ package goveed20.LiteraryAssociationApplication.model;
 
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import lombok.*;
-import org.camunda.bpm.engine.identity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -18,7 +17,7 @@ import java.util.Set;
 @Builder(toBuilder = true)
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class BaseUser implements UserDetails, User {
+public class BaseUser implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -80,34 +79,5 @@ public class BaseUser implements UserDetails, User {
     @Override
     public boolean isEnabled() {
         return this.verified;
-    }
-
-    @Override
-    public String getId() {
-        return username;
-    }
-
-    @Override
-    public void setId(String s) {
-    }
-
-    @Override
-    public String getFirstName() {
-        return name;
-    }
-
-    @Override
-    public void setFirstName(String s) {
-        name = s;
-    }
-
-    @Override
-    public void setLastName(String s) {
-        surname = s;
-    }
-
-    @Override
-    public String getLastName() {
-        return surname;
     }
 }

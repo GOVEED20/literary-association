@@ -35,13 +35,13 @@ public class WriterService {
     private FormService formService;
 
     public void submitWritings(FormSubmissionDTO formSubmissionDTO) {
-        if (formSubmissionDTO.getID() == null)
+        if (formSubmissionDTO.getId() == null)
             throw new BusinessProcessException("Missing task id");
 
-        Task task = taskService.createTaskQuery().taskId(formSubmissionDTO.getID()).singleResult();
+        Task task = taskService.createTaskQuery().taskId(formSubmissionDTO.getId()).singleResult();
 
         if (task == null)
-            throw new BusinessProcessException(String.format("Task with id '%s' not found", formSubmissionDTO.getID()));
+            throw new BusinessProcessException(String.format("Task with id '%s' not found", formSubmissionDTO.getId()));
 
         try {
             List<String> writingNames = formSubmissionDTO.getFormFields().stream().map(this::parseAndSaveWriting).collect(Collectors.toList());
@@ -58,13 +58,13 @@ public class WriterService {
 
     @SuppressWarnings("unchecked")
     public void submitWritingsReview(FormSubmissionDTO formSubmissionDTO) {
-        if (formSubmissionDTO.getID() == null)
+        if (formSubmissionDTO.getId() == null)
             throw new BusinessProcessException("Missing task id");
 
-        Task task = taskService.createTaskQuery().taskId(formSubmissionDTO.getID()).singleResult();
+        Task task = taskService.createTaskQuery().taskId(formSubmissionDTO.getId()).singleResult();
 
         if (task == null)
-            throw new BusinessProcessException(String.format("Task with id '%s' not found", formSubmissionDTO.getID()));
+            throw new BusinessProcessException(String.format("Task with id '%s' not found", formSubmissionDTO.getId()));
 
         Map<String, Object> map = UtilService.mapListToDto(formSubmissionDTO.getFormFields());
         Map<String, ReviewResult> reviewResults = (Map<String, ReviewResult>) runtimeService.getVariable(task.getProcessInstanceId(), "review_results");

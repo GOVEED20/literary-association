@@ -91,19 +91,14 @@
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_12th27c</bpmn:incoming>
-      <bpmn:incoming>Flow_17c9hpi</bpmn:incoming>
-      <bpmn:outgoing>Flow_1001c7p</bpmn:outgoing>
+      <bpmn:incoming>Flow_19nwbm4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lkklzi</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_12th27c" sourceRef="Event_1fgy1c6" targetRef="Reg_form_writer" />
-    <bpmn:serviceTask id="Create_user" name="Create user" camunda:class="goveed20.LiteraryAssociationApplication.delegates.RegistrationDelegate">
-      <bpmn:incoming>Flow_1s3wu6d</bpmn:incoming>
-      <bpmn:outgoing>Flow_0esf2ku</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:serviceTask id="Send_email_with_activation_link" name="Send email with activation link" camunda:class="goveed20.LiteraryAssociationApplication.delegates.EmailDelegate">
-      <bpmn:incoming>Flow_0esf2ku</bpmn:incoming>
+      <bpmn:incoming>Flow_1rpe5z7</bpmn:incoming>
       <bpmn:outgoing>Flow_1d8s9zr</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_0esf2ku" sourceRef="Create_user" targetRef="Send_email_with_activation_link" />
     <bpmn:userTask id="Activity_1msg0et" name="Submit writings" camunda:formKey="submit_writings_form" camunda:assignee="${user}">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -247,17 +242,6 @@ execution.setVariable("i", i);
       <bpmn:outgoing>Flow_1yx68fj</bpmn:outgoing>
       <bpmn:signalEventDefinition id="SignalEventDefinition_0ee6rrc" signalRef="Signal_0rwpehp" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:boundaryEvent id="InvalidDataError" name="InvalidDataError" attachedToRef="Reg_form_writer">
-      <bpmn:outgoing>Flow_17c9hpi</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_0llsx9l" />
-    </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_17c9hpi" sourceRef="InvalidDataError" targetRef="Reg_form_writer" />
-    <bpmn:scriptTask id="Set_user_role" name="Set user role" scriptFormat="javascript">
-      <bpmn:incoming>Flow_1rpe5z7</bpmn:incoming>
-      <bpmn:outgoing>Flow_1s3wu6d</bpmn:outgoing>
-      <bpmn:script>execution.setVariable("userRole", "writer");</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="Flow_1s3wu6d" sourceRef="Set_user_role" targetRef="Create_user" />
     <bpmn:sequenceFlow id="Flow_1d8s9zr" sourceRef="Send_email_with_activation_link" targetRef="Confirmation_link_event" />
     <bpmn:sequenceFlow id="Flow_1yx68fj" sourceRef="Confirmation_link_event" targetRef="Activity_1msg0et" />
     <bpmn:sequenceFlow id="Flow_13uw9l5" sourceRef="Activity_1msg0et" targetRef="Activity_1nd5m05" />
@@ -281,10 +265,9 @@ execution.setVariable("i", i);
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0za4fg0" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_0mtyfuq" sourceRef="Invalid_writings_2" targetRef="Activity_1flwtkz" />
-    <bpmn:sequenceFlow id="Flow_1rpe5z7" sourceRef="Activity_0xdez2j" targetRef="Set_user_role" />
-    <bpmn:sequenceFlow id="Flow_1001c7p" sourceRef="Reg_form_writer" targetRef="Activity_0xdez2j" />
+    <bpmn:sequenceFlow id="Flow_1rpe5z7" sourceRef="Activity_0xdez2j" targetRef="Send_email_with_activation_link" />
     <bpmn:scriptTask id="Activity_0xdez2j" name="Set bpmn file" scriptFormat="javascript">
-      <bpmn:incoming>Flow_1001c7p</bpmn:incoming>
+      <bpmn:incoming>Flow_1yl9983</bpmn:incoming>
       <bpmn:outgoing>Flow_1rpe5z7</bpmn:outgoing>
       <bpmn:script>execution.setVariable("bpmnFile", "writer_registration");</bpmn:script>
     </bpmn:scriptTask>
@@ -322,6 +305,17 @@ execution.setVariable("i", i);
     <bpmn:sequenceFlow id="Flow_1281tdc" name="Needs further review but review more than 3 times" sourceRef="Gateway_0h1nu6p" targetRef="Event_1t0obmw">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${further_review == true &amp;&amp; i &gt; 3}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1yl9983" sourceRef="Create_writer" targetRef="Activity_0xdez2j" />
+    <bpmn:sequenceFlow id="Flow_1lkklzi" sourceRef="Reg_form_writer" targetRef="Create_writer" />
+    <bpmn:serviceTask id="Create_writer" name="Create writer" camunda:class="goveed20.LiteraryAssociationApplication.delegates.writerRegistration.CreateWriterDelegate">
+      <bpmn:incoming>Flow_1lkklzi</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yl9983</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1ewqn3n" name="Bad registration data" attachedToRef="Create_writer">
+      <bpmn:outgoing>Flow_19nwbm4</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_08el3sp" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_19nwbm4" sourceRef="Event_1ewqn3n" targetRef="Reg_form_writer" />
   </bpmn:process>
   <bpmn:signal id="Signal_0rwpehp" name="Confirmation_link_signal" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -396,13 +390,9 @@ execution.setVariable("i", i);
         <di:waypoint x="2330" y="738" />
         <di:waypoint x="2330" y="270" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1001c7p_di" bpmnElement="Flow_1001c7p">
-        <di:waypoint x="380" y="250" />
-        <di:waypoint x="430" y="250" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1rpe5z7_di" bpmnElement="Flow_1rpe5z7">
-        <di:waypoint x="530" y="250" />
-        <di:waypoint x="620" y="250" />
+        <di:waypoint x="740" y="250" />
+        <di:waypoint x="870" y="250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0mtyfuq_di" bpmnElement="Flow_0mtyfuq">
         <di:waypoint x="1832" y="592" />
@@ -431,16 +421,6 @@ execution.setVariable("i", i);
         <di:waypoint x="970" y="250" />
         <di:waypoint x="1052" y="250" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1s3wu6d_di" bpmnElement="Flow_1s3wu6d">
-        <di:waypoint x="720" y="250" />
-        <di:waypoint x="740" y="250" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_17c9hpi_di" bpmnElement="Flow_17c9hpi">
-        <di:waypoint x="357" y="308" />
-        <di:waypoint x="357" y="390" />
-        <di:waypoint x="297" y="390" />
-        <di:waypoint x="297" y="290" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jjk1vb_di" bpmnElement="Flow_1jjk1vb">
         <di:waypoint x="1770" y="660" />
         <di:waypoint x="1330" y="660" />
@@ -454,25 +434,26 @@ execution.setVariable("i", i);
         <di:waypoint x="1540" y="270" />
         <di:waypoint x="1610" y="270" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0esf2ku_di" bpmnElement="Flow_0esf2ku">
-        <di:waypoint x="840" y="250" />
-        <di:waypoint x="870" y="250" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_12th27c_di" bpmnElement="Flow_12th27c">
         <di:waypoint x="188" y="250" />
-        <di:waypoint x="280" y="250" />
+        <di:waypoint x="220" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yl9983_di" bpmnElement="Flow_1yl9983">
+        <di:waypoint x="530" y="250" />
+        <di:waypoint x="640" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lkklzi_di" bpmnElement="Flow_1lkklzi">
+        <di:waypoint x="320" y="250" />
+        <di:waypoint x="430" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19nwbm4_di" bpmnElement="Flow_19nwbm4">
+        <di:waypoint x="510" y="308" />
+        <di:waypoint x="510" y="328" />
+        <di:waypoint x="270" y="328" />
+        <di:waypoint x="270" y="290" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1fgy1c6_di" bpmnElement="Event_1fgy1c6">
         <dc:Bounds x="152" y="232" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1ucej54_di" bpmnElement="Reg_form_writer">
-        <dc:Bounds x="280" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_04hl6b0_di" bpmnElement="Create_user">
-        <dc:Bounds x="740" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0do2vc8_di" bpmnElement="Send_email_with_activation_link">
-        <dc:Bounds x="870" y="210" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_00gxjnm_di" bpmnElement="Activity_1msg0et">
         <dc:Bounds x="1150" y="230" width="100" height="80" />
@@ -513,12 +494,6 @@ execution.setVariable("i", i);
           <dc:Bounds x="1030" y="275" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1dck42m_di" bpmnElement="Set_user_role">
-        <dc:Bounds x="620" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0rihjae_di" bpmnElement="Activity_0xdez2j">
-        <dc:Bounds x="430" y="210" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_15hk2iw_di" bpmnElement="Gateway_0h1nu6p" isMarkerVisible="true">
         <dc:Bounds x="1923" y="245" width="50" height="50" />
       </bpmndi:BPMNShape>
@@ -527,6 +502,18 @@ execution.setVariable("i", i);
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0l0a5fu_di" bpmnElement="Activity_0enuqnf">
         <dc:Bounds x="1960" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ucej54_di" bpmnElement="Reg_form_writer">
+        <dc:Bounds x="220" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0do2vc8_di" bpmnElement="Send_email_with_activation_link">
+        <dc:Bounds x="870" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rihjae_di" bpmnElement="Activity_0xdez2j">
+        <dc:Bounds x="640" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kkuknr_di" bpmnElement="Create_writer">
+        <dc:Bounds x="430" y="210" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0e66qlt_di" bpmnElement="Invalid_writings_2">
         <dc:Bounds x="1814" y="592" width="36" height="36" />
@@ -540,12 +527,6 @@ execution.setVariable("i", i);
           <dc:Bounds x="1204" y="336" width="73" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1o3kobf_di" bpmnElement="InvalidDataError">
-        <dc:Bounds x="339" y="272" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="326" y="316" width="81" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1gmtgzj_di" bpmnElement="Event_1ta7som">
         <dc:Bounds x="1804" y="672" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -556,6 +537,12 @@ execution.setVariable("i", i);
         <dc:Bounds x="2152" y="142" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2131" y="185" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_02hrp8u_di" bpmnElement="Event_1ewqn3n">
+        <dc:Bounds x="492" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="471" y="314" width="78" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

@@ -52,7 +52,7 @@ public class BookService {
 
     public String submitWorkingPaperTemplate(FormSubmissionDTO formSubmission) {
         Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
-        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getId()).singleResult();
         String title = (String) map.get("title");
         if (workingPaperRepository.findByTitle(title) != null) {
             throw new BpmnError("Book with given title already exists");
@@ -71,7 +71,7 @@ public class BookService {
 
     public String chooseBetaReaders(FormSubmissionDTO formSubmission) {
         Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
-        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getId()).singleResult();
         Set<String> betaReaders = UtilService.parseBetaReaders((String) map.get("beta_readers"));
         if (betaReaders.size() == 0) {
             return "There are no selected beta readers";
@@ -84,7 +84,7 @@ public class BookService {
 
     public String publishBook(FormSubmissionDTO formSubmission) {
         Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
-        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getId()).singleResult();
         WorkingPaper workingPaper = workingPaperRepository.findByTitle(
                 (String) runtimeService.getVariable(task.getProcessInstanceId(), "working_paper"));
         if (workingPaper == null) {
@@ -114,7 +114,7 @@ public class BookService {
 
     public String submitBetaReaderComment(FormSubmissionDTO formSubmission) {
         Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
-        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getId()).singleResult();
 
         BaseUser writer = (BaseUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (writer == null) {
@@ -142,7 +142,7 @@ public class BookService {
 
     public String submitSelectFormFields(FormSubmissionDTO formSubmission) {
         Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
-        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getId()).singleResult();
         String retVal;
         String processVariable;
         boolean processVariableValue;
@@ -187,7 +187,7 @@ public class BookService {
 
     public String submitCommentForm(FormSubmissionDTO formSubmission) {
         Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
-        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getId()).singleResult();
         String retVal;
         String processVariableCommentName;
         String processVariableCommentValue;
@@ -212,14 +212,14 @@ public class BookService {
                 processVariableCommentName = "lector_comment";
                 processVariableCommentValue = (String) map.get("mistake_comment");
                 retVal = "Comment for lexicographic mistakes successfully sent";
-                runtimeService.setVariable(formSubmission.getID(), "correct_mistakes",
+                runtimeService.setVariable(formSubmission.getId(), "correct_mistakes",
                         !map.get("mistake_comment").equals(""));
                 break;
             case "editor_suggestions_form":
                 processVariableCommentName = "editor_suggestion_comment";
                 processVariableCommentValue = (String) map.get("editor_suggestions");
                 retVal = "Suggestions on working paper successfully delivered";
-                runtimeService.setVariable(formSubmission.getID(), "editor_suggested",
+                runtimeService.setVariable(formSubmission.getId(), "editor_suggested",
                         !map.get("editor_suggestions").equals(""));
                 break;
             default:
@@ -237,7 +237,7 @@ public class BookService {
 
     public String submitFile(FormSubmissionDTO formSubmission) {
         Map<String, Object> map = UtilService.mapListToDto(formSubmission.getFormFields());
-        Task task = taskService.createTaskQuery().taskId(formSubmission.getID()).singleResult();
+        Task task = taskService.createTaskQuery().taskId(formSubmission.getId()).singleResult();
 
         String retVal;
         String formFieldName;

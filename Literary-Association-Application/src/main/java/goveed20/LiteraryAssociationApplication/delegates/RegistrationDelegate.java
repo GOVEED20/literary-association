@@ -3,9 +3,12 @@ package goveed20.LiteraryAssociationApplication.delegates;
 import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionFieldDTO;
 import goveed20.LiteraryAssociationApplication.model.*;
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
-import goveed20.LiteraryAssociationApplication.repositories.*;
+import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
+import goveed20.LiteraryAssociationApplication.repositories.ReaderRepository;
+import goveed20.LiteraryAssociationApplication.repositories.VerificationTokenRepository;
+import goveed20.LiteraryAssociationApplication.repositories.WriterRepository;
+import goveed20.LiteraryAssociationApplication.services.CamundaUserService;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
-import org.camunda.bpm.engine.IdentityService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +38,7 @@ public class RegistrationDelegate implements JavaDelegate {
     private WriterRepository writerRepository;
 
     @Autowired
-    private IdentityService identityService;
+    private CamundaUserService camundaUserService;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -48,16 +51,15 @@ public class RegistrationDelegate implements JavaDelegate {
         if (userRole.equals("reader")) {
             Reader reader = createReader(registration);
             user = reader;
-            identityService.saveUser(reader);
             readerRepository.save(reader);
         } else {
             Writer writer = createWriter(registration);
             user = writer;
-            identityService.saveUser(writer);
             writerRepository.save(writer);
             delegateExecution.setVariable("user", writer.getUsername());
         }
 
+        camundaUserService.createCamundaUser(user);
         VerificationToken vt = VerificationToken.builder().user(user)
                 .disposableHash(String.valueOf(UUID.randomUUID().toString().hashCode())).build();
         verificationTokenRepository.save(vt);
@@ -111,57 +113,5 @@ public class RegistrationDelegate implements JavaDelegate {
         });
 
         return reader;
-    }
-
-    private Writer createWriter(List<FormSubmissionFieldDTO> registration) {
-        String country = registration.stream().filter((field) -> field.getFieldId().equals("country")).findAny().orElseThrow().getFieldValue();
-        String city = registration.stream().filter((field) -> field.getFieldId().equals("city")).findAny().orElseThrow().getFieldValue();
-
-        Writer writer = Writer.writerBuilder()
-                .role(UserRole.WRITER)
-                .genres(new HashSet<>())
-                .location(createLocation(country, city))
-                .comments(new HashSet<>())
-                .transactions(new HashSet<>())
-                .verified(false)
-                .membershipApproved(false)
-                .workingPapers(new HashSet<>())
-                .books(new HashSet<>())
-                .build();
-
-        registration.forEach((field) -> {
-            switch (field.getFieldId()) {
-                case "username":
-                    writer.setUsername(field.getFieldValue());
-                    break;
-                case "password":
-                    writer.setPassword(passwordEncoder.encode(field.getFieldValue()));
-                    break;
-                case "name":
-                    writer.setName(field.getFieldValue());
-                    break;
-                case "surname":
-                    writer.setSurname(field.getFieldValue());
-                    break;
-                case "email":
-                    writer.setEmail(field.getFieldValue());
-                    break;
-                case "genres":
-                    UtilService.parseGenres(field.getFieldValue()).forEach(g -> writer.getGenres()
-                            .add(genreRepository.findByGenre(g.getGenre())));
-                    break;
-            }
-        });
-
-        return writer;
-    }
-
-    private Location createLocation(String country, String city) {
-        return Location.builder()
-                .country(country)
-                .city(city)
-                .latitude(45.0)
-                .longitude(45.0)
-                .build();
     }
 }

@@ -1,7 +1,6 @@
 package goveed20.LiteraryAssociationApplication.services;
 
 import goveed20.LiteraryAssociationApplication.dtos.FormFieldsDTO;
-import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionDTO;
 import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessException;
 import goveed20.LiteraryAssociationApplication.model.Reader;
 import goveed20.LiteraryAssociationApplication.model.VerificationToken;
@@ -14,7 +13,6 @@ import goveed20.LiteraryAssociationApplication.utils.UtilService;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
-import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.form.FormField;
 import org.camunda.bpm.engine.form.TaskFormData;
 import org.camunda.bpm.engine.runtime.Execution;
@@ -25,7 +23,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class RegistrationService {
@@ -64,30 +61,6 @@ public class RegistrationService {
         });
 
         return new FormFieldsDTO(processID, task.getId(), properties);
-    }
-
-    public void register(FormSubmissionDTO regData) {
-        Map<String, Object> map = UtilService.mapListToDto(regData.getFormFields());
-
-        Task task = taskService.createTaskQuery().processInstanceId(regData.getID()).active().list().get(0);
-
-        if (task.getName().toLowerCase().contains("reader")) {
-            if (readerRepository.findByUsername(String.valueOf(map.get("username"))) != null) {
-                throw new BpmnError("User with given username already exists");
-            }
-            if (readerRepository.findByEmail(String.valueOf(map.get("email"))) != null) {
-                throw new BpmnError("User with given email address already exists");
-            }
-        } else {
-            if (writerRepository.findByUsername(String.valueOf(map.get("username"))).isPresent()) {
-                throw new BpmnError("User with given username already exists");
-            }
-            if (writerRepository.findByEmail(String.valueOf(map.get("email"))) != null) {
-                throw new BpmnError("User with given email address already exists");
-            }
-        }
-        runtimeService.setVariable(regData.getID(), "registration", regData.getFormFields());
-        formService.submitTaskForm(task.getId(), map); // complete input registration data task
     }
 
     public void verify(String disHash, String pID) {
