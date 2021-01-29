@@ -35,16 +35,25 @@ const Form = ({ form, onSubmit }) => {
         return formField.properties.dependsOn === undefined ? true : state[formField.properties.dependsOn]
     }
 
+    const encodeSingleField = async (field, state) => {
+        const fileInput = document.getElementById(field.id)
+        const encodedFiles = []
+
+        for (let i = 0; i < fileInput.files.length; ++i) {
+            encodedFiles.push(await toBase64(fileInput.files[i]))
+        }
+
+        state[field.id] = encodedFiles.join(' ')
+    }
+
     const submit = (event) => {
         event.preventDefault()
         const preparedState = { ...state }
-        Promise.all(form.formFields.filter(ff => ff.properties.type === 'file')
-            .map(ff => new Promise(() => {
-                toBase64(document.getElementById(ff.id).files[0])
-                    .then(base64 => {
-                        preparedState[ff.id] = base64
-                    })
-            }))).then(onSubmit(preparedState))
+
+        Promise.all(form.formFields
+            .filter(ff => ff.properties.type === 'file')
+            .map(ff => encodeSingleField(ff, preparedState))
+        ).then(() => onSubmit(preparedState))
     }
 
     return (
@@ -53,7 +62,8 @@ const Form = ({ form, onSubmit }) => {
                 {
                     form.formFields.map((formField) =>
                         isVisible(formField) &&
-                        <FormField key={formField.id} formField={formField} onChange={changeState} value={state[formField.id]}/>
+                        <FormField key={formField.id} formField={formField} onChange={changeState}
+                                   value={state[formField.id]}/>
                     )
                 }
                 <BootstrapForm.Group as={Row}>

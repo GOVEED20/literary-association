@@ -12,7 +12,7 @@ const getTask = async (id) => {
     return response.data
 }
 
-const submitTask = async (submitUrl, taskId, state) => {
+const submitTask = async (taskId, state) => {
     const payload = {
         id: taskId,
         formFields: Object.entries(state).map((value) => {

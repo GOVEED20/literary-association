@@ -98,10 +98,13 @@ public class UserTaskService {
     }
 
     public void submitForm(FormSubmissionDTO data) {
-        Task task = taskService.createTaskQuery().processInstanceId(data.getId()).active().list().get(0);
+        Task task;
+        List<Task> taskList = taskService.createTaskQuery().processInstanceId(data.getId()).active().list();
 
-        if (task == null) {
+        if (taskList.isEmpty()) {
             task = taskService.createTaskQuery().taskId(data.getId()).singleResult();
+        } else {
+            task = taskList.get(0);
         }
 
         if (task == null) {
