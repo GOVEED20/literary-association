@@ -2,11 +2,22 @@ import React, {useEffect, useState} from "react";
 import {getAvailableServices, getPaymentServiceRegistrationFields} from "../services/paymentService";
 import ServiceForm from "./ServiceForm"
 import {Button, Form as BootstrapForm, Toast} from "react-bootstrap";
-import {registerRetailer} from "../services/retailerService";
-import {formStyle, h1Style, h4Style, mainDivStyle, serviceDivStyle, submitButtonStyle} from "../css/registerStyles";
+import {logoutUser, registerRetailer} from "../services/retailerService";
+import {
+    formStyle,
+    h1Style,
+    h4Style,
+    logoutBtnStyle,
+    mainDivStyle,
+    serviceDivStyle,
+    submitButtonStyle
+} from "../css/registerStyles";
 import Toaster from "./Toaster";
+import {useHistory} from "react-router-dom";
 
 const Register = () => {
+
+    const history = useHistory()
 
     const [availableServices, setAvailableServices] = useState([])
     const [state, setState] = useState({})
@@ -178,6 +189,11 @@ const Register = () => {
 
     }
 
+    const logout = async () => {
+        await logoutUser()
+        history.push('/login')
+    }
+
     document.body.style.backgroundColor = "#010d3b"
 
     return (
@@ -207,6 +223,7 @@ const Register = () => {
                     <Button variant="primary" type="submit" style={submitButtonStyle}>Submit</Button>
                 </BootstrapForm>
             </div>
+            <Button style={logoutBtnStyle} onClick={logout}>Logout</Button>
             {toastData.show ? <Toaster type={toastData.type} message={toastData.message} color={toastData.color}/> : null}
         </div>
     )

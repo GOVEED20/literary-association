@@ -2,7 +2,6 @@ import Register from "./components/Register";
 import {Switch, Route, Redirect} from "react-router-dom";
 import React from "react";
 import Login from "./components/Login";
-import AdminDashboard from "./components/AdminDashboard";
 
 const App = () => {
     return (
@@ -11,13 +10,13 @@ const App = () => {
                 <Route path="/login">
                     <Login/>
                 </Route>
-                <Route path="/register">
+                <Route path="/register-retailer">
                     <Register/>
                 </Route>
-                <Route path="/dashboard">
-                    <AdminDashboard/>
-                </Route>
                 <Route exact path='/'>
+                    <Redirect to='/login'/>
+                </Route>
+                <Route exact path='*'>
                     <Redirect to='/login'/>
                 </Route>
             </Switch>

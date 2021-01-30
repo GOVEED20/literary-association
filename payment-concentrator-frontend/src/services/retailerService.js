@@ -1,5 +1,11 @@
 import axios from 'axios';
 
+const local_logout = () => {
+    window.localStorage.removeItem('token')
+    window.localStorage.removeItem('role')
+    window.localStorage.removeItem('subject')
+}
+
 export const registerRetailer = async (retailerData) => {
     const formData = new FormData();
     formData.append("retailerData", new Blob([JSON.stringify(retailerData)], {type: "application/json"}));
@@ -9,4 +15,8 @@ export const registerRetailer = async (retailerData) => {
         }
     })
     return response.data
+}
+
+export const logoutUser = async () => {
+    local_logout()
 }
