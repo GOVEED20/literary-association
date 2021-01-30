@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {Button, Form as BootstrapForm} from "react-bootstrap";
-import { login } from '../services/loginService'
-import { useHistory } from 'react-router-dom'
+import {login} from '../services/loginService'
+import {useHistory} from 'react-router-dom'
 import {h1Style, mainDivStyle, submitButtonStyle} from "../css/loginStyles";
 import Toaster from "./Toaster";
 
@@ -47,17 +47,18 @@ const Login = () => {
                     <BootstrapForm.Group controlId="loginForm.username">
                         <BootstrapForm.Label>Username:</BootstrapForm.Label>
                         <BootstrapForm.Control type="text" placeholder="Enter username"
-                                      onChange={({ target }) => setUsername(target.value)}/>
+                                               onChange={({target}) => setUsername(target.value)}/>
                     </BootstrapForm.Group>
                     <BootstrapForm.Group controlId="loginForm.password">
                         <BootstrapForm.Label>Password:</BootstrapForm.Label>
                         <BootstrapForm.Control type="password" placeholder="Enter password"
-                                      onChange={({ target }) => setPassword(target.value)}/>
+                                               onChange={({target}) => setPassword(target.value)}/>
                     </BootstrapForm.Group>
                     <Button variant="primary" type="submit" style={submitButtonStyle}>Login</Button>
                 </BootstrapForm>
             </div>
-            {toastData.show ? <Toaster type={toastData.type} message={toastData.message} color={toastData.color}/> : null}
+            {toastData.show ?
+                <Toaster type={toastData.type} message={toastData.message} color={toastData.color}/> : null}
         </div>
 
     )

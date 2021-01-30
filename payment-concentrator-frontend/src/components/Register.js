@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {getAvailableServices, getPaymentServiceRegistrationFields} from "../services/paymentService";
 import ServiceForm from "./ServiceForm"
-import {Button, Form as BootstrapForm, Toast} from "react-bootstrap";
+import {Button, Form as BootstrapForm} from "react-bootstrap";
 import {logoutUser, registerRetailer} from "../services/retailerService";
 import {
+    emailFieldStyle,
     formStyle,
     h1Style,
     h4Style,
@@ -25,6 +26,7 @@ const Register = () => {
     const [formFields, setFormFields] = useState(null)
     const [encryptionFields, setEncryptionFields] = useState({})
     const [retailerName, setRetailerName] = useState("")
+    const [retailerEmail, setRetailerEmail] = useState("")
     const [toastData, setToastData] = useState({
         show: false,
         message: '',
@@ -32,7 +34,7 @@ const Register = () => {
         color: ''
     })
 
-    useEffect( () => {
+    useEffect(() => {
         const getPaymentServices = async () => {
             setAvailableServices(await getAvailableServices())
         }
@@ -142,6 +144,10 @@ const Register = () => {
         setRetailerName(e.target.value)
     }
 
+    const onChangeEmailHandler = (e) => {
+        setRetailerEmail(e.target.value)
+    }
+
     const closeToaster = (message, type) => {
         setTimeout(() => {
             setToastData({show: false, message: message, type: type, color: ''})
@@ -152,6 +158,7 @@ const Register = () => {
         e.preventDefault()
         const retailerData = {}
         retailerData['retailerName'] = retailerName
+        retailerData['retailerEmail'] = retailerEmail
         let paymentServiceDataArray = []
         availableServices.forEach(service => {
             if (checkServices[service]) {
@@ -204,6 +211,9 @@ const Register = () => {
                     <BootstrapForm.Label>Retailer name: </BootstrapForm.Label>
                     <BootstrapForm.Control type="text" placeholder="Enter retailer name"
                                            onChange={(e) => onChangeNameHandler(e)}/>
+                    <BootstrapForm.Label style={emailFieldStyle}>Retailer email: </BootstrapForm.Label>
+                    <BootstrapForm.Control type="text" placeholder="Enter retailer email"
+                                           onChange={(e) => onChangeEmailHandler(e)}/>
                     <h4 style={h4Style}>Payment services</h4>
                     <p>Choose which payment services you will provide to customers</p>
                     {
@@ -212,10 +222,10 @@ const Register = () => {
                                 <BootstrapForm.Check type="checkbox" id={service} label={formatServiceName(service)}
                                                      onChange={(e) => checkChanged(e)}/>
                                 {checkServices[service] &&
-                                    <ServiceForm
-                                        serviceName={service}
-                                        formFields={formFields[service]}
-                                        onChange={(e) => changeState(e, service)}/>
+                                <ServiceForm
+                                    serviceName={service}
+                                    formFields={formFields[service]}
+                                    onChange={(e) => changeState(e, service)}/>
                                 }
                             </div>
                         )
@@ -224,7 +234,8 @@ const Register = () => {
                 </BootstrapForm>
             </div>
             <Button style={logoutBtnStyle} onClick={logout}>Logout</Button>
-            {toastData.show ? <Toaster type={toastData.type} message={toastData.message} color={toastData.color}/> : null}
+            {toastData.show ?
+                <Toaster type={toastData.type} message={toastData.message} color={toastData.color}/> : null}
         </div>
     )
 }

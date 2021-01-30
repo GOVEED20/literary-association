@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class RetailerService {
@@ -34,14 +35,19 @@ public class RetailerService {
     @Autowired
     private RetailerRepository retailerRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public String registerRetailer(RetailerData retailerData) throws Exception {
         Retailer retailer;
-        if (retailerData.getRetailerName() != null && !retailerData.getRetailerName().equals("")) {
+        if ((retailerData.getRetailerName() != null && !retailerData.getRetailerName().equals("")) ||
+                (retailerData.getRetailerEmail() != null && !retailerData.getRetailerEmail().equals(""))) {
             retailer = Retailer.builder()
                     .name(retailerData.getRetailerName())
+                    .email(retailerData.getRetailerEmail())
                     .build();
         } else {
-            throw new BadRequestException("You must provide retailer name");
+            throw new BadRequestException("You must provide retailer name and email");
         }
 
         if (retailerRepository.findByName(retailerData.getRetailerName()).isPresent()) {
@@ -83,8 +89,13 @@ public class RetailerService {
             retailer.getRetailerDataForPaymentServices().add(retailerDataForPaymentService);
         }
 
-        retailerRepository.save(retailer);
+        String registrationToken = UUID.randomUUID().toString();
+        retailer.setRegistrationToken(registrationToken);
 
+        retailerRepository.save(retailer);
+        emailService.sendEmail(retailer.getEmail(), "Registration successful",
+                String.format("Dear %s, \n You registration on payment concentrator system was successful. \n" +
+                        "Your registration token is %s. \n Have a nice day!", retailer.getName(), registrationToken));
         return "Registration was successful";
     }
 }

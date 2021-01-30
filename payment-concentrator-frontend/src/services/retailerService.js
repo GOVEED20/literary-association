@@ -18,5 +18,6 @@ export const registerRetailer = async (retailerData) => {
 }
 
 export const logoutUser = async () => {
+    //await axios.get(`http://localhost:8080/logout`)
     local_logout()
 }

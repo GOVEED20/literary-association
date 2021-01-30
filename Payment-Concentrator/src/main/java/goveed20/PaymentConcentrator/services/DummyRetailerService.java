@@ -10,6 +10,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class DummyRetailerService {
     @Autowired
@@ -27,6 +29,8 @@ public class DummyRetailerService {
 
             Retailer retailer = Retailer.builder()
                     .name("Laguna")
+                    .email("laguna@maildrop.cc")
+                    .registrationToken(UUID.randomUUID().toString())
                     .build();
 
             RetailerDataForPaymentService dataForPaypalService = RetailerDataForPaymentService.builder()
@@ -83,7 +87,7 @@ public class DummyRetailerService {
                     .name("Admin")
                     .surname("Admirovic")
                     .username("admin")
-                    .password(passwordEncoder.encode("Admin123!")) //Admin123!
+                    .password(passwordEncoder.encode("Admin123!"))
                     .role(UserRole.ADMIN)
                     .build();
 

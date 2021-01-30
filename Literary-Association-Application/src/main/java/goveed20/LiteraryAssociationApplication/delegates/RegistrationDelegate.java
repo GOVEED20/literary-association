@@ -47,16 +47,16 @@ public class RegistrationDelegate implements JavaDelegate {
                 .getVariable("registration");
         String userRole = (String) delegateExecution.getVariable("userRole");
 
-        BaseUser user;
+        BaseUser user = null;
         if (userRole.equals("reader")) {
             Reader reader = createReader(registration);
             user = reader;
             readerRepository.save(reader);
         } else {
-            Writer writer = createWriter(registration);
-            user = writer;
-            writerRepository.save(writer);
-            delegateExecution.setVariable("user", writer.getUsername());
+//            Writer writer = createWriter(registration);
+//            user = writer;
+//            writerRepository.save(writer);
+//            delegateExecution.setVariable("user", writer.getUsername());
         }
 
         camundaUserService.createCamundaUser(user);
@@ -75,7 +75,7 @@ public class RegistrationDelegate implements JavaDelegate {
                 .transactions(new HashSet<>())
                 .genres(new HashSet<>())
                 .betaReader(registration.stream().anyMatch((field) -> field.getFieldId().equals("beta_reader")))
-                .location(createLocation(country, city))
+                //.location(createLocation(country, city))
                 .verified(false)
                 .build();
 

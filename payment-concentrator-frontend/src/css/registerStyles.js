@@ -26,6 +26,10 @@ const formStyle = {
     marginTop: "5%"
 }
 
+const emailFieldStyle = {
+    marginTop: "3%"
+}
+
 const h1Style = {
     marginTop: "2.5%",
     textAlign: "center"
@@ -53,4 +57,14 @@ const logoutBtnStyle = {
     textAlign: "center"
 }
 
-export {mainDivStyle, serviceDivStyle, submitButtonStyle, h1Style, formStyle, h4Style, formFieldStyle, logoutBtnStyle}
+export {
+    mainDivStyle,
+    serviceDivStyle,
+    submitButtonStyle,
+    h1Style,
+    formStyle,
+    h4Style,
+    formFieldStyle,
+    logoutBtnStyle,
+    emailFieldStyle
+}
