@@ -25,7 +25,7 @@
       <bpmn:incoming>Flow_1er35mq</bpmn:incoming>
       <bpmn:incoming>Flow_094iijd</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Activity_1tqgfyt" name="Beta reader penalty" camunda:class="goveed20.LiteraryAssociationApplication.delegates.BetaReaderPenaltyDelegate">
+    <bpmn:serviceTask id="Activity_1tqgfyt" name="Beta reader penalty" camunda:class="goveed20.LiteraryAssociationApplication.delegates.bookPublishing.BetaReaderPenaltyDelegate">
       <bpmn:incoming>Flow_0aobxcn</bpmn:incoming>
       <bpmn:outgoing>Flow_094iijd</bpmn:outgoing>
     </bpmn:serviceTask>
