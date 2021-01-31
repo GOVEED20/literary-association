@@ -30,6 +30,10 @@ spring:
           writetimeout: 5000
     username: goveed20@gmail.com
 
+paymentconcentrator:
+  name: Laguna
+  registrationToken: 2565a484-e734-4477-bbb0-18e0a0d1afbe
+
 server:
   servlet:
     context-path: /api

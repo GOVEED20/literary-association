@@ -23,7 +23,7 @@ public class Retailer {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String registrationToken;
 
     @Builder.Default

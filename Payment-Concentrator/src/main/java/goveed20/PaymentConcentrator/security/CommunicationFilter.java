@@ -19,16 +19,22 @@ public class CommunicationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println("Addr  " + httpServletRequest.getRemoteAddr());
+        System.out.println("ServerName  " + httpServletRequest.getServerName());
         String requestURL = httpServletRequest.getRequestURI();
         if (requestURL.equals("/api/actuator/health")) {
             return;
         } else if (requestURL.startsWith("/api/h2")) {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
-        } else {
+        } else if (httpServletRequest.getHeader("Authorization") != null &&
+                httpServletRequest.getHeader("Authorization").matches("^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")){
             String authToken = httpServletRequest.getHeader("Authorization");
             if (retailerRepository.findByRegistrationToken(authToken).isEmpty()) {
                 return;
             }
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+        }
+        else {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
     }

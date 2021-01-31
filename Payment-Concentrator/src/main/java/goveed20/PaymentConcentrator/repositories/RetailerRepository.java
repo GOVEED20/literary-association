@@ -10,5 +10,7 @@ import java.util.Optional;
 public interface RetailerRepository extends JpaRepository<Retailer, Long> {
     Optional<Retailer> findByName(String name);
 
+    Optional<Retailer> findByEmail(String email);
+
     Optional<Retailer> findByRegistrationToken(String registrationToken);
 }

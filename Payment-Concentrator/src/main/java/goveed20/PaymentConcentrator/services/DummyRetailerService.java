@@ -6,11 +6,8 @@ import goveed20.PaymentConcentrator.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 public class DummyRetailerService {
@@ -30,7 +27,7 @@ public class DummyRetailerService {
             Retailer retailer = Retailer.builder()
                     .name("Laguna")
                     .email("laguna@maildrop.cc")
-                    .registrationToken(UUID.randomUUID().toString())
+                    .registrationToken("2565a484-e734-4477-bbb0-18e0a0d1afbe")
                     .build();
 
             RetailerDataForPaymentService dataForPaypalService = RetailerDataForPaymentService.builder()
