@@ -1,11 +1,10 @@
 package goveed20.LiteraryAssociationApplication.services;
 
-import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionDTO;
-import goveed20.LiteraryAssociationApplication.dtos.TaskDTO;
-import goveed20.LiteraryAssociationApplication.dtos.TaskPreviewDTO;
-import goveed20.LiteraryAssociationApplication.dtos.TaskType;
+import goveed20.LiteraryAssociationApplication.dtos.*;
 import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
+import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
@@ -14,6 +13,7 @@ import org.camunda.bpm.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,10 +37,12 @@ public class UserTaskService {
     @Autowired
     private FormFieldsService formFieldsService;
 
+    private static final String tempFolder = "Literary-Association-Application/src/main/resources/temp/";
+
     public Set<TaskPreviewDTO> getActiveTasksForUser(String username) {
         return taskService
                 .createTaskQuery()
-                .processVariableValueEquals("user", username)
+                .taskAssignee(username)
                 .active()
                 .list()
                 .stream()
@@ -111,8 +113,21 @@ public class UserTaskService {
             throw new NotFoundException(String.format("Task or process with id '%s' not found", data.getId()));
         }
 
-        Map<String, Object> map = UtilService.mapListToDto(data.getFormFields());
-        runtimeService.setVariable(task.getProcessInstanceId(), "data", UtilService.mapListToDto(data.getFormFields()));
+        Map<String, Object> map = UtilService.mapListToDto(processLongTextFields(data.getFormFields()));
+        runtimeService.setVariable(task.getProcessInstanceId(), "data", map);
         formService.submitTaskForm(task.getId(), map);
+    }
+
+    private List<FormSubmissionFieldDTO> processLongTextFields(List<FormSubmissionFieldDTO> originalFields) {
+        originalFields.stream().filter(f -> f.getFieldValue().length() >= 4000).forEach(f -> f.setFieldValue(createTempFileForField(f)));
+        return originalFields;
+    }
+
+    @SneakyThrows
+    private String createTempFileForField(FormSubmissionFieldDTO field) {
+        String path = String.format("%s%s.txt", tempFolder, field.getFieldId());
+        File tempFile = new File(path);
+        FileUtils.writeStringToFile(tempFile, field.getFieldValue());
+        return path;
     }
 }

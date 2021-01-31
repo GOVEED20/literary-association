@@ -5,6 +5,7 @@ import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessExcepti
 import goveed20.LiteraryAssociationApplication.model.enums.MembershipApplicationStatus;
 import goveed20.LiteraryAssociationApplication.utils.ReviewResult;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
+import org.apache.commons.io.FileUtils;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
@@ -13,9 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,25 +62,19 @@ public class PdfService {
 
     public List<String> saveBase64ToPdf(String[] base64Strings) {
         return Arrays.stream(base64Strings).sequential().map(s -> {
-            byte[] decoded = Base64.getDecoder().decode(s);
-            if (decoded[0] != 0x25 || decoded[1] != 0x50 || decoded[2] != 0x44 || decoded[3] != 0x46) {
+            if (!s.contains("data:application/pdf;base64,")) {
                 throw new BusinessProcessException("Invalid file type. It should be a PDF file");
             }
+            s = s.replace("data:application/pdf;base64,", "");
+            byte[] decoded = Base64.getMimeDecoder().decode(s.getBytes(StandardCharsets.UTF_8));
             String title = String.format("pdf-%s", UUID.randomUUID().toString().replace("-", ""));
-            File pdf = new File(String.format("%s%s.pdf", writingsFolder, title));
+            String path = String.format("%s%s.pdf", writingsFolder, title);
             try {
-                savePdf(pdf, decoded);
+                FileUtils.writeByteArrayToFile(new File(path), decoded);
             } catch (IOException e) {
                 throw new BusinessProcessException("Failed to save pdf");
             }
             return title;
         }).collect(Collectors.toList());
-    }
-
-    private void savePdf(File pdf, byte[] content) throws IOException {
-        OutputStream os = new FileOutputStream(pdf);
-        os.write(content);
-        os.flush();
-        os.close();
     }
 }

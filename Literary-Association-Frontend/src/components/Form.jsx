@@ -24,7 +24,6 @@ const Form = ({ form, onSubmit }) => {
         }
         setState(newState)
     }
-
     const toBase64 = (file) => new Promise((resolve) => {
         const reader = new FileReader()
         reader.readAsDataURL(file)
@@ -34,7 +33,6 @@ const Form = ({ form, onSubmit }) => {
     const isVisible = (formField) => {
         return formField.properties.dependsOn === undefined ? true : state[formField.properties.dependsOn]
     }
-
     const encodeSingleField = async (field, state) => {
         const fileInput = document.getElementById(field.id)
         const encodedFiles = []
@@ -53,7 +51,9 @@ const Form = ({ form, onSubmit }) => {
         Promise.all(form.formFields
             .filter(ff => ff.properties.type === 'file')
             .map(ff => encodeSingleField(ff, preparedState))
-        ).then(() => onSubmit(preparedState))
+        ).then(() => {
+            onSubmit(preparedState)
+        })
     }
 
     return (

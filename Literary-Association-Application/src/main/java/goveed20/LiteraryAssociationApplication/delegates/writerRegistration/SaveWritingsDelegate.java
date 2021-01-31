@@ -2,12 +2,14 @@ package goveed20.LiteraryAssociationApplication.delegates.writerRegistration;
 
 import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessException;
 import goveed20.LiteraryAssociationApplication.services.PdfService;
+import org.apache.commons.io.FileUtils;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +22,11 @@ public class SaveWritingsDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
         Map<String, Object> data = (Map<String, Object>) delegateExecution.getVariable("data");
-        String writingsString = String.valueOf(data.get("writings"));
+        String writingsPath = String.valueOf(data.get("writings"));
+        File writingsFile = new File(writingsPath);
+        String writingsString = FileUtils.readFileToString(writingsFile);
+        FileUtils.forceDelete(writingsFile);
+
         String[] writings = writingsString.split(" ");
 
         if (writings.length < 2) {
