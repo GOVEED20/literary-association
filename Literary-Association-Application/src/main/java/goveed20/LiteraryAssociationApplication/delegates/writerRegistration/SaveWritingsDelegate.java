@@ -34,8 +34,8 @@ public class SaveWritingsDelegate implements JavaDelegate {
         }
 
         try {
-            List<String> writingsTitles = pdfService.saveBase64ToPdf(writings);
-            delegateExecution.setVariable("writings_titles", writingsTitles);
+            List<String> writingsPaths = pdfService.saveBase64ToPdf(writings);
+            delegateExecution.setVariable("documents", writingsPaths);
         } catch (BusinessProcessException e) {
             throw new BpmnError(e.getMessage());
         }

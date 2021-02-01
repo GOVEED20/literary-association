@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setTask } from '../reducers/userTaskReducer'
 import userTaskService from '../services/userTaskService'
 import Form from './Form'
-import { Spinner } from 'react-bootstrap'
+import { Col, Spinner } from 'react-bootstrap'
+import PdfViewer from './PdfViewer'
 
 const Task = () => {
     const dispatch = useDispatch()
@@ -33,6 +34,7 @@ const Task = () => {
         return (
             <div>
                 <h2>{task.name}</h2>
+                {task.documents && task.documents.map((d, index) => <Col key={index}><PdfViewer pdf={d}/>&nbsp;</Col>)}
                 <Form form={task} onSubmit={onSubmit}/>
             </div>
         )
