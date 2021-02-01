@@ -7,8 +7,7 @@ public enum UserRole implements GrantedAuthority {
     WRITER,
     LECTOR,
     BOARD_MEMBER,
-    EDITOR,
-    HEAD_EDITOR;
+    EDITOR;
 
     @Override
     public String getAuthority() {

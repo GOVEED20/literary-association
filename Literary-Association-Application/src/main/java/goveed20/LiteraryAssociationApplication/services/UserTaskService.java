@@ -89,11 +89,12 @@ public class UserTaskService {
         if (taskExtensions.containsKey("basic_select")) {
             formFieldsService.setSelectFormFields(task);
         }
-        if (taskExtensions.containsKey("genre_select") || taskExtensions.containsKey("beta_reader_select")) {
+        if (taskExtensions.containsKey("genre_select") || taskExtensions.containsKey("beta_reader_select")
+                || taskExtensions.containsKey("editor_select")) {
             formFieldsService.setSerializedFormFields(task);
         }
         if (taskExtensions.containsKey("download_file")) {
-            formFieldsService.setDownloadFormField(task);
+            formFieldsService.setDownloadFormField(task, taskExtensions.get("download_file"));
         }
 
         return formService.getTaskFormData(task.getId()).getFormFields();

@@ -1,6 +1,8 @@
 package goveed20.LiteraryAssociationApplication.services;
 
 import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
+import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
+import goveed20.LiteraryAssociationApplication.repositories.BaseUserRepository;
 import goveed20.LiteraryAssociationApplication.repositories.BetaReaderStatusRepository;
 import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
@@ -34,6 +36,9 @@ public class FormFieldsService {
     @Autowired
     private WorkingPaperRepository workingPaperRepository;
 
+    @Autowired
+    private BaseUserRepository baseUserRepository;
+
     public void setSelectFormFields(Task task) {
         TaskFormData tfd = formService.getTaskFormData(task.getId());
         Set<String> options;
@@ -59,6 +64,10 @@ public class FormFieldsService {
                 options = new HashSet<>(Arrays.asList("Request changes", "Everything is fine"));
                 selectName = "editor_request_changes_option";
                 break;
+            case "vote_form":
+                options = new HashSet<>(Arrays.asList("Plagiarism", "Original"));
+                selectName = "vote_option";
+                break;
             default:
                 options = new HashSet<>();
                 selectName = "";
@@ -67,32 +76,62 @@ public class FormFieldsService {
         UtilService.setOptions(selectName, options, tfd.getFormFields());
     }
 
+    @SuppressWarnings("unchecked")
     public void setSerializedFormFields(Task task) {
         TaskFormData tfd = formService.getTaskFormData(task.getId());
         tfd.getFormFields().forEach(p -> {
-            if (p.getId().equals("genre")) {
-                p.getProperties().put("options", UtilService
-                        .serializeGenres(new HashSet<>(genreRepository.findAll())));
-            } else if (p.getId().equals("beta_readers")) {
-                String title = (String) runtimeService.getVariable(task.getProcessInstanceId(), "working_paper");
-                WorkingPaper workingPaper = workingPaperRepository.findByTitle(title);
-                p.getProperties().put("options", UtilService
-                        .serializeBetaReaders(new HashSet<>(betaReaderStatusRepository
-                                .findByGenre(workingPaper.getGenre()))));
+            switch (p.getId()) {
+                case "genre":
+                    p.getProperties().put("options", UtilService
+                            .serializeGenres(new HashSet<>(genreRepository.findAll())));
+                    break;
+                case "beta_readers":
+                    String title = (String) runtimeService.getVariable(task.getProcessInstanceId(), "working_paper");
+                    WorkingPaper workingPaper = workingPaperRepository.findByTitle(title);
+                    p.getProperties().put("options", UtilService
+                            .serializeBetaReaders(new HashSet<>(betaReaderStatusRepository
+                                    .findByGenre(workingPaper.getGenre()))));
+                    break;
+                case "editors":
+                    p.getProperties().put("options", UtilService.serializeEditors(new HashSet<>(
+                            baseUserRepository.findAllByRoleEqualsAndUsernameNot(UserRole.EDITOR, task.getAssignee())
+                    )));
+                    break;
+                case "editor_replacement":
+                    Map<String,String> chosenEditors = (Map<String,String>) runtimeService.getVariable(task.getProcessInstanceId(), "chosen_editors");
+                    List<String> editors = new ArrayList<>(chosenEditors.keySet());
+                    editors.add(task.getAssignee());
+                    p.getProperties().put("options", UtilService.serializeEditors(new HashSet<>(
+                            baseUserRepository.findAllByRoleEqualsAndUsernameNotIn(UserRole.EDITOR, editors)
+                    )));
+                    break;
             }
         });
     }
 
-    public void setDownloadFormField(Task task) {
+    public void setDownloadFormField(Task task, String value) {
         TaskFormData tfd = formService.getTaskFormData(task.getId());
         Map<String, String> buttonProperties = new HashMap<>();
         buttonProperties.put("type", "button");
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        buttonProperties.put("downloadURL", baseUrl + "/book/download/" + runtimeService.getVariable(
-                task.getProcessInstanceId(), "working_paper"));
+        if (!value.equals("2")) {
+            buttonProperties.put("downloadURL", baseUrl + "/book/download/" + runtimeService.getVariable(
+                    task.getProcessInstanceId(), "working_paper"));
 
-        tfd.getFormFields().add(CustomFormField.builder().id("downloadButton").label("Download paper")
-                .typeName("button").properties(buttonProperties).validationConstraints(new ArrayList<>()).build());
+            tfd.getFormFields().add(CustomFormField.builder().id("downloadButton").label("Download paper")
+                    .typeName("button").properties(buttonProperties).validationConstraints(new ArrayList<>()).build());
+        } else {
+            String myBook = (String) runtimeService.getVariable(task.getProcessInstanceId(), "my_book");
+            String plagiarismBook = (String) runtimeService.getVariable(task.getProcessInstanceId(), "plagiarism_book");
+            buttonProperties.put("downloadURL1", baseUrl + "/book/download/" + myBook);
+
+            buttonProperties.put("downloadURL2", baseUrl + "/book/download/" + plagiarismBook);
+
+            tfd.getFormFields().add(CustomFormField.builder().id("downloadButton1").label("Download book " + myBook)
+                    .typeName("button").properties(buttonProperties).validationConstraints(new ArrayList<>()).build());
+
+            tfd.getFormFields().add(CustomFormField.builder().id("downloadButton2").label("Download book " + plagiarismBook)
+                    .typeName("button").properties(buttonProperties).validationConstraints(new ArrayList<>()).build());
+        }
     }
-
 }

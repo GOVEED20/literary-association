@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 @Getter
 @Setter
@@ -32,6 +33,9 @@ public class Book extends WorkingPaper {
 
     @Column(nullable = false)
     private Double price;
+
+    @ManyToOne
+    private Writer writer;
 
     @Builder(builderMethodName = "bookBuilder")
     public Book(Long id, String file, String title, Genre genre, String synopsis, WorkingPaperStatus status, String ISBN, String keywords, String publisher, Integer publicationYear, Integer pages, String publicationPlace, Double price) {

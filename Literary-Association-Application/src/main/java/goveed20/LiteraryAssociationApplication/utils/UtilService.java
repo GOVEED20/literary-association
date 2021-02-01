@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionFieldDTO;
 import goveed20.LiteraryAssociationApplication.dtos.OptionDTO;
+import goveed20.LiteraryAssociationApplication.model.BaseUser;
 import goveed20.LiteraryAssociationApplication.model.BetaReaderStatus;
 import goveed20.LiteraryAssociationApplication.model.Genre;
 import org.camunda.bpm.engine.form.FormField;
@@ -38,6 +39,12 @@ public class UtilService {
                 .value(b.getReader().getUsername())));
     }
 
+    public static String serializeEditors(HashSet<BaseUser> baseUsers) {
+        Gson gson = new Gson();
+        return gson.toJson(baseUsers.stream().map(b -> OptionDTO.builder().name(b.getName() + " " + b.getSurname())
+                .value(b.getUsername())));
+    }
+
     private static String serializeOptions(Set<String> options) {
         Gson gson = new Gson();
         return gson.toJson(options.stream().map(o -> OptionDTO.builder().name(o).value(o).build()));
@@ -59,6 +66,15 @@ public class UtilService {
         Gson gson = new Gson();
         Type betaReaderSet = new TypeToken<Set<String>>() {}.getType();
         return gson.fromJson(betaReaders, betaReaderSet);
+    }
+
+    public static Set<String> parseEditors(String editors) {
+        if (editors.equals("")) {
+            return new HashSet<>();
+        }
+        Gson gson = new Gson();
+        Type editorSet = new TypeToken<Set<String>>() {}.getType();
+        return gson.fromJson(editors, editorSet);
     }
 
     public static void setOptions(String optionField, Set<String> options, List<FormField> properties) {

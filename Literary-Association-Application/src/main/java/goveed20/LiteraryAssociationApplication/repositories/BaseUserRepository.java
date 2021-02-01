@@ -13,4 +13,8 @@ public interface BaseUserRepository extends JpaRepository<BaseUser, Long> {
     List<BaseUser> findAllByRole(UserRole role);
 
     Optional<BaseUser> findByEmail(String email);
+
+    List<BaseUser> findAllByRoleEqualsAndUsernameNot(UserRole role, String username);
+
+    List<BaseUser> findAllByRoleEqualsAndUsernameNotIn(UserRole role, List<String> editors);
 }
