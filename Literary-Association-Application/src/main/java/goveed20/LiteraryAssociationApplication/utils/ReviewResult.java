@@ -10,5 +10,5 @@ import lombok.*;
 @Builder(toBuilder = true)
 public class ReviewResult {
     private String comment;
-    private MembershipApplicationStatus status;
+    private ReviewStatus status;
 }

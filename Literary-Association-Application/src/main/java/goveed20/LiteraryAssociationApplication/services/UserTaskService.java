@@ -37,6 +37,9 @@ public class UserTaskService {
     @Autowired
     private FormFieldsService formFieldsService;
 
+    @Autowired
+    private PdfService pdfService;
+
     private static final String tempFolder = "Literary-Association-Application/src/main/resources/temp/";
 
     public Set<TaskPreviewDTO> getActiveTasksForUser(String username) {
@@ -61,6 +64,7 @@ public class UserTaskService {
                 .collect(Collectors.toSet());
     }
 
+    @SuppressWarnings("unchecked")
     public TaskDTO getTask(String id) {
         Task task = taskService.createTaskQuery().taskId(id).initializeFormKeys().singleResult();
 
@@ -80,6 +84,12 @@ public class UserTaskService {
             dto.setTransactionId(null); // supporting only FORM tasks for now
         }
 
+        String bpmnFile = (String) runtimeService.getVariable(task.getProcessInstanceId(), "bpmnFile");
+
+        if (taskExtensionsService.getExtensions(bpmnFile, task.getTaskDefinitionKey()).containsKey("documents")) {
+            List<String> documents = (List<String>) runtimeService.getVariable(task.getProcessInstanceId(), "documents");
+            dto.setDocuments(pdfService.pdfToBase64(documents));
+        }
         return dto;
     }
 
