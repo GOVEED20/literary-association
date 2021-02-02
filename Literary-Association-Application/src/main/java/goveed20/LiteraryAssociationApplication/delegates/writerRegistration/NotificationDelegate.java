@@ -40,18 +40,18 @@ public class NotificationDelegate implements JavaDelegate {
 
             String text;
             if (membershipNotPaid != null && membershipNotPaid) {
-                text = String.format("Dear %s %s,\nYou have failed to pay your first membership fee in time, therefore your membership application is rejected.\nBest regards", user.getName(), user.getSurname());
+                text = String.format("Dear %s %s,\nYou have failed to pay your first membership fee in time, therefore your membership application is rejected.\n\nBest regards", user.getName(), user.getSurname());
             } else if (newWritingsNotSubmitted != null && newWritingsNotSubmitted) {
-                text = String.format("Dear %s %s,\nYou have failed to submit required writings in time, therefore your membership application is rejected.\nBest regards", user.getName(), user.getSurname());
+                text = String.format("Dear %s %s,\nYou have failed to submit required writings in time, therefore your membership application is rejected.\n\nBest regards", user.getName(), user.getSurname());
             } else if (suitable) {
-                text = String.format("Dear %s %s,\nOur board members have found you suitable for membership in our literary association. In order to complete your registration, you are required to pay your first membership fee in the next 2 weeks.\nBest regards", user.getName(), user.getSurname());
+                text = String.format("Dear %s %s,\nOur board members have found you suitable for membership in our literary association. In order to complete your registration, you are required to pay your first membership fee in the next 2 weeks.\n\nBest regards", user.getName(), user.getSurname());
             } else if (furtherReview && i > 3) {
                 text = String.format("Dear %s %s,\nYou have reached review cycle's limit, therefore your membership application is rejected.\nBest regards", user.getName(), user.getSurname());
             } else if (furtherReview) {
-                text = String.format("Dear %s %s,\nOur board members have requested more writings for review. In order to complete your registration, you are required to send additional writings in the next 2 weeks.\n%s\nBest regards", user.getName(), user.getSurname(), reviewResults.stream().map(ReviewResult::getComment).collect(Collectors.joining("\n")));
+                text = String.format("Dear %s %s,\nOur board members have requested more writings for review. In order to complete your registration, you are required to send additional writings in the next 2 weeks.\n\nComments:\n%s\n\nBest regards", user.getName(), user.getSurname(), reviewResults.stream().map(ReviewResult::getComment).collect(Collectors.joining("\n")));
             } else {
-                text = String.format("Dear %s %s,\nOur board members have found you unsuitable for membership in our literary association, therefore your membership application is rejected.\n%s" +
-                        "\nBest regards", user.getName(), user.getSurname(), reviewResults.stream().map(ReviewResult::getComment).collect(Collectors.joining("\n")));
+                text = String.format("Dear %s %s,\nOur board members have found you unsuitable for membership in our literary association, therefore your membership application is rejected.\n\nComments:\n%s" +
+                        "\n\nBest regards", user.getName(), user.getSurname(), reviewResults.stream().map(ReviewResult::getComment).collect(Collectors.joining("\n")));
             }
             emailService.sendEmail(email, "Literary association registration status", text);
         }

@@ -14,7 +14,7 @@ const Navbar = ({ role }) => {
                     <NavbarLink text='Tasks' url='/dashboard/tasks'/>
                     <NavbarLink text='Books' url='/dashboard/books'/>
                     <NavbarLink text='My books' url='/dashboard/my-books'/>
-                    <NavbarLink text='Profile' url='/dashboard/profile'/>
+                    <NavbarLink text='Payments' url='/dashboard/payments'/>
                 </Nav>
                 <Nav>
                     <NavbarLink text='Logout' url='/logout'/>
@@ -28,7 +28,6 @@ const Navbar = ({ role }) => {
                 <NavbarLogoLink imgPath='/logo.svg' url='/dashboard/tasks' alt='Literary association logo'/>
                 <Nav className="mr-auto">
                     <NavbarLink text='Tasks' url='/dashboard/tasks'/>
-                    <NavbarLink text='Profile' url='/dashboard/profile'/>
                 </Nav>
                 <Nav>
                     <NavbarLink text='Logout' url='/logout'/>

@@ -1,14 +1,15 @@
 package goveed20.LiteraryAssociationApplication.utils;
 
-import goveed20.LiteraryAssociationApplication.model.enums.MembershipApplicationStatus;
 import lombok.*;
+
+import java.io.Serializable;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class ReviewResult {
+public class ReviewResult implements Serializable {
     private String comment;
     private ReviewStatus status;
 }

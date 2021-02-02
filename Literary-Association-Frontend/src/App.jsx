@@ -4,6 +4,7 @@ import WriterRegistration from './components/WriterRegistration'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import Login from './components/Login'
 import Dashboard from './components/Dashboard'
+import Logout from './components/Logout'
 
 const App = () => {
     return (
@@ -11,6 +12,9 @@ const App = () => {
             <Switch>
                 <Route path='/login'>
                     <Login/>
+                </Route>
+                <Route path='/logout'>
+                    <Logout/>
                 </Route>
                 <Route path='/reader-registration'>
                     <ReaderRegistration/>

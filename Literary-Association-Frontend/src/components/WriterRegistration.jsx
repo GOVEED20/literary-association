@@ -33,7 +33,12 @@ const WriterRegistration = () => {
     }, [processId])
 
     const onSubmit = async (state) => {
-        await sendRegistrationData(processId, state)
+        try {
+            await sendRegistrationData(processId, state)
+            window.localStorage.removeItem('writer_registration_process')
+        } catch (e) {
+
+        }
     }
 
     if (!formFields) {

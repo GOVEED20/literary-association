@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 public class MembershipTransactionDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
-        System.out.println("plati porez picko");
+        System.out.println("CREATE MEMBERSHIP");
     }
 }
