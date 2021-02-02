@@ -1,4 +1,4 @@
-package goveed20.LiteraryAssociationApplication.delegates;
+package goveed20.LiteraryAssociationApplication.delegates.bookPublishing;
 
 import goveed20.LiteraryAssociationApplication.model.BaseUser;
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
@@ -19,14 +19,16 @@ public class ChooseLectorDelegate implements JavaDelegate {
     private EmailService emailService;
 
     @Override
-    public void execute(DelegateExecution delegateExecution) throws Exception {
+    public void execute(DelegateExecution delegateExecution) {
         ArrayList<BaseUser> lectors = (ArrayList<BaseUser>) userRepository.findAllByRole(UserRole.LECTOR);
-        BaseUser lector = lectors.get((int)(Math.random() * lectors.size()));
+        BaseUser lector = lectors.get((int) (Math.random() * lectors.size()));
 
         delegateExecution.setVariable("lector", lector.getUsername());
 
-        String text = String.format("Dear %s %s,\nYou have been chosen for reviewing new working paper with title %s", lector.getName(),
-                lector.getSurname(), delegateExecution.getVariable("working_paper"));
+        String text = String
+                .format("Dear %s %s,\nYou have been chosen for reviewing new working paper with title %s", lector
+                                .getName(),
+                        lector.getSurname(), delegateExecution.getVariable("working_paper"));
         emailService.sendEmail(lector.getEmail(), "Reviewing new working paper", text);
     }
 }

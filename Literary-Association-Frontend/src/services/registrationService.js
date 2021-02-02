@@ -27,6 +27,6 @@ export const sendRegistrationData = async (processID, state) => {
             }
         })
     }
-    const response = await axios.post(`${BASE_URL}/register`, payload)
+    const response = await axios.post(`${BASE_URL}/task`, payload)
     return response.data
 }

@@ -1,4 +1,4 @@
-package goveed20.LiteraryAssociationApplication.delegates;
+package goveed20.LiteraryAssociationApplication.delegates.bookPublishing;
 
 import goveed20.LiteraryAssociationApplication.model.Reader;
 import goveed20.LiteraryAssociationApplication.repositories.BetaReaderStatusRepository;
@@ -20,7 +20,7 @@ public class BetaReaderPenaltyDelegate implements JavaDelegate {
     private BetaReaderStatusRepository betaReaderStatusRepository;
 
     @Override
-    public void execute(DelegateExecution delegateExecution) throws Exception {
+    public void execute(DelegateExecution delegateExecution) {
         Reader reader = readerRepository.findByUsername((String) delegateExecution
                 .getVariable("current_beta_reader"));
         if (reader != null) {
@@ -34,8 +34,7 @@ public class BetaReaderPenaltyDelegate implements JavaDelegate {
                 emailService.sendEmail(reader.getEmail(), "Beta reader status lost", text);
                 reader.setBetaReader(false);
                 betaReaderStatusRepository.delete(reader.getBetaReaderStatus());
-            }
-            else {
+            } else {
                 reader.getBetaReaderStatus().setPenaltyPoints(penaltyPoints);
             }
             readerRepository.save(reader);

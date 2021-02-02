@@ -5,6 +5,7 @@ import goveed20.LiteraryAssociationApplication.services.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +13,8 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/register")
+@PreAuthorize("!(hasAuthority('READER') or hasAuthority('WRITER') or hasAuthority('LECTOR') or hasAuthority('BOARD_MEMBER') or hasAuthority('EDITOR'))")
+@CrossOrigin
 public class RegistrationController {
 
     @Autowired

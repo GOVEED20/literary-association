@@ -1,4 +1,4 @@
-package goveed20.LiteraryAssociationApplication.delegates;
+package goveed20.LiteraryAssociationApplication.delegates.bookPublishing;
 
 import goveed20.LiteraryAssociationApplication.model.BaseUser;
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
@@ -23,7 +23,7 @@ public class ChooseEditorDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution delegateExecution) {
         ArrayList<BaseUser> editors = (ArrayList<BaseUser>) userRepository.findAllByRole(UserRole.EDITOR);
-        BaseUser editor = editors.get((int)(Math.random() * editors.size()));
+        BaseUser editor = editors.get((int) (Math.random() * editors.size()));
 
         delegateExecution.setVariable("editor", editor.getUsername());
 

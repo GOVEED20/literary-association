@@ -41,7 +41,7 @@ const Dashboard = () => {
                 <Route path='/dashboard/tasks/:id'>
                     <Task/>
                 </Route>
-                <Route path='/dashboard/tasks'>
+                <Route exact path='/dashboard/tasks'>
                     <TaskList username={username}/>
                 </Route>
                 <Route path='/dashboard'>

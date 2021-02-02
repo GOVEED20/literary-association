@@ -1,7 +1,9 @@
 package goveed20.LiteraryAssociationApplication.services;
 
+import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
 import goveed20.LiteraryAssociationApplication.repositories.BetaReaderStatusRepository;
 import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
+import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
 import goveed20.LiteraryAssociationApplication.utils.CustomFormField;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
 import org.camunda.bpm.engine.FormService;
@@ -28,6 +30,9 @@ public class FormFieldsService {
 
     @Autowired
     private BetaReaderStatusRepository betaReaderStatusRepository;
+
+    @Autowired
+    private WorkingPaperRepository workingPaperRepository;
 
     public void setSelectFormFields(Task task) {
         TaskFormData tfd = formService.getTaskFormData(task.getId());
@@ -69,8 +74,11 @@ public class FormFieldsService {
                 p.getProperties().put("options", UtilService
                         .serializeGenres(new HashSet<>(genreRepository.findAll())));
             } else if (p.getId().equals("beta_readers")) {
+                String title = (String) runtimeService.getVariable(task.getProcessInstanceId(), "working_paper");
+                WorkingPaper workingPaper = workingPaperRepository.findByTitle(title);
                 p.getProperties().put("options", UtilService
-                        .serializeBetaReaders(new HashSet<>(betaReaderStatusRepository.findAll())));
+                        .serializeBetaReaders(new HashSet<>(betaReaderStatusRepository
+                                .findByGenre(workingPaper.getGenre()))));
             }
         });
     }

@@ -1,4 +1,4 @@
-package goveed20.LiteraryAssociationApplication.delegates;
+package goveed20.LiteraryAssociationApplication.delegates.bookPublishing;
 
 import goveed20.LiteraryAssociationApplication.model.Writer;
 import goveed20.LiteraryAssociationApplication.repositories.WriterRepository;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RejectionNotificationDelegate implements JavaDelegate {
+public class ExpirationNotificationDelegate implements JavaDelegate {
 
     @Autowired
     private WriterRepository writerRepository;
@@ -21,11 +21,9 @@ public class RejectionNotificationDelegate implements JavaDelegate {
     public void execute(DelegateExecution delegateExecution) {
         Writer writer = writerRepository.findByUsername((String) delegateExecution
                 .getVariable("writer")).get();
-        String text = String.format("Dear %s %s,\nYour working paper is rejected.\nRejection comment:\n%s",
-                writer.getName(),
-                writer.getSurname(),
-                delegateExecution.getVariable("working_paper_rejection_comment "));
+        String text = String.format("Dear %s %s,%nTime for submitting full working paper has expired", writer.getName(),
+                writer.getSurname());
 
-        emailService.sendEmail(writer.getEmail(), "Working paper rejection", text);
+        emailService.sendEmail(writer.getEmail(), "Submitting period expired", text);
     }
 }

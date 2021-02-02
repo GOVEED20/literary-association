@@ -34,8 +34,8 @@ public class UtilService {
 
     public static String serializeBetaReaders(HashSet<BetaReaderStatus> betaReaderStatuses) {
         Gson gson = new Gson();
-        return gson.toJson(betaReaderStatuses.stream().map(b -> OptionDTO.builder().name(b.getReader().getUsername())
-                .value(b.getReader().getName() + " " + b.getReader().getSurname())));
+        return gson.toJson(betaReaderStatuses.stream().map(b -> OptionDTO.builder().name(b.getReader().getName() + " " + b.getReader().getSurname())
+                .value(b.getReader().getUsername())));
     }
 
     private static String serializeOptions(Set<String> options) {

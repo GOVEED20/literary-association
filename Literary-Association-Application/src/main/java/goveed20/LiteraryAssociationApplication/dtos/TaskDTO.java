@@ -15,6 +15,6 @@ public class TaskDTO {
     private String id;
     private List<FormField> formFields;
     private Long transactionId;
-    private String submitUrl;
     private String name;
+    private List<String> documents;
 }
