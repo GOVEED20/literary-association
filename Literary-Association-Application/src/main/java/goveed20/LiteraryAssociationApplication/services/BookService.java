@@ -1,7 +1,9 @@
 package goveed20.LiteraryAssociationApplication.services;
 
+import goveed20.LiteraryAssociationApplication.dtos.BookListItemDTO;
 import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessException;
 import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
+import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
 import org.apache.commons.io.FileUtils;
 import org.camunda.bpm.engine.RuntimeService;
@@ -14,6 +16,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -25,6 +29,16 @@ public class BookService {
 
     @Autowired
     private WorkingPaperRepository workingPaperRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    public List<BookListItemDTO> getBooks() {
+        return bookRepository.findAll()
+                .stream()
+                .map(b -> new BookListItemDTO(b.getId(), b.getTitle(), b.getPublisher(), b.getISBN(), b.getPublicationYear()))
+                .collect(Collectors.toList());
+    }
 
     public WorkingPaper submitPaper(String processID, String base64File) throws IOException {
         byte[] pdfDecoded = Base64.getDecoder().decode(base64File);

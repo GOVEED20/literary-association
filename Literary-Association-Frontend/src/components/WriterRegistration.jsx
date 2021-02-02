@@ -37,7 +37,7 @@ const WriterRegistration = () => {
             await sendRegistrationData(processId, state)
             window.localStorage.removeItem('writer_registration_process')
         } catch (e) {
-
+            console.log(e)
         }
     }
 

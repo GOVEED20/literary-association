@@ -16,7 +16,6 @@ public class ProcessController {
     private ProcessService processService;
 
     @PostMapping("/start")
-    @PreAuthorize("!(hasAuthority('READER') or hasAuthority('WRITER') or hasAuthority('LECTOR') or hasAuthority('BOARD_MEMBER') or hasAuthority('EDITOR'))")
     public ResponseEntity<String> startProcess(@RequestBody String processName) {
         return new ResponseEntity<>(processService.startProcess(processName), HttpStatus.OK);
     }

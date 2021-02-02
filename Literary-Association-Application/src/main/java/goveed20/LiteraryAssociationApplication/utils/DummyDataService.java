@@ -2,14 +2,18 @@ package goveed20.LiteraryAssociationApplication.utils;
 
 import goveed20.LiteraryAssociationApplication.model.BaseUser;
 import goveed20.LiteraryAssociationApplication.model.Location;
+import goveed20.LiteraryAssociationApplication.model.Reader;
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import goveed20.LiteraryAssociationApplication.repositories.BaseUserRepository;
 import goveed20.LiteraryAssociationApplication.services.CamundaUserService;
+import goveed20.LiteraryAssociationApplication.services.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
 
 @Service
 public class DummyDataService {
@@ -21,6 +25,9 @@ public class DummyDataService {
 
     @Autowired
     private CamundaUserService camundaUserService;
+
+    @Autowired
+    private LocationService locationService;
 
     @EventListener(ApplicationReadyEvent.class)
     public void addDummyBoardMembers() {
@@ -54,6 +61,26 @@ public class DummyDataService {
             camundaUserService.createCamundaUser(boardMember2);
 
             System.out.println("Created dummy board members!");
+        }
+
+        if (baseUserRepository.findAllByRole(UserRole.READER).isEmpty()) {
+            Reader reader = Reader.readerBuilder()
+                    .role(UserRole.READER)
+                    .username("reader1")
+                    .password(passwordEncoder.encode("password1"))
+                    .name("reader1")
+                    .surname("reader1")
+                    .email("reader@reader.com")
+                    .comments(new HashSet<>())
+                    .transactions(new HashSet<>())
+                    .genres(new HashSet<>())
+                    .betaReader(false)
+                    .location(locationService.createLocation("dummyland", "dummytown"))
+                    .verified(true)
+                    .build();
+
+            baseUserRepository.save(reader);
+            System.out.println("Create dummy reader 'reader1' with password 'password1'!");
         }
     }
 }
