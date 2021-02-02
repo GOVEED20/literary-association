@@ -8,6 +8,7 @@ const local_login = (token, role, subject) => {
 }
 
 export const login = async (loginData) => {
+    console.log(loginData)
     const formData = new FormData();
     formData.append("loginData", new Blob([JSON.stringify(loginData)], {type: "application/json"}));
     const response = await axios.post(`http://localhost:8080/api/login`, formData, {

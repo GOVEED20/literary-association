@@ -23,8 +23,8 @@ spring:
           auth: true
           connectiontimeout: 5000
           starttls:
-            enable: true
-            required: true
+            enable: false
+            required: false
           timeout: 5000
           writetimeout: 5000
     username: goveed20@gmail.com

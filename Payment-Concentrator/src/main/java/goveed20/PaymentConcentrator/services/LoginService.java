@@ -12,10 +12,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LoginService {
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -23,12 +19,9 @@ public class LoginService {
     private TokenService tokenService;
 
     public String login(LoginData loginData) {
-        String encodedPass = passwordEncoder.encode(loginData.getPassword());
-        final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginData.getUsername(),
-                        loginData.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginData.getUsername(),
+                loginData.getPassword());
+        final Authentication authentication = authenticationManager.authenticate(token);
 
         return tokenService.generateToken(authentication);
     }
