@@ -5,20 +5,20 @@ import goveed20.LiteraryAssociationApplication.services.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/login")
+@CrossOrigin
 public class LoginController {
     @Autowired
     private LoginService loginService;
 
     @PostMapping
+    @PreAuthorize("!(hasAuthority('READER') or hasAuthority('WRITER') or hasAuthority('LECTOR') or hasAuthority('BOARD_MEMBER') or hasAuthority('EDITOR'))")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginData) {
         try {
             return new ResponseEntity<>(loginService.login(loginData), HttpStatus.OK);

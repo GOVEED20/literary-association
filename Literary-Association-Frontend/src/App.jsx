@@ -5,6 +5,22 @@ import { Switch, Route, Redirect } from 'react-router-dom'
 import Login from './components/Login'
 import Dashboard from './components/Dashboard'
 import Logout from './components/Logout'
+import axios from 'axios'
+import store from './store'
+
+axios.interceptors.request.use(
+    request => {
+        const state = store.getState()
+        const token = state.user.token
+
+        if (token) {
+            request.headers['Authorization'] = `Bearer ${token}`
+        }
+        return request
+    },
+    error => Promise.reject(error)
+)
+
 
 const App = () => {
     return (
