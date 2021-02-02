@@ -6,19 +6,21 @@ import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperReposito
 import org.apache.commons.io.FileUtils;
 import org.camunda.bpm.engine.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Service
 public class BookService {
 
-    private static final String booksFolder = "Literary-Association-Application/src/main/resources/workingPapers/";
+    private static final String booksFolder = "Literary-Association-Application/src/main/resources/writings/";
 
     @Autowired
     private RuntimeService runtimeService;
@@ -26,11 +28,15 @@ public class BookService {
     @Autowired
     private WorkingPaperRepository workingPaperRepository;
 
-    public WorkingPaper submitPaper(String processID, String base64File) throws IOException {
-        byte[] pdfDecoded = Base64.getDecoder().decode(base64File);
-        if (pdfDecoded[0] != 0x25 || pdfDecoded[1] != 0x50 || pdfDecoded[2] != 0x44 || pdfDecoded[3] != 0x46) {
+    public WorkingPaper submitPaper(String processID, String path) throws IOException {
+        File writingsFile = new File(path);
+        String writingsString = FileUtils.readFileToString(writingsFile);
+        FileUtils.forceDelete(writingsFile);
+        if (!writingsString.contains("data:application/pdf;base64,")) {
             throw new BusinessProcessException("Invalid file type. It should be a PDF file");
         }
+        writingsString = writingsString.replace("data:application/pdf;base64,", "");
+        byte[] decoded = Base64.getMimeDecoder().decode(writingsString.getBytes(StandardCharsets.UTF_8));
 
         String workingPaperTitle = (String) runtimeService.getVariable(processID, "working_paper");
         WorkingPaper paper = workingPaperRepository.findByTitle(workingPaperTitle);
@@ -39,8 +45,9 @@ public class BookService {
         }
 
         File filePaper = new File(booksFolder + workingPaperTitle + ".pdf");
+        filePaper.createNewFile();
         OutputStream os = new FileOutputStream(filePaper);
-        os.write(pdfDecoded);
+        os.write(decoded);
         os.flush();
         os.close();
 
@@ -48,23 +55,19 @@ public class BookService {
         return paper;
     }
 
-    public String downloadBook(String bookTitle) throws Exception {
+    public ResponseEntity downloadBook(String bookTitle) throws Exception {
         WorkingPaper paper = workingPaperRepository.findByTitle(bookTitle);
         if (paper == null) {
             throw new EntityNotFoundException("Book with given title does not exist");
         }
 
         File file = new File(paper.getFile());
-        FileOutputStream outputStream;
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
 
-        try {
-            outputStream = new FileOutputStream(paper.getTitle() + ".pdf");
-            outputStream.write(FileUtils.readFileToByteArray(file));
-            outputStream.close();
-        } catch (IOException e) {
-            throw new Exception("Book file does not exist");
-        }
-
-        return "Successful download";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
+                .contentLength(file.length())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 }

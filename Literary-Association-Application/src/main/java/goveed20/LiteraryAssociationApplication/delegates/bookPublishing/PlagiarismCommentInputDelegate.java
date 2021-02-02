@@ -26,8 +26,8 @@ public class PlagiarismCommentInputDelegate implements JavaDelegate {
 
         Writer writer = writerRepository.findByUsername((String) delegateExecution
                 .getVariable("writer")).get();
-        String text = String.format("Dear %s %s,\nYour working paper is rejected as a plagiarism." +
-                        writer.getName(), writer.getSurname(), data.get("plagiarism_reject_comment"));
+        String text = String.format("Dear %s %s,\nYour working paper is rejected as a plagiarism. \nReject comment: %s",
+                writer.getName(), writer.getSurname(), data.get("plagiarism_reject_comment"));
 
         emailService.sendEmail(writer.getEmail(), "Working paper rejection", text);
     }

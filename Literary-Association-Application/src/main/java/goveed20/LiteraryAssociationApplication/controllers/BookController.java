@@ -4,6 +4,7 @@ import goveed20.LiteraryAssociationApplication.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,10 +15,11 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @GetMapping("/download/{bookTitle}")
-    public ResponseEntity<String> downloadBook(@PathVariable String bookTitle) {
+    @GetMapping("/{bookTitle}/download")
+    @PreAuthorize("hasAuthority('EDITOR')")
+    public ResponseEntity<Object> downloadBook(@PathVariable String bookTitle) {
         try {
-            return new ResponseEntity<>(bookService.downloadBook(bookTitle), HttpStatus.OK);
+            return bookService.downloadBook(bookTitle);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

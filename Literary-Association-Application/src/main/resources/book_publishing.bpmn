@@ -41,7 +41,7 @@
           </camunda:formField>
         </camunda:formData>
         <camunda:properties>
-          <camunda:property name="genre_select" />
+          <camunda:property name="genre_select" value="true" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0k6isss</bpmn:incoming>
@@ -73,7 +73,7 @@
           </camunda:formField>
         </camunda:formData>
         <camunda:properties>
-          <camunda:property name="basic_select" />
+          <camunda:property name="basic_select" value="true" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1o480h4</bpmn:incoming>
@@ -86,10 +86,10 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0ht0dzh" sourceRef="Activity_1red3gc" targetRef="Activity_0fg5s8a" />
     <bpmn:sequenceFlow id="Flow_0yh26jy" name="Accepted" sourceRef="Gateway_1iojkbp" targetRef="Activity_1cvolld">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${working_paper_accepteded == true}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${working_paper_accepted == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1653kjq" name="Rejected" sourceRef="Gateway_1iojkbp" targetRef="Activity_0f2jokq">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${working_paper_accepteded == false}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${working_paper_accepted == false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:userTask id="Activity_0f2jokq" name="Rejection comment input" camunda:formKey="working_paper_reject_form" camunda:assignee="${editor}">
       <bpmn:extensionElements>
@@ -164,7 +164,7 @@
           </camunda:formField>
         </camunda:formData>
         <camunda:properties>
-          <camunda:property name="basic_select" />
+          <camunda:property name="basic_select" value="true" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_10tv1k9</bpmn:incoming>
@@ -182,7 +182,7 @@
     <bpmn:sequenceFlow id="Flow_1t6esbk" name="Plagiarism" sourceRef="Gateway_062zvyw" targetRef="Activity_1nminsc">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${is_plagiarism == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="Activity_1nminsc" name="Plagiarism comment input" camunda:formKey="plagiarism_reject_form">
+    <bpmn:userTask id="Activity_1nminsc" name="Plagiarism comment input" camunda:formKey="plagiarism_reject_form" camunda:assignee="${editor}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="plagiarism_reject_comment" label="Rejection comment" type="string">
@@ -208,7 +208,7 @@
       <bpmn:incoming>Flow_02x39bi</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_02x39bi" sourceRef="Activity_0pxc76r" targetRef="Event_1n3e7xi" />
-    <bpmn:userTask id="Activity_1ppkfg2" name="Accept or reject full working paper" camunda:formKey="accept_reject_full_paper">
+    <bpmn:userTask id="Activity_1ppkfg2" name="Accept or reject full working paper" camunda:formKey="accept_reject_full_paper" camunda:assignee="${editor}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="accept_full_paper_option" label="Choose option" type="string">
@@ -222,8 +222,8 @@
           </camunda:formField>
         </camunda:formData>
         <camunda:properties>
-          <camunda:property name="basic_select" />
-          <camunda:property name="download_file" />
+          <camunda:property name="basic_select" value="true" />
+          <camunda:property name="download_file" value="true" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0idk8aq</bpmn:incoming>
@@ -250,7 +250,7 @@
       <bpmn:incoming>Flow_03pmllg</bpmn:incoming>
       <bpmn:outgoing>Flow_122a6b9</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Activity_16dq420" name="Rejection of full paper comment input" camunda:formKey="full_paper_reject_form">
+    <bpmn:userTask id="Activity_16dq420" name="Rejection of full paper comment input" camunda:formKey="full_paper_reject_form" camunda:assignee="${editor}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="full_paper_rejection_comment" label="Comment" type="string">
@@ -267,7 +267,7 @@
       <bpmn:incoming>Flow_00lay34</bpmn:incoming>
       <bpmn:outgoing>Flow_03pmllg</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Activity_1mx49c4" name="Include beta-readers or not" camunda:formKey="include_beta_readers_form">
+    <bpmn:userTask id="Activity_1mx49c4" name="Include beta-readers or not" camunda:formKey="include_beta_readers_form" camunda:assignee="${editor}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="include_beta_reader_option" label="Send to beta readers" type="string">
@@ -282,7 +282,7 @@
           </camunda:formField>
         </camunda:formData>
         <camunda:properties>
-          <camunda:property name="basic_select" />
+          <camunda:property name="basic_select" value="true" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0paeqcv</bpmn:incoming>
@@ -297,7 +297,7 @@
     <bpmn:sequenceFlow id="Flow_0mh7w1n" sourceRef="Gateway_0252wwh" targetRef="Activity_1f9ykb0">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${include_beta_readers == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="Activity_1f9ykb0" name="Choose beta readers" camunda:formKey="beta_readers_form">
+    <bpmn:userTask id="Activity_1f9ykb0" name="Choose beta readers" camunda:formKey="beta_readers_form" camunda:assignee="${editor}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="beta_readers" label="Beta readers" type="string">
@@ -309,7 +309,7 @@
           </camunda:formField>
         </camunda:formData>
         <camunda:properties>
-          <camunda:property name="beta_reader_select" />
+          <camunda:property name="beta_reader_select" value="true" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0mh7w1n</bpmn:incoming>
@@ -342,7 +342,7 @@
             </camunda:formField>
           </camunda:formData>
           <camunda:properties>
-            <camunda:property name="download_file" />
+            <camunda:property name="download_file" value="true" />
           </camunda:properties>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0o4l63d</bpmn:incoming>
@@ -389,7 +389,7 @@
       <bpmn:incoming>Flow_0k7oq3a</bpmn:incoming>
       <bpmn:outgoing>Flow_0rhk7lk</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Activity_1sachd9" name="Editor request changes" camunda:formKey="editor_request_changes_form">
+    <bpmn:userTask id="Activity_1sachd9" name="Editor request changes" camunda:formKey="editor_request_changes_form" camunda:assignee="${editor}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="editor_request_changes_option" label="Request changes" type="string">
@@ -403,7 +403,7 @@
           </camunda:formField>
         </camunda:formData>
         <camunda:properties>
-          <camunda:property name="download_file" />
+          <camunda:property name="download_file" value="true" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ufk185</bpmn:incoming>
@@ -440,7 +440,7 @@
           </camunda:formField>
         </camunda:formData>
         <camunda:properties>
-          <camunda:property name="download_file" />
+          <camunda:property name="download_file" value="true" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_08x3tld</bpmn:incoming>
@@ -488,7 +488,7 @@
           </camunda:formField>
         </camunda:formData>
         <camunda:properties>
-          <camunda:property name="download_file" />
+          <camunda:property name="download_file" value="true" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0if44a1</bpmn:incoming>
@@ -812,12 +812,6 @@ Return editor suggestions with form fields</bpmn:text>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Book_publishing">
-      <bpmndi:BPMNShape id="TextAnnotation_0e84hhn_di" bpmnElement="TextAnnotation_0e84hhn">
-        <dc:Bounds x="5320" y="470" width="100" height="68" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1i9acj2_di" bpmnElement="TextAnnotation_1i9acj2">
-        <dc:Bounds x="5740" y="454" width="100" height="68" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0zxe6mz_di" bpmnElement="Flow_0zxe6mz">
         <di:waypoint x="5490" y="468" />
         <di:waypoint x="5490" y="488" />
@@ -1365,14 +1359,12 @@ Return editor suggestions with form fields</bpmn:text>
       <bpmndi:BPMNShape id="TextAnnotation_1uqkzil_di" bpmnElement="TextAnnotation_1uqkzil">
         <dc:Bounds x="3890" y="409" width="100" height="82" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_06vkuy1_di" bpmnElement="Association_06vkuy1">
-        <di:waypoint x="5300" y="441" />
-        <di:waypoint x="5346" y="470" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0xysz53_di" bpmnElement="Association_0xysz53">
-        <di:waypoint x="5680" y="428" />
-        <di:waypoint x="5749" y="454" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0e84hhn_di" bpmnElement="TextAnnotation_0e84hhn">
+        <dc:Bounds x="5320" y="470" width="100" height="68" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1i9acj2_di" bpmnElement="TextAnnotation_1i9acj2">
+        <dc:Bounds x="5740" y="454" width="100" height="68" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0emjwsf_di" bpmnElement="Event_0qlx7rp">
         <dc:Bounds x="5472" y="432" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -1460,6 +1452,14 @@ Return editor suggestions with form fields</bpmn:text>
       <bpmndi:BPMNEdge id="Association_0w6ki9x_di" bpmnElement="Association_0w6ki9x">
         <di:waypoint x="3940" y="520" />
         <di:waypoint x="3940" y="491" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_06vkuy1_di" bpmnElement="Association_06vkuy1">
+        <di:waypoint x="5300" y="441" />
+        <di:waypoint x="5346" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0xysz53_di" bpmnElement="Association_0xysz53">
+        <di:waypoint x="5680" y="428" />
+        <di:waypoint x="5749" y="454" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -22,6 +22,7 @@ const Navbar = ({ role }) => {
             </BootstrapNavbar>
         )
     }
+    case 'EDITOR':
     case 'BOARD_MEMBER': {
         return (
             <BootstrapNavbar bg="dark" variant="dark">

@@ -18,10 +18,10 @@ public class WorkingPaper extends ApplicationPaper {
     @JoinColumn(name = "genre", referencedColumnName = "id")
     protected Genre genre;
 
-    @Column(unique = false)
+    @Column
     protected String synopsis;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private WorkingPaperStatus status;
 

@@ -36,6 +36,7 @@ const WriterRegistration = () => {
         try {
             await sendRegistrationData(processId, state)
             window.localStorage.removeItem('writer_registration_process')
+            // eslint-disable-next-line no-empty
         } catch (e) {
 
         }

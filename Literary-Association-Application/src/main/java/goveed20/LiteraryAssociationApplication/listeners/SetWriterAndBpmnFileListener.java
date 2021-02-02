@@ -14,6 +14,6 @@ public class SetWriterAndBpmnFileListener implements ExecutionListener {
     public void notify(DelegateExecution delegateExecution) {
         BaseUser writer = (BaseUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         delegateExecution.setVariable("writer", writer.getUsername());
-        delegateExecution.setVariable("bpmnFile", "src/main/resources/book_publishing.bpmn");
+        delegateExecution.setVariable("bpmnFile", "book_publishing");
     }
 }

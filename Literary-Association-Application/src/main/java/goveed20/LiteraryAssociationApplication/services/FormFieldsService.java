@@ -1,5 +1,6 @@
 package goveed20.LiteraryAssociationApplication.services;
 
+import goveed20.LiteraryAssociationApplication.dtos.ButtonDTO;
 import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
 import goveed20.LiteraryAssociationApplication.repositories.BetaReaderStatusRepository;
 import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
@@ -85,14 +86,17 @@ public class FormFieldsService {
 
     public void setDownloadFormField(Task task) {
         TaskFormData tfd = formService.getTaskFormData(task.getId());
-        Map<String, String> buttonProperties = new HashMap<>();
-        buttonProperties.put("type", "button");
+        String workingPaperTitle = (String) runtimeService.getVariable(task.getProcessInstanceId(), "working_paper");
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        buttonProperties.put("downloadURL", baseUrl + "/book/download/" + runtimeService.getVariable(
-                task.getProcessInstanceId(), "working_paper"));
+        ButtonDTO button = ButtonDTO.builder()
+                .id("downloadButton")
+                .label("Download paper: " + workingPaperTitle)
+                .title(workingPaperTitle)
+                .downloadURL(baseUrl + "/book/" + workingPaperTitle + "/download")
+                .build();
+        List<ButtonDTO> buttons = new ArrayList<>();
+        buttons.add(button);
 
-        tfd.getFormFields().add(CustomFormField.builder().id("downloadButton").label("Download paper")
-                .typeName("button").properties(buttonProperties).validationConstraints(new ArrayList<>()).build());
+        tfd.getFormFields().forEach(p -> p.getProperties().put("buttons", UtilService.serializeButtons(buttons)));
     }
-
 }
