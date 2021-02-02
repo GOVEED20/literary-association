@@ -8,6 +8,7 @@ import { restore_login } from '../reducers/userReducer'
 import Task from './Task'
 import BookList from './BookList'
 import { GuardProvider, GuardedRoute } from 'react-router-guards'
+import Book from './Book'
 
 const Dashboard = () => {
     const history = useHistory()
@@ -59,7 +60,7 @@ const Dashboard = () => {
                     <TaskList username={username}/>
                 </GuardedRoute>
                 <GuardedRoute path='/dashboard/books/:id' meta={{ roles: ['READER'] }}>
-                    <TaskList username={username}/>
+                    <Book/>
                 </GuardedRoute>
                 <GuardedRoute exact path='/dashboard/books' meta={{ roles: ['READER'] }}>
                     <BookList/>

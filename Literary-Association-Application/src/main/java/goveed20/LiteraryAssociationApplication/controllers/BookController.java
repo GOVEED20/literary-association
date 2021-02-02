@@ -1,6 +1,7 @@
 package goveed20.LiteraryAssociationApplication.controllers;
 
 import goveed20.LiteraryAssociationApplication.dtos.BookListItemDTO;
+import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
 import goveed20.LiteraryAssociationApplication.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,17 @@ public class BookController {
         return new ResponseEntity<>(bookService.getBooks(), HttpStatus.OK);
     }
 
-    @GetMapping("/download/{bookTitle}")
+    @PreAuthorize("hasAuthority('READER') or hasAuthority('WRITER')")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getBook(@PathVariable("id") Long id) {
+        try {
+            return new ResponseEntity<>(bookService.getBook(id), HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/{bookTitle}/download")
     public ResponseEntity<String> downloadBook(@PathVariable String bookTitle) {
         try {
             return new ResponseEntity<>(bookService.downloadBook(bookTitle), HttpStatus.OK);

@@ -11,7 +11,7 @@ const BookList = () => {
         dispatch(getBooks())
     }, [dispatch])
 
-    const books = useSelector(state => state.books)
+    const books = useSelector(state => state.books.list)
 
     return (
         <div>
@@ -23,7 +23,7 @@ const BookList = () => {
                     <th>Title</th>
                     <th>Publisher</th>
                     <th>Year</th>
-                    <th></th>
+                    <th/>
                 </tr>
                 </thead>
                 <tbody>

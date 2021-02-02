@@ -1,7 +1,10 @@
 package goveed20.LiteraryAssociationApplication.services;
 
+import goveed20.LiteraryAssociationApplication.dtos.BookDTO;
 import goveed20.LiteraryAssociationApplication.dtos.BookListItemDTO;
 import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessException;
+import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
+import goveed20.LiteraryAssociationApplication.model.Book;
 import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
 import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
@@ -17,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +43,28 @@ public class BookService {
                 .map(b -> new BookListItemDTO(b.getId(), b.getTitle(), b.getPublisher(), b.getISBN(), b.getPublicationYear()))
                 .collect(Collectors.toList());
     }
+
+    public BookDTO getBook(Long id) {
+        Optional<Book> bookOptional = bookRepository.findById(id);
+
+        if (bookOptional.isEmpty()) {
+            throw new NotFoundException(String.format("Book with id '%d' not found", id));
+        }
+
+        Book book = bookOptional.get();
+
+        return BookDTO.builder()
+                .genreEnum(book.getGenre().getGenre())
+                .ISBN(book.getISBN())
+                .place(book.getPublicationPlace())
+                .publisher(book.getPublisher())
+                .synopsis(book.getSynopsis())
+                .title(book.getTitle())
+                .price(book.getPrice())
+                .year(book.getPublicationYear())
+                .build();
+    }
+
 
     public WorkingPaper submitPaper(String processID, String base64File) throws IOException {
         byte[] pdfDecoded = Base64.getDecoder().decode(base64File);

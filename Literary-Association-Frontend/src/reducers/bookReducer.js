@@ -11,10 +11,31 @@ export const getBooks = () => {
     }
 }
 
-const reducer = (state = [], action) => {
+export const setBook = (id) => {
+    return async dispatch => {
+        const book = await bookService.getBook(id)
+
+        dispatch({
+            type: 'SET_BOOK',
+            book
+        })
+    }
+}
+
+const reducer = (state = { list: [], shown: null }, action) => {
     switch (action.type) {
-    case 'GET_BOOKS':
-        return action.books
+    case 'GET_BOOKS': {
+        return {
+            ...state,
+            list: action.books
+        }
+    }
+    case 'SET_BOOK': {
+        return {
+            ...state,
+            shown: action.book
+        }
+    }
     default:
         return state
     }
