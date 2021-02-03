@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Form as BootstrapForm } from 'react-bootstrap'
-import { getAvailableServices, getPaymentServiceRegistrationFields } from '../services/retailerRegistrationService'
+import { getAvailableServices, getPaymentServiceRegistrationFields } from '../services/retailerService'
 import PaymentServiceForm from './PaymentServiceForm'
-import { registerRetailer } from '../services/retailerRegistrationService'
+import { registerRetailer } from '../services/retailerService'
 
 const RetailerRegister = () => {
 

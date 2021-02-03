@@ -59,6 +59,7 @@ public class BookService {
         Book book = bookOptional.get();
 
         return BookDTO.builder()
+                .id(book.getId())
                 .genreEnum(book.getGenre().getGenre())
                 .ISBN(book.getISBN())
                 .place(book.getPublicationPlace())

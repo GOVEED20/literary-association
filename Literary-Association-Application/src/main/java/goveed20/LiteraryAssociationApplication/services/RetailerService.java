@@ -18,7 +18,7 @@ public class RetailerService {
     private RetailerRepository retailerRepository;
 
     public Object getAvailableServices() {
-        return paymentUtilsService.getAvailableServices().getBody();
+        return paymentUtilsService.getAvailableServices(null).getBody();
     }
 
     public Object getServiceRegistrationFields(String serviceName) {
@@ -59,5 +59,9 @@ public class RetailerService {
         retailerRepository.save(retailer);
 
         return "Retailer registered successfully";
+    }
+
+    public Object getPaymentServicesForRetailer(String retailer) {
+        return paymentUtilsService.getAvailableServices(retailer);
     }
 }

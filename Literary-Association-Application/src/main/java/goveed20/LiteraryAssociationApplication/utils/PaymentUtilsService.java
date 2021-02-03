@@ -34,10 +34,10 @@ public class PaymentUtilsService {
         return headers;
     }
 
-    public ResponseEntity<Object> getAvailableServices() {
+    public ResponseEntity<Object> getAvailableServices(String retailerName) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl + "/{retailerName}/payment-services");
         Map<String, String> urlParams = new HashMap<>();
-        urlParams.put("retailerName", myConfig.getName());
+        urlParams.put("retailerName", retailerName == null ? myConfig.getName() : retailerName);
         return restTemplate.exchange(builder.buildAndExpand(urlParams).toUri(),
                 HttpMethod.GET, new HttpEntity<>(getHeaders()), Object.class);
     }

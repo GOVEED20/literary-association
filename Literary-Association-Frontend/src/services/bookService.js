@@ -24,10 +24,16 @@ const downloadBook = async (title, downloadUrl) => {
     window.URL.revokeObjectURL(url)
 }
 
+const getRetailersForBook = async (id) => {
+    const response = await axios.get(`${BASE_URL}/book/${id}/retailer`)
+    return response.data
+}
+
 const bookService = {
     getBooks,
     getBook,
-    downloadBook
+    downloadBook,
+    getRetailersForBook
 }
 
 export default bookService

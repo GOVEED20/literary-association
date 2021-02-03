@@ -68,6 +68,7 @@ public class DummyBookService {
 
             Retailer r = Retailer.builder()
                     .name("Laguna")
+                    .email("laguna@maildrop.cc")
                     .books(new HashSet<>(Arrays.asList(b1, b2)))
                     .build();
 
