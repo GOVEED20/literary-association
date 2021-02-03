@@ -1,7 +1,12 @@
 package goveed20.LiteraryAssociationApplication.services;
 
+import goveed20.LiteraryAssociationApplication.dtos.BookDTO;
+import goveed20.LiteraryAssociationApplication.dtos.BookListItemDTO;
 import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessException;
+import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
+import goveed20.LiteraryAssociationApplication.model.Book;
 import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
+import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
 import org.apache.commons.io.FileUtils;
 import org.camunda.bpm.engine.RuntimeService;
@@ -16,6 +21,9 @@ import javax.persistence.EntityNotFoundException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -27,6 +35,38 @@ public class BookService {
 
     @Autowired
     private WorkingPaperRepository workingPaperRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    public List<BookListItemDTO> getBooks() {
+        return bookRepository.findAll()
+                .stream()
+                .map(b -> new BookListItemDTO(b.getId(), b.getTitle(), b.getPublisher(), b.getISBN(), b.getPublicationYear()))
+                .collect(Collectors.toList());
+    }
+
+    public BookDTO getBook(Long id) {
+        Optional<Book> bookOptional = bookRepository.findById(id);
+
+        if (bookOptional.isEmpty()) {
+            throw new NotFoundException(String.format("Book with id '%d' not found", id));
+        }
+
+        Book book = bookOptional.get();
+
+        return BookDTO.builder()
+                .genreEnum(book.getGenre().getGenre())
+                .ISBN(book.getISBN())
+                .place(book.getPublicationPlace())
+                .publisher(book.getPublisher())
+                .synopsis(book.getSynopsis())
+                .title(book.getTitle())
+                .price(book.getPrice())
+                .year(book.getPublicationYear())
+                .build();
+    }
+
 
     public WorkingPaper submitPaper(String processID, String path) throws IOException {
         File writingsFile = new File(path);

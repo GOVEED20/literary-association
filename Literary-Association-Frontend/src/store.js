@@ -1,12 +1,14 @@
 import userReducer from './reducers/userReducer'
 import userTaskReducer from './reducers/userTaskReducer'
+import bookReducer from './reducers/bookReducer'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import thunk from 'redux-thunk'
 
 const reducer = combineReducers({
     user: userReducer,
-    userTasks: userTaskReducer
+    userTasks: userTaskReducer,
+    books: bookReducer
 })
 
 const store = createStore(

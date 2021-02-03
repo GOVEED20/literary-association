@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { Redirect, Route, useHistory } from 'react-router-dom'
+import { Redirect, useHistory } from 'react-router-dom'
 import TaskList from './TaskList'
 import { useDispatch, useSelector } from 'react-redux'
 import Navbar from './Navbar'
@@ -7,6 +8,9 @@ import { Spinner } from 'react-bootstrap'
 import { restore_login } from '../reducers/userReducer'
 import Task from './Task'
 import MyBooks from './MyBooks'
+import BookList from './BookList'
+import { GuardProvider, GuardedRoute } from 'react-router-guards'
+import Book from './Book'
 
 const Dashboard = () => {
     const history = useHistory()
@@ -35,23 +39,38 @@ const Dashboard = () => {
         )
     }
 
+    const requireRole = (to, from, next) => {
+        if (to.meta.roles) {
+            if (to.meta.roles.includes(role)) {
+                next()
+            }
+            next.redirect(from)
+        } else {
+            next()
+        }
+
+    }
+
     return (
         <div>
             <Navbar role={role}/>
-            <div>
-                <Route path='/dashboard/tasks/:id'>
+            <GuardProvider guards={[requireRole]}>
+                <GuardedRoute path='/dashboard/tasks/:id'>
                     <Task/>
-                </Route>
-                <Route exact path='/dashboard/tasks'>
+                </GuardedRoute>
+                <GuardedRoute exact path='/dashboard/tasks'>
                     <TaskList username={username}/>
-                </Route>
-                <Route path='/dashboard'>
+                </GuardedRoute>
+                <GuardedRoute path='/dashboard/books/:id' meta={{ roles: ['READER'] }}>
+                    <Book/>
+                </GuardedRoute>
+                <GuardedRoute exact path='/dashboard/books' meta={{ roles: ['READER'] }}>
+                    <BookList/>
+                </GuardedRoute>
+                <GuardedRoute exact path='/dashboard'>
                     <Redirect to='/dashboard/tasks'/>
-                </Route>
-                <Route path='/dashboard/my-books'>
-                    <MyBooks/>
-                </Route>
-            </div>
+                </GuardedRoute>
+            </GuardProvider>
         </div>
     )
 }

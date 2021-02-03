@@ -38,7 +38,7 @@ const WriterRegistration = () => {
             window.localStorage.removeItem('writer_registration_process')
             // eslint-disable-next-line no-empty
         } catch (e) {
-
+            console.log(e)
         }
     }
 
