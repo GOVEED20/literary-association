@@ -13,6 +13,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/task")
+@CrossOrigin
 public class UserTaskController {
 
     @Autowired

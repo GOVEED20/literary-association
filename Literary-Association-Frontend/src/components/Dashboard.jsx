@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react'
-import { Route, Redirect, useHistory } from 'react-router-dom'
+import { Redirect, Route, useHistory } from 'react-router-dom'
 import TaskList from './TaskList'
 import { useDispatch, useSelector } from 'react-redux'
 import Navbar from './Navbar'
 import { Spinner } from 'react-bootstrap'
 import { restore_login } from '../reducers/userReducer'
 import Task from './Task'
+import MyBooks from './MyBooks'
 
 const Dashboard = () => {
     const history = useHistory()
@@ -46,6 +47,9 @@ const Dashboard = () => {
                 </Route>
                 <Route path='/dashboard'>
                     <Redirect to='/dashboard/tasks'/>
+                </Route>
+                <Route path='/dashboard/my-books'>
+                    <MyBooks/>
                 </Route>
             </div>
         </div>

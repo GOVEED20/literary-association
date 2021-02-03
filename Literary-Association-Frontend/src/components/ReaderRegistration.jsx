@@ -33,7 +33,12 @@ const ReaderRegistration = () => {
     }, [processId])
 
     const onSubmit = async (state) => {
-        await sendRegistrationData(processId, state)
+        try {
+            await sendRegistrationData(processId, state)
+            window.localStorage.removeItem('reader_registration_process')
+        } catch (e) {
+            console.log(e)// add error handling
+        }
     }
 
     if (!formFields) {

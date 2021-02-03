@@ -2,6 +2,7 @@ package goveed20.LiteraryAssociationApplication.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import goveed20.LiteraryAssociationApplication.dtos.ButtonDTO;
 import goveed20.LiteraryAssociationApplication.dtos.FormSubmissionFieldDTO;
 import goveed20.LiteraryAssociationApplication.dtos.OptionDTO;
 import goveed20.LiteraryAssociationApplication.model.BaseUser;
@@ -36,7 +37,7 @@ public class UtilService {
     public static String serializeBetaReaders(HashSet<BetaReaderStatus> betaReaderStatuses) {
         Gson gson = new Gson();
         return gson.toJson(betaReaderStatuses.stream().map(b -> OptionDTO.builder().name(b.getReader().getName() + " " + b.getReader().getSurname())
-                .value(b.getReader().getUsername())));
+                .value(b.getReader().getUsername())).collect(Collectors.toSet()));
     }
 
     public static String serializeEditors(HashSet<BaseUser> baseUsers) {
@@ -47,7 +48,12 @@ public class UtilService {
 
     private static String serializeOptions(Set<String> options) {
         Gson gson = new Gson();
-        return gson.toJson(options.stream().map(o -> OptionDTO.builder().name(o).value(o).build()));
+        return gson.toJson(options.stream().map(o -> OptionDTO.builder().name(o).value(o).build()).collect(Collectors.toSet()));
+    }
+
+    public static String serializeButtons(List<ButtonDTO> buttons) {
+        Gson gson = new Gson();
+        return gson.toJson(buttons);
     }
 
     public static Set<Genre> parseGenres(String genres) {
