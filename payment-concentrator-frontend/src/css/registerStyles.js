@@ -1,18 +1,18 @@
 const mainDivStyle = {
-    width: '480px',
+    width: '45%',
     margin: '0 auto',
-    marginTop: '25px',
+    marginTop: '3%',
     backgroundColor: 'white',
-    padding: '20px',
+    padding: '1.8%',
     color: '#010d3b',
 }
 
 const serviceDivStyle = {
-    marginTop: "15px"
+    marginTop: "2.5%"
 }
 
 const submitButtonStyle = {
-    marginTop: "15px",
+    marginTop: "3.5%",
     width: "100%",
     backgroundColor: "#010d3b",
     color: "white",
@@ -23,20 +23,48 @@ const submitButtonStyle = {
 }
 
 const formStyle = {
-    marginTop: "20px"
+    marginTop: "5%"
+}
+
+const emailFieldStyle = {
+    marginTop: "3%"
 }
 
 const h1Style = {
-    marginTop: "10px",
+    marginTop: "2.5%",
     textAlign: "center"
 }
 
 const h4Style = {
-    marginTop: "15px"
+    marginTop: "5%"
 }
 
 const formFieldStyle = {
-    marginTop: "5px"
+    marginTop: "2%"
 }
 
-export {mainDivStyle, serviceDivStyle, submitButtonStyle, h1Style, formStyle, h4Style, formFieldStyle}
+const logoutBtnStyle = {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    marginTop: '1.5%',
+    marginRight: '5%',
+    width: '4%',
+    backgroundColor: "#010d3b",
+    color: "white",
+    border: "0px",
+    textDecoration: "underline",
+    textAlign: "center"
+}
+
+export {
+    mainDivStyle,
+    serviceDivStyle,
+    submitButtonStyle,
+    h1Style,
+    formStyle,
+    h4Style,
+    formFieldStyle,
+    logoutBtnStyle,
+    emailFieldStyle
+}

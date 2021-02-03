@@ -6,10 +6,7 @@ import goveed20.PaymentConcentrator.services.RetailerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
@@ -19,9 +16,20 @@ public class RetailerController {
     private RetailerService retailerService;
 
     @PostMapping(value = "/register", consumes = "multipart/form-data")
-    public ResponseEntity<?> registerRetailer(@RequestPart("retailerData") RetailerData retailerData) {
+    public ResponseEntity<?> registerRetailerByAdmin(@RequestPart("retailerData") RetailerData retailerData) {
         try {
-            return new ResponseEntity<>(retailerService.registerRetailer(retailerData), HttpStatus.OK);
+            return new ResponseEntity<>(retailerService.registerRetailerByAdmin(retailerData), HttpStatus.OK);
+        } catch (BadRequestException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/register-external")
+    public ResponseEntity<?> registerRetailerExternal(@RequestBody RetailerData retailerData) {
+        try {
+            return new ResponseEntity<>(retailerService.registerRetailerExternally(retailerData), HttpStatus.OK);
         } catch (BadRequestException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {

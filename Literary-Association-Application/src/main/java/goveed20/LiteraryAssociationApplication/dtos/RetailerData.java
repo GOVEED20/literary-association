@@ -1,4 +1,4 @@
-package goveed20.PaymentConcentrator.dtos;
+package goveed20.LiteraryAssociationApplication.dtos;
 
 import lombok.*;
 

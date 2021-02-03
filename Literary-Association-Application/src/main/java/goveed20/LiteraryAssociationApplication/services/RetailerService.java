@@ -1,37 +1,63 @@
 package goveed20.LiteraryAssociationApplication.services;
 
-import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
-import goveed20.LiteraryAssociationApplication.exceptions.PaymentException;
+import goveed20.LiteraryAssociationApplication.dtos.RetailerData;
+import goveed20.LiteraryAssociationApplication.exceptions.BadRequestException;
+import goveed20.LiteraryAssociationApplication.model.Retailer;
 import goveed20.LiteraryAssociationApplication.repositories.RetailerRepository;
+import goveed20.LiteraryAssociationApplication.utils.PaymentUtilsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Set;
 
 @Service
 public class RetailerService {
+
+    @Autowired
+    private PaymentUtilsService paymentUtilsService;
+
     @Autowired
     private RetailerRepository retailerRepository;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    public Object getAvailableServices() {
+        return paymentUtilsService.getAvailableServices().getBody();
+    }
 
-    public Set<String> getPaymentServicesForRetailer(String retailerName) {
-        if (retailerRepository.findByName(retailerName).isEmpty()) {
-            throw new NotFoundException(String.format("Retailer with name '%s' not found", retailerName));
+    public Object getServiceRegistrationFields(String serviceName) {
+        return paymentUtilsService.getServiceRegistrationFields(serviceName).getBody();
+    }
+
+    public String registerRetailer(RetailerData retailerData) {
+        Retailer retailer;
+        if ((retailerData.getRetailerName() != null && !retailerData.getRetailerName().equals("")) ||
+                (retailerData.getRetailerEmail() != null && !retailerData.getRetailerEmail().equals(""))) {
+            retailer = Retailer.builder()
+                    .name(retailerData.getRetailerName())
+                    .email(retailerData.getRetailerEmail())
+                    .build();
+        } else {
+            throw new BadRequestException("You must provide retailer name and email");
         }
 
-        ParameterizedTypeReference<Set<String>> responseType = new ParameterizedTypeReference<>() {
-        };
-        ResponseEntity<Set<String>> response = restTemplate.exchange(String.format("http://localhost:8080/api/%s/payment-services", retailerName), HttpMethod.GET, null, responseType);
-
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new PaymentException(response.getStatusCode().getReasonPhrase());
+        if (retailerRepository.findByName(retailerData.getRetailerName()).isPresent()) {
+            throw new BadRequestException("Given retailer name is already in use");
         }
 
-        return response.getBody();
+        if (retailerRepository.findByEmail(retailerData.getRetailerEmail()).isPresent()) {
+            throw new BadRequestException("Given retailer email is already in use");
+        }
+
+        if (retailerData.getPaymentServices().size() == 0) {
+            throw new BadRequestException("You must select at least one payment service");
+        }
+
+        try {
+            paymentUtilsService.sendRegisterRetailerRequest(retailerData);
+        } catch (Exception e) {
+            String msg = e.getMessage();
+            throw new BadRequestException(msg.substring(msg.indexOf("[") + 1, msg.lastIndexOf("]")));
+        }
+
+        retailerRepository.save(retailer);
+
+        return "Retailer registered successfully";
     }
 }

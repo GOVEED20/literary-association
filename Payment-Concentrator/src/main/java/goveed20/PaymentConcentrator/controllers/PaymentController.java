@@ -9,6 +9,7 @@ import goveed20.PaymentConcentrator.services.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,10 +27,10 @@ public class PaymentController {
         return new ResponseEntity<>(paymentService.getGlobalPaymentServices(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "{retailerId}/payment-services")
-    public ResponseEntity<?> getRetailerPaymentServices(@PathVariable("retailerId") Long retailerId) {
+    @GetMapping(value = "{retailerName}/payment-services")
+    public ResponseEntity<?> getRetailerPaymentServices(@PathVariable("retailerName") String retailerName) {
         try {
-            return new ResponseEntity<>(paymentService.getRetailerPaymentServices(retailerId), HttpStatus.OK);
+            return new ResponseEntity<>(paymentService.getRetailerPaymentServices(retailerName), HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

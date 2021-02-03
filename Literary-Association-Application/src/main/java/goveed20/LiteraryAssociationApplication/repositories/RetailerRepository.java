@@ -11,4 +11,6 @@ public interface RetailerRepository extends JpaRepository<Retailer, Long> {
     Optional<Retailer> findByName(String name);
 
     List<Retailer> findAllByBooksContaining(Book book);
+
+    Optional<Retailer> findByEmail(String email);
 }
