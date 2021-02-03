@@ -5,8 +5,10 @@ import goveed20.LiteraryAssociationApplication.dtos.BookListItemDTO;
 import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessException;
 import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
 import goveed20.LiteraryAssociationApplication.model.Book;
+import goveed20.LiteraryAssociationApplication.model.Retailer;
 import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
 import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
+import goveed20.LiteraryAssociationApplication.repositories.RetailerRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
 import org.apache.commons.io.FileUtils;
 import org.camunda.bpm.engine.RuntimeService;
@@ -36,6 +38,9 @@ public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private RetailerRepository retailerRepository;
 
     public List<BookListItemDTO> getBooks() {
         return bookRepository.findAll()
@@ -106,5 +111,15 @@ public class BookService {
         }
 
         return "Successful download";
+    }
+
+    public List<String> getRetailersForBook(Long id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Book with id '%d' not found", id)));
+
+        return retailerRepository.findAllByBooksContaining(book)
+                .stream()
+                .map(Retailer::getName)
+                .collect(Collectors.toList());
     }
 }

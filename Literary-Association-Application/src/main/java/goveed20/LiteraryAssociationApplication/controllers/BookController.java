@@ -43,4 +43,13 @@ public class BookController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/{id}/retailer")
+    public ResponseEntity<?> getRetailersForBook(@PathVariable("id") Long id) {
+        try {
+            return new ResponseEntity<>(bookService.getRetailersForBook(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }

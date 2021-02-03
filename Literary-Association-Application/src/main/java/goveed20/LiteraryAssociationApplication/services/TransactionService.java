@@ -5,6 +5,7 @@ import goveed20.LiteraryAssociationApplication.dtos.InvoiceItemDTO;
 import goveed20.LiteraryAssociationApplication.dtos.OrderDTO;
 import goveed20.LiteraryAssociationApplication.dtos.PaymentFieldsDTO;
 import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
+import goveed20.LiteraryAssociationApplication.exceptions.PaymentException;
 import goveed20.LiteraryAssociationApplication.model.*;
 import goveed20.LiteraryAssociationApplication.model.enums.TransactionStatus;
 import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
@@ -69,6 +70,10 @@ public class TransactionService {
 
         String url = String.format("http://localhost:8080/api/payment-services/%s/initialize-payment", invoiceDTO.getPaymentMethod());
         ResponseEntity<String> response = restTemplate.postForEntity(url, orderDTO, String.class);
+
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new PaymentException(response.getStatusCode().getReasonPhrase());
+        }
 
         return response.getBody();
     }

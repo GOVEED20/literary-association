@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouteMatch } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Col, Row, Spinner } from 'react-bootstrap'
 import { setBook } from '../reducers/bookReducer'
 import bookService from '../services/bookService'
+import PaymentModal from './PaymentModal'
 
 const Book = () => {
     const dispatch = useDispatch()
     const book = useSelector(state => state.books.shown)
+    const [modalShown, setModalShown] = useState(false)
 
     const idMatch = useRouteMatch('/dashboard/books/:id')
 
@@ -26,31 +28,35 @@ const Book = () => {
     }
 
     const buttonName = book.price === 0 ? 'Download' : 'Purchase'
-    const onClick = () => book.price === 0 ? bookService.downloadBook(book.title, null) : console.log('kitica')
+    const toggleModal = () => setModalShown(!modalShown)
+    const onClick = () => book.price === 0 ? bookService.downloadBook(book.title, null) : toggleModal()
 
     return (
-        <Row style={{ width: '60%', marginTop: '2%', marginLeft: 'auto', marginRight: 'auto' }}>
-            <Col style={{ borderRight: '1px solid #333' }}>
-                <Row>Title:</Row>
-                <Row>ISBN:</Row>
-                <Row>Genre:</Row>
-                <Row>Publisher:</Row>
-                <Row>City:</Row>
-                <Row>Year:</Row>
-                <Row>Synopsis:</Row>
-            </Col>
-            <Col/>
-            <Col style={{ whiteSpace: 'nowrap' }}>
-                <Row><b>{book.title}</b></Row>
-                <Row>{book.isbn}</Row>
-                <Row>{book.genreEnum}</Row>
-                <Row>{book.publisher}</Row>
-                <Row>{book.place}</Row>
-                <Row>{book.year}</Row>
-                <Row><i>{book.synopsis}</i></Row>
-                <Row><Button onClick={onClick} type='button'>{buttonName}</Button></Row>
-            </Col>
-        </Row>
+        <>
+            <PaymentModal show={modalShown} toggleModal={toggleModal}/>
+            <Row style={{ width: '60%', marginTop: '2%', marginLeft: 'auto', marginRight: 'auto' }}>
+                <Col style={{ borderRight: '1px solid #333' }}>
+                    <Row>Title:</Row>
+                    <Row>ISBN:</Row>
+                    <Row>Genre:</Row>
+                    <Row>Publisher:</Row>
+                    <Row>City:</Row>
+                    <Row>Year:</Row>
+                    <Row>Synopsis:</Row>
+                </Col>
+                <Col/>
+                <Col style={{ whiteSpace: 'nowrap' }}>
+                    <Row><b>{book.title}</b></Row>
+                    <Row>{book.isbn}</Row>
+                    <Row>{book.genreEnum}</Row>
+                    <Row>{book.publisher}</Row>
+                    <Row>{book.place}</Row>
+                    <Row>{book.year}</Row>
+                    <Row><i>{book.synopsis}</i></Row>
+                    <Row><Button onClick={onClick} type='button'>{buttonName}</Button></Row>
+                </Col>
+            </Row>
+        </>
     )
 }
 
