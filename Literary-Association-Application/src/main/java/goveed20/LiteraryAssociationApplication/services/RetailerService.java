@@ -2,6 +2,7 @@ package goveed20.LiteraryAssociationApplication.services;
 
 import goveed20.LiteraryAssociationApplication.dtos.RetailerData;
 import goveed20.LiteraryAssociationApplication.exceptions.BadRequestException;
+import goveed20.LiteraryAssociationApplication.exceptions.PaymentException;
 import goveed20.LiteraryAssociationApplication.model.Retailer;
 import goveed20.LiteraryAssociationApplication.repositories.RetailerRepository;
 import goveed20.LiteraryAssociationApplication.utils.PaymentUtilsService;
@@ -17,15 +18,15 @@ public class RetailerService {
     @Autowired
     private RetailerRepository retailerRepository;
 
-    public Object getAvailableServices() {
-        return paymentUtilsService.getAvailableServices(null).getBody();
+    public Object getAvailableServices() throws PaymentException {
+        return paymentUtilsService.getAvailableServices(null);
     }
 
-    public Object getServiceRegistrationFields(String serviceName) {
-        return paymentUtilsService.getServiceRegistrationFields(serviceName).getBody();
+    public Object getServiceRegistrationFields(String serviceName) throws PaymentException {
+        return paymentUtilsService.getServiceRegistrationFields(serviceName);
     }
 
-    public String registerRetailer(RetailerData retailerData) {
+    public String registerRetailer(RetailerData retailerData) throws PaymentException {
         Retailer retailer;
         if ((retailerData.getRetailerName() != null && !retailerData.getRetailerName().equals("")) ||
                 (retailerData.getRetailerEmail() != null && !retailerData.getRetailerEmail().equals(""))) {

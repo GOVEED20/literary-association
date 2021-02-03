@@ -18,12 +18,12 @@ public class RetailerController {
     private RetailerService retailerService;
 
     @PreAuthorize("hasAuthority('READER') or hasAuthority('WRITER')")
-    @GetMapping("/{name}/payment-service")
+    @GetMapping("/{name}/payment-services")
     public ResponseEntity<?> getPaymentServicesForRetailer(@PathVariable("name") String retailer) {
         try {
             return new ResponseEntity<>(retailerService.getPaymentServicesForRetailer(retailer), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 

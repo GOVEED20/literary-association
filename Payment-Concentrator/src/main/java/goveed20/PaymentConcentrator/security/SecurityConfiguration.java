@@ -24,10 +24,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private CommunicationFilter communicationFilter;
-
     @Autowired
     public void configureAuthentication(
             AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
@@ -85,16 +81,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .clearAuthentication(true)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login")
-                .permitAll()
-                .antMatchers("/actuator/health")
+                .antMatchers("/login", "/actuator/health")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .httpBasic()
                 .and()
-                .addFilterAfter(communicationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
         httpSecurity.headers().frameOptions().disable();

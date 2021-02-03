@@ -18,7 +18,7 @@ export const registerRetailer = async (retailerData) => {
 }
 
 export const getPaymentServicesForRetailer = async (retailerName) => {
-    const response = await axios.get(`${BASE_URL}/${retailerName}/payment-service`)
+    const response = await axios.get(`${BASE_URL}/retailer/${retailerName}/payment-services`)
     return response.data
 }
 

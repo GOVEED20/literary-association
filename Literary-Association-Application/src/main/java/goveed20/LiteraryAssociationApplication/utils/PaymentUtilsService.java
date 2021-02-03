@@ -3,8 +3,10 @@ package goveed20.LiteraryAssociationApplication.utils;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import goveed20.LiteraryAssociationApplication.configs.YAMLConfig;
 import goveed20.LiteraryAssociationApplication.dtos.RetailerData;
+import goveed20.LiteraryAssociationApplication.exceptions.PaymentException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,7 +22,7 @@ import java.util.Map;
 @Service
 public class PaymentUtilsService {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new RestTemplateResponseErrorHandler()).build();
 
     private final String baseUrl = "http://localhost:8080/api";
 
@@ -34,23 +36,27 @@ public class PaymentUtilsService {
         return headers;
     }
 
-    public ResponseEntity<Object> getAvailableServices(String retailerName) {
+    public Object getAvailableServices(String retailerName) throws PaymentException {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl + "/{retailerName}/payment-services");
         Map<String, String> urlParams = new HashMap<>();
         urlParams.put("retailerName", retailerName == null ? myConfig.getName() : retailerName);
-        return restTemplate.exchange(builder.buildAndExpand(urlParams).toUri(),
+        ResponseEntity<Object> response = restTemplate.exchange(builder.buildAndExpand(urlParams).toUri(),
                 HttpMethod.GET, new HttpEntity<>(getHeaders()), Object.class);
+
+        return response.getBody();
     }
 
-    public ResponseEntity<Object> getServiceRegistrationFields(String serviceName) {
+    public Object getServiceRegistrationFields(String serviceName) throws PaymentException {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl + "/payment-services/{paymentService}/registration-fields");
         Map<String, String> urlParams = new HashMap<>();
         urlParams.put("paymentService", serviceName);
-        return restTemplate.exchange(builder.buildAndExpand(urlParams).toUri(),
+        ResponseEntity<Object> response = restTemplate.exchange(builder.buildAndExpand(urlParams).toUri(),
                 HttpMethod.GET, new HttpEntity<>(getHeaders()), Object.class);
+
+        return response.getBody();
     }
 
-    public void sendRegisterRetailerRequest(RetailerData retailerData) {
+    public void sendRegisterRetailerRequest(RetailerData retailerData) throws PaymentException {
         MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
@@ -64,8 +70,6 @@ public class PaymentUtilsService {
                 baseUrl + "/register-external",
                 HttpMethod.POST,
                 new HttpEntity<>(payload.toMap(), getHeaders()),
-                String.class
-        );
+                String.class);
     }
-
 }

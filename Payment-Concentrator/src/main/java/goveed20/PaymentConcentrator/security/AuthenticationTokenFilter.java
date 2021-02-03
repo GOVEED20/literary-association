@@ -1,5 +1,6 @@
 package goveed20.PaymentConcentrator.security;
 
+import goveed20.PaymentConcentrator.repositories.RetailerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,30 +23,32 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private RetailerRepository retailerRepository;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-//        String requestURL = httpRequest.getRequestURI();
-//        if (requestURL.equals("/api/actuator/health")) {
-//            return;
-//        } else if (requestURL.startsWith("/api/h2")) {
-//            chain.doFilter(request, response);
-//        }
+        String token = tokenService.getToken(httpRequest);
 
-        String username;
-        String authToken = tokenService.getToken(httpRequest);
-
-        if (authToken != null) {
-            username = tokenService.getUsernameFromToken(authToken);
-
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-                if (tokenService.validateToken(authToken, userDetails)) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        if (token != null) {
+            if (token.matches("^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")) {
+                if (retailerRepository.findByRegistrationToken(token).isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    ApiKeyBasedAuthentication authentication = new ApiKeyBasedAuthentication(token);
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } else {
+                String username = tokenService.getUsernameFromToken(token);
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                    if (tokenService.validateToken(token, userDetails)) {
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
             }
         }
