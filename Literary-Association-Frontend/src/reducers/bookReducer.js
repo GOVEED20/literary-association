@@ -1,8 +1,8 @@
 import bookService from '../services/bookService'
 
-export const getBooks = () => {
+export const getBooks = (myBooks) => {
     return async dispatch => {
-        const books = await bookService.getBooks()
+        const books = !myBooks ? await bookService.getBooks() : await bookService.getMyBooks()
 
         dispatch({
             type: 'GET_BOOKS',

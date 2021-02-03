@@ -12,9 +12,16 @@ const getBook = async (id) => {
     return response.data
 }
 
+const getMyBooks = async () => {
+    const response = await axios.get(`${BASE_URL}/book/my-books`)
+    return response.data
+}
+
 const bookService = {
     getBooks,
-    getBook
+    getBook,
+    getMyBooks
 }
+
 
 export default bookService

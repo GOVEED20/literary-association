@@ -37,9 +37,19 @@ public class BookController {
 
     @GetMapping("/{bookTitle}/download")
     @PreAuthorize("hasAuthority('EDITOR')")
-    public ResponseEntity<Object> downloadBook(@PathVariable String bookTitle) {
+    public ResponseEntity downloadBook(@PathVariable String bookTitle) {
         try {
             return bookService.downloadBook(bookTitle);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/my-books")
+    @PreAuthorize("hasAuthority('WRITER')")
+    public ResponseEntity<Object> getMyBooks() {
+        try {
+            return new ResponseEntity<>(bookService.getMyBooks(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

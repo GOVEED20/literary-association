@@ -24,7 +24,7 @@ const FormField = ({ formField, onChange, value }) => {
             return (
                 JSON.parse(formField.properties.buttons).map(button => {
                     return (
-                        <Form.Group as={Row} controlId={button.id} key={button.id}>
+                        <Form.Group as={Row} key={button.id}>
                             <Col sm={3}>
                                 <Button onClick={() => download(button.downloadURL, button.title)}>{button.label}</Button>
                             </Col>

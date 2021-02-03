@@ -15,6 +15,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -42,7 +43,8 @@ public class BookService {
     public List<BookListItemDTO> getBooks() {
         return bookRepository.findAll()
                 .stream()
-                .map(b -> new BookListItemDTO(b.getId(), b.getTitle(), b.getPublisher(), b.getISBN(), b.getPublicationYear()))
+                .map(b -> new BookListItemDTO(b.getId(), b.getTitle(), b.getPublisher(), b.getISBN(), b
+                        .getPublicationYear()))
                 .collect(Collectors.toList());
     }
 
@@ -109,5 +111,14 @@ public class BookService {
                 .contentLength(file.length())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
+    }
+
+    public List<BookListItemDTO> getMyBooks() {
+        goveed20.LiteraryAssociationApplication.model.Writer writer = (goveed20.LiteraryAssociationApplication.model.Writer)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return writer.getBooks().stream()
+                .map(b -> new BookListItemDTO(b.getId(), b.getTitle(), b.getPublisher(), b.getISBN(),
+                        b.getPublicationYear())).collect(Collectors.toList());
     }
 }

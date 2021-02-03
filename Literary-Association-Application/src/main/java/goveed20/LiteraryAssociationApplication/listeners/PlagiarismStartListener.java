@@ -22,7 +22,7 @@ public class PlagiarismStartListener implements ExecutionListener {
     public void notify(DelegateExecution delegateExecution) throws Exception {
         BaseUser writer = (BaseUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         delegateExecution.setVariable("writer", writer.getUsername());
-        delegateExecution.setVariable("bpmnFile", "src/main/resources/plagiarism.bpmn");
+        delegateExecution.setVariable("bpmnFile", "plagiarism");
         Map<String, String> boardMembers = new HashMap<>();
         baseUserRepository.findAllByRole(UserRole.BOARD_MEMBER).forEach(member -> {
             boardMembers.put(member.getUsername(), "");

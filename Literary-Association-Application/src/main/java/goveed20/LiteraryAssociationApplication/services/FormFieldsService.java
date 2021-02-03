@@ -7,7 +7,6 @@ import goveed20.LiteraryAssociationApplication.repositories.BaseUserRepository;
 import goveed20.LiteraryAssociationApplication.repositories.BetaReaderStatusRepository;
 import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
-import goveed20.LiteraryAssociationApplication.utils.CustomFormField;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
@@ -99,7 +98,8 @@ public class FormFieldsService {
                     )));
                     break;
                 case "editor_replacement":
-                    Map<String,String> chosenEditors = (Map<String,String>) runtimeService.getVariable(task.getProcessInstanceId(), "chosen_editors");
+                    Map<String, String> chosenEditors = (Map<String, String>) runtimeService
+                            .getVariable(task.getProcessInstanceId(), "chosen_editors");
                     List<String> editors = new ArrayList<>(chosenEditors.keySet());
                     editors.add(task.getAssignee());
                     p.getProperties().put("options", UtilService.serializeEditors(new HashSet<>(
@@ -114,34 +114,37 @@ public class FormFieldsService {
         TaskFormData tfd = formService.getTaskFormData(task.getId());
         String workingPaperTitle = (String) runtimeService.getVariable(task.getProcessInstanceId(), "working_paper");
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        List<ButtonDTO> buttons = new ArrayList<>();
 
         if (!value.equals("2")) {
-            buttonProperties.put("downloadURL", baseUrl + "/book/download/" + runtimeService.getVariable(
-                    task.getProcessInstanceId(), "working_paper"));
-
-            tfd.getFormFields().add(CustomFormField.builder().id("downloadButton").label("Download paper")
-                    .typeName("button").properties(buttonProperties).validationConstraints(new ArrayList<>()).build());
+            ButtonDTO button = ButtonDTO.builder()
+                    .id("downloadButton")
+                    .label("Download paper: " + workingPaperTitle)
+                    .title(workingPaperTitle)
+                    .downloadURL(baseUrl + "/book/" + workingPaperTitle + "/download")
+                    .build();
+            buttons.add(button);
         } else {
             String myBook = (String) runtimeService.getVariable(task.getProcessInstanceId(), "my_book");
             String plagiarismBook = (String) runtimeService.getVariable(task.getProcessInstanceId(), "plagiarism_book");
-            buttonProperties.put("downloadURL1", baseUrl + "/book/download/" + myBook);
 
-            buttonProperties.put("downloadURL2", baseUrl + "/book/download/" + plagiarismBook);
+            ButtonDTO button1 = ButtonDTO.builder()
+                    .id("downloadButton1")
+                    .label("Download paper: " + myBook)
+                    .title(myBook)
+                    .downloadURL(baseUrl + "/book/" + myBook + "/download")
+                    .build();
 
-            tfd.getFormFields().add(CustomFormField.builder().id("downloadButton1").label("Download book " + myBook)
-                    .typeName("button").properties(buttonProperties).validationConstraints(new ArrayList<>()).build());
+            ButtonDTO button2 = ButtonDTO.builder()
+                    .id("downloadButton2")
+                    .label("Download paper: " + plagiarismBook)
+                    .title(plagiarismBook)
+                    .downloadURL(baseUrl + "/book/" + plagiarismBook + "/download")
+                    .build();
 
-            tfd.getFormFields().add(CustomFormField.builder().id("downloadButton2").label("Download book " + plagiarismBook)
-                    .typeName("button").properties(buttonProperties).validationConstraints(new ArrayList<>()).build());
+            buttons.add(button1);
+            buttons.add(button2);
         }
-        ButtonDTO button = ButtonDTO.builder()
-                .id("downloadButton")
-                .label("Download paper: " + workingPaperTitle)
-                .title(workingPaperTitle)
-                .downloadURL(baseUrl + "/book/" + workingPaperTitle + "/download")
-                .build();
-        List<ButtonDTO> buttons = new ArrayList<>();
-        buttons.add(button);
 
         tfd.getFormFields().forEach(p -> p.getProperties().put("buttons", UtilService.serializeButtons(buttons)));
     }

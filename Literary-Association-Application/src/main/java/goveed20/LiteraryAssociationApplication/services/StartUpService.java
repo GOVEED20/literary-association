@@ -1,11 +1,13 @@
 package goveed20.LiteraryAssociationApplication.services;
 
 import goveed20.LiteraryAssociationApplication.model.BaseUser;
+import goveed20.LiteraryAssociationApplication.model.Book;
 import goveed20.LiteraryAssociationApplication.model.Genre;
 import goveed20.LiteraryAssociationApplication.model.Writer;
 import goveed20.LiteraryAssociationApplication.model.enums.GenreEnum;
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import goveed20.LiteraryAssociationApplication.repositories.BaseUserRepository;
+import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
 import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WriterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class StartUpService {
 
     @Autowired
     private WriterRepository writerRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -62,7 +67,53 @@ public class StartUpService {
                 .genres(new HashSet<>())
                 .build();
 
-        writerRepository.save(writer);
+        Book book = Book.bookBuilder()
+                .ISBN("123412341234")
+                .publisher("Carobna kljiga")
+                .title("Kljiga")
+                .publicationYear(1998)
+                .keywords("kljucne reci")
+                .pages(256)
+                .publicationPlace("mesto publikacije")
+                .genre(genreRepository.findByGenre(GenreEnum.COOKBOOKS))
+                .synopsis("Sinobsis")
+                .price(302.00)
+                .build();
+        book.setWriter(writer);
+        bookRepository.save(book);
+
+        Writer writer2 = Writer.writerBuilder()
+                .role(UserRole.WRITER)
+                .genres(new HashSet<>())
+                .location(locationService.createLocation("Serbia", "Novi Sad"))
+                .comments(new HashSet<>())
+                .transactions(new HashSet<>())
+                .verified(true)
+                .membershipApproved(true)
+                .workingPapers(new HashSet<>())
+                .books(new HashSet<>())
+                .username("lazata")
+                .password(passwordEncoder.encode("Laza1997!"))
+                .name("Lazo")
+                .surname("Lazic")
+                .email("lazata@maildrop.cc")
+                .genres(new HashSet<>())
+                .build();
+
+        Book book2 = Book.bookBuilder()
+                .ISBN("653515341234")
+                .publisher("Simgidulum")
+                .title("Tajtl")
+                .publicationYear(2005)
+                .keywords("kljucne reci")
+                .pages(256)
+                .publicationPlace("mesto publikacije")
+                .genre(genreRepository.findByGenre(GenreEnum.COOKBOOKS))
+                .synopsis("Sinobsis")
+                .price(203.00)
+                .build();
+        book2.setWriter(writer2);
+        bookRepository.save(book2);
 
         BaseUser editor = BaseUser.builder()
                 .role(UserRole.EDITOR)

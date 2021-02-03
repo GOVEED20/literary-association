@@ -3,9 +3,7 @@ package goveed20.LiteraryAssociationApplication.model;
 import goveed20.LiteraryAssociationApplication.model.enums.WorkingPaperStatus;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -34,7 +32,7 @@ public class Book extends WorkingPaper {
     @Column(nullable = false)
     private Double price;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Writer writer;
 
     @Builder(builderMethodName = "bookBuilder")

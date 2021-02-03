@@ -26,7 +26,7 @@ public class Writer extends BaseUser {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<WorkingPaper> workingPapers;
 
-    @OneToMany(mappedBy = "writer")
+    @OneToMany(mappedBy = "writer", fetch = FetchType.EAGER)
     private Set<Book> books;
 
     @Builder(builderMethodName = "writerBuilder")
