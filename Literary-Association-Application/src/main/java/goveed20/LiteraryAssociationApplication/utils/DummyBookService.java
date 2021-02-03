@@ -44,7 +44,7 @@ public class DummyBookService {
                     .publicationYear(2014)
                     .pages(240)
                     .publicationPlace("Novi Sad, Srbija")
-                    .price(1400.0)
+                    .price(0.0)
                     .build();
 
             Genre g2 = genreRepository.findByGenre(GenreEnum.FANTASY);
