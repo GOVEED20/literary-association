@@ -43,7 +43,7 @@ public class UtilService {
     public static String serializeEditors(HashSet<BaseUser> baseUsers) {
         Gson gson = new Gson();
         return gson.toJson(baseUsers.stream().map(b -> OptionDTO.builder().name(b.getName() + " " + b.getSurname())
-                .value(b.getUsername())));
+                .value(b.getUsername())).collect(Collectors.toSet()));
     }
 
     private static String serializeOptions(Set<String> options) {

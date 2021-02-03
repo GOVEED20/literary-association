@@ -14,7 +14,8 @@ public class VoteDelegate implements JavaDelegate {
     public void execute(DelegateExecution delegateExecution) {
         Map<String, Object> data = (Map<String, Object>) delegateExecution.getVariable("data");
         Map<String, String> boardMembers = (Map<String, String>) delegateExecution.getVariable("board_members");
-        boardMembers.replace((String) delegateExecution.getVariable("current_board_member"), (String) data.get("vote_option"));
+        boardMembers.replace((String) delegateExecution.getVariable("current_board_member"), (String) data
+                .get("vote_option"));
         delegateExecution.setVariable("board_members", boardMembers);
     }
 }

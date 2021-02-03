@@ -51,6 +51,7 @@ public class InputComplaintDataDelegate implements JavaDelegate {
         BaseUser editor = editors.get((int) (Math.random() * editors.size()));
 
         delegateExecution.setVariable("editor", editor.getUsername());
+        System.out.println(editor.getUsername());
 
         String text = String.format("Dear %s %s,\nPlagiarism complaint request has been received from %s, for " +
                         "book with title %s", editor.getName(),

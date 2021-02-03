@@ -86,12 +86,14 @@ const FormField = ({ formField, onChange, value }) => {
     }
     case 'textarea': {
         return (
+            <>{checkForButtons(formField)}
             <Form.Group as={Row} controlId={formField.id}>
                 <Form.Label sm={1} column>{formField.label}</Form.Label>
                 <Col sm={3}>
                     <Form.Control as='textarea' onChange={onChange} value={value} rows={formField.properties.rows}/>
                 </Col>
             </Form.Group>
+            </>
         )
     }
     default: {
