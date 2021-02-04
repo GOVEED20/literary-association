@@ -5,12 +5,14 @@ import { Alert } from 'react-bootstrap'
 const Toaster = () => {
     const notification = useSelector(state => state.notification)
 
-    if (!notification) {
+    if (!notification.notification) {
         return null
     }
 
+    const type = notification.notificationType === 'error' ? 'danger' : 'success'
+
     return (
-        <Alert variant={notification.notificationType}>
+        <Alert variant={type}>
             {notification.notification}
         </Alert>
     )
