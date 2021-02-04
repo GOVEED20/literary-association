@@ -74,6 +74,7 @@
         </camunda:formData>
         <camunda:properties>
           <camunda:property name="basic_select" value="true" />
+          <camunda:property name="additional_content" value="1" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1o480h4</bpmn:incoming>
@@ -104,6 +105,9 @@
             </camunda:validation>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="additional_content" value="1" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1653kjq</bpmn:incoming>
       <bpmn:outgoing>Flow_1ec2nbh</bpmn:outgoing>
@@ -135,6 +139,9 @@
             </camunda:validation>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="additional_content" value="1" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0qia434</bpmn:incoming>
       <bpmn:incoming>Flow_1ov2ow8</bpmn:incoming>
@@ -165,6 +172,7 @@
         </camunda:formData>
         <camunda:properties>
           <camunda:property name="basic_select" value="true" />
+          <camunda:property name="additional_content" value="1" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_10tv1k9</bpmn:incoming>
@@ -195,6 +203,9 @@
             </camunda:validation>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="additional_content" value="1" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1t6esbk</bpmn:incoming>
       <bpmn:outgoing>Flow_19lffs2</bpmn:outgoing>
@@ -224,6 +235,7 @@
         <camunda:properties>
           <camunda:property name="basic_select" value="true" />
           <camunda:property name="download_file" value="true" />
+          <camunda:property name="additional_content" value="1" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0idk8aq</bpmn:incoming>
@@ -263,6 +275,9 @@
             </camunda:validation>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="additional_content" value="1" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_00lay34</bpmn:incoming>
       <bpmn:outgoing>Flow_03pmllg</bpmn:outgoing>
@@ -283,6 +298,7 @@
         </camunda:formData>
         <camunda:properties>
           <camunda:property name="basic_select" value="true" />
+          <camunda:property name="additional_content" value="1" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0paeqcv</bpmn:incoming>
@@ -310,6 +326,7 @@
         </camunda:formData>
         <camunda:properties>
           <camunda:property name="beta_reader_select" value="true" />
+          <camunda:property name="additional_content" value="1" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0mh7w1n</bpmn:incoming>
@@ -343,6 +360,7 @@
           </camunda:formData>
           <camunda:properties>
             <camunda:property name="download_file" value="true" />
+            <camunda:property name="additional_content" value="1" />
           </camunda:properties>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0o4l63d</bpmn:incoming>
@@ -383,6 +401,9 @@
             </camunda:validation>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="additional_content" value="3" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jafoym</bpmn:incoming>
       <bpmn:incoming>Flow_0skkj3d</bpmn:incoming>
@@ -403,7 +424,9 @@
           </camunda:formField>
         </camunda:formData>
         <camunda:properties>
+          <camunda:property name="basic_select" value="true" />
           <camunda:property name="download_file" value="true" />
+          <camunda:property name="additional_content" value="1" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ufk185</bpmn:incoming>
@@ -441,6 +464,7 @@
         </camunda:formData>
         <camunda:properties>
           <camunda:property name="download_file" value="true" />
+          <camunda:property name="additional_content" value="1" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_08x3tld</bpmn:incoming>
@@ -472,6 +496,9 @@
             </camunda:validation>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="additional_content" value="3" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1k4uvfv</bpmn:incoming>
       <bpmn:incoming>Flow_1t1xfbr</bpmn:incoming>
@@ -489,6 +516,7 @@
         </camunda:formData>
         <camunda:properties>
           <camunda:property name="download_file" value="true" />
+          <camunda:property name="additional_content" value="1" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0if44a1</bpmn:incoming>
@@ -521,6 +549,9 @@
             </camunda:validation>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="additional_content" value="3" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0isce60</bpmn:incoming>
       <bpmn:incoming>Flow_0zxe6mz</bpmn:incoming>
@@ -625,6 +656,9 @@
             </camunda:properties>
           </camunda:formField>
         </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="additional_content" value="1" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0l6dwu3</bpmn:incoming>
       <bpmn:outgoing>Flow_00dpw3d</bpmn:outgoing>

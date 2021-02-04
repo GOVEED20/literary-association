@@ -106,6 +106,9 @@ public class UserTaskService {
         if (taskExtensions.containsKey("download_file")) {
             formFieldsService.setDownloadFormField(task, taskExtensions.get("download_file"));
         }
+        if (taskExtensions.containsKey("additional_content")) {
+            formFieldsService.setAdditionalContent(task, taskExtensions.get("additional_content"));
+        }
 
         return formService.getTaskFormData(task.getId()).getFormFields();
     }

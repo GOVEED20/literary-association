@@ -10,6 +10,5 @@ import java.util.List;
 
 public interface BetaReaderStatusRepository extends JpaRepository<BetaReaderStatus, Long> {
 
-    @Query("SELECT b FROM BetaReaderStatus b WHERE :genre IN (b.betaGenres)")
-    List<BetaReaderStatus> findByGenre(@Param("genre") Genre genre);
+    List<BetaReaderStatus> findByBetaGenresContaining(Genre genre);
 }

@@ -41,17 +41,28 @@ const Form = ({ form, onSubmit }) => {
             encodedFiles.push(await toBase64(fileInput.files[i]))
         }
 
+        console.log(encodedFiles)
         state[field.id] = encodedFiles.join(' ')
     }
 
     const submit = (event) => {
         event.preventDefault()
         const preparedState = { ...state }
+        Object.keys(preparedState).forEach((key) => {
+            if (key === 'beta_readers') {
+                preparedState[key] = JSON.stringify(preparedState[key].map(v => {
+                    return {
+                        beta_readers: v
+                    }
+                }))
+            }
+        })
 
         Promise.all(form.formFields
             .filter(ff => ff.properties.type === 'file')
             .map(ff => encodeSingleField(ff, preparedState))
         ).then(() => {
+            console.log(preparedState)
             onSubmit(preparedState)
         })
     }

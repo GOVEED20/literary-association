@@ -25,7 +25,7 @@ public class TokenService {
     @Value("Authorization")
     private String AUTH_HEADER;
 
-    private static final long JWT_TOKEN_VALIDITY = 30 * 60 * 60;
+    private static final long JWT_TOKEN_VALIDITY = 30 * 60 * 60 * 60;
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -51,7 +51,7 @@ public class TokenService {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 10000))
                 .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
     }
