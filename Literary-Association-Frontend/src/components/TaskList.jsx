@@ -9,7 +9,7 @@ const TaskList = ({ username }) => {
 
     useEffect(() => {
         dispatch(getActiveTasks(username))
-    }, [dispatch, username])
+    }, [])
 
     const tasks = useSelector(state => state.userTasks.list)
 

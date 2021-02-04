@@ -6,10 +6,12 @@ import userTaskService from '../services/userTaskService'
 import Form from './Form'
 import { Col, Spinner } from 'react-bootstrap'
 import PdfViewer from './PdfViewer'
+import { setNotification } from '../reducers/notificationReducer'
 
 const Task = () => {
     const dispatch = useDispatch()
     const task = useSelector(state => state.userTasks.active)
+    //const history = useHistory()
 
     const idMatch = useRouteMatch('/dashboard/tasks/:id')
 
@@ -19,7 +21,16 @@ const Task = () => {
         }
     }, [])
 
-    const onSubmit = async (state) => await userTaskService.submitTask(task.id, state)
+    const onSubmit = async (state) => {
+        try {
+            await userTaskService.submitTask(task.id, state)
+            //history.push('/dashboard/tasks')
+        } catch (e) {
+            console.log(e)
+            dispatch(setNotification(e, 'danger', 3500))
+            //history.push('/dashboard/tasks')
+        }
+    }
 
     if (!task) {
         return (
