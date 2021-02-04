@@ -1,13 +1,13 @@
 package goveed20.LiteraryAssociationApplication.services;
 
-import goveed20.LiteraryAssociationApplication.model.BaseUser;
-import goveed20.LiteraryAssociationApplication.model.Genre;
-import goveed20.LiteraryAssociationApplication.model.Writer;
+import goveed20.LiteraryAssociationApplication.model.*;
 import goveed20.LiteraryAssociationApplication.model.enums.GenreEnum;
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import goveed20.LiteraryAssociationApplication.repositories.BaseUserRepository;
 import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
+import goveed20.LiteraryAssociationApplication.repositories.ReaderRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WriterRepository;
+import goveed20.LiteraryAssociationApplication.utils.UtilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -28,6 +28,9 @@ public class StartUpService {
 
     @Autowired
     private WriterRepository writerRepository;
+
+    @Autowired
+    private ReaderRepository readerRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -90,6 +93,30 @@ public class StartUpService {
 
         baseUserRepository.save(lector);
 
+        Reader reader = Reader.readerBuilder()
+                .role(UserRole.READER)
+                .username("reader")
+                .password(passwordEncoder.encode("Reader1997!"))
+                .name("Gogara")
+                .surname("Gogic")
+                .email("gogara@maildrop.cc")
+                .comments(new HashSet<>())
+                .transactions(new HashSet<>())
+                .genres(new HashSet<>())
+                .betaReader(true)
+                .location(locationService.createLocation("Serbia", "SM"))
+                .verified(true)
+                .build();
+        reader.getGenres().add(genreRepository.findByGenre(GenreEnum.ADVENTURE));
+
+        BetaReaderStatus brs = BetaReaderStatus.builder().betaGenres(new HashSet<>())
+                .betaReaderPapers(new HashSet<>()).penaltyPoints(0).reader(reader).build();
+        brs.getBetaGenres().add(genreRepository.findByGenre(GenreEnum.ADVENTURE));
+        reader.setBetaReaderStatus(brs);
+
+        readerRepository.save(reader);
+
+        camundaUserService.createCamundaUser(reader);
         camundaUserService.createCamundaUser(writer);
         camundaUserService.createCamundaUser(editor);
         camundaUserService.createCamundaUser(lector);

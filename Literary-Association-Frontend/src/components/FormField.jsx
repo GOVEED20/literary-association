@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, Col, Form, Row } from 'react-bootstrap'
 import axios from 'axios'
+import AdditionalContentList from './AdditionalContentList'
 
 const FormField = ({ formField, onChange, value }) => {
 
@@ -45,7 +46,9 @@ const FormField = ({ formField, onChange, value }) => {
         switch (formField.type.name) {
         case 'string': {
             return (
-                <>{checkForButtons(formField)}
+                <>
+                    {formField.properties.additional && <AdditionalContentList additionals={formField.properties.additional}/>}
+                    {checkForButtons(formField)}
                     <Form.Group as={Row} controlId={formField.id}>
                         <Form.Label sm={1} column>{formField.label}</Form.Label>
                         <Col sm={3}>
@@ -59,26 +62,30 @@ const FormField = ({ formField, onChange, value }) => {
                                 }
                             </Form.Control>
                         </Col>
-                    </Form.Group></>
+                    </Form.Group>
+                </>
             )
         }
         case 'enum': {
             return (
-                <Form.Group as={Row} controlId={formField.id}>
-                    <Form.Label sm={1} column>{formField.label}</Form.Label>
-                    <Col sm={3}>
-                        <Form.Control as="select" {...nativeProps} onChange={onChange} value={value}>
-                            <option key='empty' value=''>-</option>
-                            {
-                                Object.keys(formField.type.values)
-                                    .map((option) =>
-                                        <option key={option}
-                                            value={option}>{formField.type.values[option]}</option>
-                                    )
-                            }
-                        </Form.Control>
-                    </Col>
-                </Form.Group>
+                <>
+                    {formField.properties.additional && <AdditionalContentList additionals={formField.properties.additional}/>}
+                    <Form.Group as={Row} controlId={formField.id}>
+                        <Form.Label sm={1} column>{formField.label}</Form.Label>
+                        <Col sm={3}>
+                            <Form.Control as="select" {...nativeProps} onChange={onChange} value={value}>
+                                <option key='empty' value=''>-</option>
+                                {
+                                    Object.keys(formField.type.values)
+                                        .map((option) =>
+                                            <option key={option}
+                                                value={option}>{formField.type.values[option]}</option>
+                                        )
+                                }
+                            </Form.Control>
+                        </Col>
+                    </Form.Group>
+                </>
             )
         }
         }
@@ -86,22 +93,28 @@ const FormField = ({ formField, onChange, value }) => {
     }
     case 'textarea': {
         return (
-            <Form.Group as={Row} controlId={formField.id}>
-                <Form.Label sm={1} column>{formField.label}</Form.Label>
-                <Col sm={3}>
-                    <Form.Control as='textarea' onChange={onChange} value={value} rows={formField.properties.rows}/>
-                </Col>
-            </Form.Group>
+            <>
+                {formField.properties.additional && <AdditionalContentList additionals={formField.properties.additional}/>}
+                <Form.Group as={Row} controlId={formField.id}>
+                    <Form.Label sm={1} column>{formField.label}</Form.Label>
+                    <Col sm={3}>
+                        <Form.Control as='textarea' onChange={onChange} value={value} rows={formField.properties.rows}/>
+                    </Col>
+                </Form.Group>
+            </>
         )
     }
     default: {
         return (
-            <Form.Group as={Row} controlId={formField.id}>
-                <Form.Label sm={1} column>{formField.label}</Form.Label>
-                <Col sm={3}>
-                    <Form.Control {...formField.properties} onChange={onChange} value={value}/>
-                </Col>
-            </Form.Group>
+            <>
+                {formField.properties.additional && <AdditionalContentList additionals={formField.properties.additional}/>}
+                <Form.Group as={Row} controlId={formField.id}>
+                    <Form.Label sm={1} column>{formField.label}</Form.Label>
+                    <Col sm={3}>
+                        <Form.Control {...formField.properties} onChange={onChange} value={value}/>
+                    </Col>
+                </Form.Group>
+            </>
         )
     }
     }
