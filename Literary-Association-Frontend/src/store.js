@@ -11,8 +11,15 @@ const reducer = combineReducers({
     books: bookReducer
 })
 
+const rootReducer = (state, action) => {
+    if (action.type === 'DESTROY_SESSION') {
+        state = undefined
+    }
+    return reducer(state, action)
+}
+
 const store = createStore(
-    reducer,
+    rootReducer,
     composeWithDevTools(
         applyMiddleware(thunk)
     )

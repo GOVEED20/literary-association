@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 @Service
 public class PaymentService {
     private final RestTemplate restTemplate = new RestTemplate();
+
     @Autowired
     private DiscoveryClient discoveryClient;
     @Autowired
@@ -48,14 +49,15 @@ public class PaymentService {
                 .collect(Collectors.toSet());
     }
 
-    public Set<String> getRetailerPaymentServices(Long retailerId) {
-        Set<String> supportedPaymentServices = retailerDataForPaymentServiceRepository.findByRetailer_Id(retailerId)
+    public Set<String> getRetailerPaymentServices(String retailerName) {
+        Retailer retailer = retailerRepository.findByName(retailerName).get();
+        Set<String> supportedPaymentServices = retailerDataForPaymentServiceRepository.findByRetailer_Id(retailer.getId())
                 .stream()
                 .map(RetailerDataForPaymentService::getPaymentService)
                 .collect(Collectors.toSet());
 
         if (supportedPaymentServices.isEmpty()) {
-            throw new NotFoundException(String.format("Retailer with id %d not found", retailerId));
+            throw new NotFoundException(String.format("Retailer with name %s not found", retailerName));
         }
         return supportedPaymentServices;
     }
@@ -182,7 +184,6 @@ public class PaymentService {
     @SneakyThrows
     @Async
     public void informClient(String url) {
-        System.out.println(url);
-        //restTemplate.getForEntity(url, Void.class);
+        restTemplate.getForEntity(url, Void.class);
     }
 }

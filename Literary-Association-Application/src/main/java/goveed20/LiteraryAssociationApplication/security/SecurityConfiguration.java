@@ -83,7 +83,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .clearAuthentication(true)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/process/start", "/register/**", "/h2/**")
+                .antMatchers("/login", "/process/start", "/register/**", "/h2/**", "/transaction/*/*")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/task")
                 .permitAll()
@@ -93,6 +93,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+                
         httpSecurity.headers().frameOptions().disable();
     }
 }

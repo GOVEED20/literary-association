@@ -27,7 +27,7 @@ const Navbar = ({ role }) => {
                 <Nav className="mr-auto">
                     <NavbarLink text='Tasks' url='/dashboard/tasks'/>
                     <NavbarLink text='Books' url='/dashboard/books'/>
-                    <NavbarLink text='Purchased books' url='/dashboard/my-books'/>
+                    <NavbarLink text='My books' url='/dashboard/my-books'/>
                     <NavbarLink text='Payments' url='/dashboard/payments'/>
                 </Nav>
                 <Nav>

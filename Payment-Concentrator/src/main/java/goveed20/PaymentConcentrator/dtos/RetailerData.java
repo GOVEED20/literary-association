@@ -11,5 +11,6 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class RetailerData {
     private String retailerName;
+    private String retailerEmail;
     private List<PaymentServiceData> paymentServices;
 }

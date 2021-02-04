@@ -54,6 +54,10 @@ export const logout = () => {
         dispatch({
             type: 'LOGOUT'
         })
+
+        dispatch({
+            type: 'DESTROY_SESSION'
+        })
     }
 }
 

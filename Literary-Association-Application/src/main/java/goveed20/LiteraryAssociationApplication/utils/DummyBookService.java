@@ -44,7 +44,7 @@ public class DummyBookService {
                     .publicationYear(2014)
                     .pages(240)
                     .publicationPlace("Novi Sad, Srbija")
-                    .price(1400.0)
+                    .price(0.0)
                     .build();
 
             Genre g2 = genreRepository.findByGenre(GenreEnum.FANTASY);
@@ -59,7 +59,7 @@ public class DummyBookService {
                     .publisher("Carobna knjiga")
                     .publicationYear(2014)
                     .pages(317)
-                    .price(1600.0)
+                    .price(16.0)
                     .publicationPlace("Beograd, Srbija")
                     .build();
 
@@ -68,6 +68,7 @@ public class DummyBookService {
 
             Retailer r = Retailer.builder()
                     .name("Laguna")
+                    .email("laguna@maildrop.cc")
                     .books(new HashSet<>(Arrays.asList(b1, b2)))
                     .build();
 

@@ -20,6 +20,12 @@ public class Retailer {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(unique = true)
+    private String registrationToken;
+
     @Builder.Default
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<RetailerDataForPaymentService> retailerDataForPaymentServices = new HashSet<>();

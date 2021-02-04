@@ -26,10 +26,10 @@ public class PaymentController {
         return new ResponseEntity<>(paymentService.getGlobalPaymentServices(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "{retailerId}/payment-services")
-    public ResponseEntity<?> getRetailerPaymentServices(@PathVariable("retailerId") Long retailerId) {
+    @GetMapping(value = "{retailerName}/payment-services")
+    public ResponseEntity<?> getRetailerPaymentServices(@PathVariable("retailerName") String retailerName) {
         try {
-            return new ResponseEntity<>(paymentService.getRetailerPaymentServices(retailerId), HttpStatus.OK);
+            return new ResponseEntity<>(paymentService.getRetailerPaymentServices(retailerName), HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -48,7 +48,7 @@ public class PaymentController {
 
     @PostMapping(value = "/payment-services/{paymentService}/initialize-payment")
     public ResponseEntity<String> initializePayment(@PathVariable("paymentService") String paymentServiceName,
-                                                     @Valid @RequestBody InitializePaymentRequest paymentRequest) {
+                                                    @Valid @RequestBody InitializePaymentRequest paymentRequest) {
         try {
             return new ResponseEntity<>(paymentService.initializePayment(paymentServiceName, paymentRequest), HttpStatus.CREATED);
         } catch (NotFoundException e) {
@@ -64,7 +64,7 @@ public class PaymentController {
     public ResponseEntity<?> sendTransactionResponse(@RequestBody ResponsePayload responsePayload) {
         try {
             paymentService.sendTransactionResponse(responsePayload);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Transaction completed", HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (StatusCodeException e) {

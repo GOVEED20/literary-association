@@ -5,8 +5,10 @@ import goveed20.LiteraryAssociationApplication.dtos.BookListItemDTO;
 import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessException;
 import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
 import goveed20.LiteraryAssociationApplication.model.Book;
+import goveed20.LiteraryAssociationApplication.model.Retailer;
 import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
 import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
+import goveed20.LiteraryAssociationApplication.repositories.RetailerRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
 import org.apache.commons.io.FileUtils;
 import org.camunda.bpm.engine.RuntimeService;
@@ -40,6 +42,9 @@ public class BookService {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private RetailerRepository retailerRepository;
+
     public List<BookListItemDTO> getBooks() {
         return bookRepository.findAll()
                 .stream()
@@ -58,6 +63,7 @@ public class BookService {
         Book book = bookOptional.get();
 
         return BookDTO.builder()
+                .id(book.getId())
                 .genreEnum(book.getGenre().getGenre())
                 .ISBN(book.getISBN())
                 .place(book.getPublicationPlace())
@@ -120,5 +126,15 @@ public class BookService {
         return writer.getBooks().stream()
                 .map(b -> new BookListItemDTO(b.getId(), b.getTitle(), b.getPublisher(), b.getISBN(),
                         b.getPublicationYear())).collect(Collectors.toList());
+    }
+
+    public List<String> getRetailersForBook(Long id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Book with id '%d' not found", id)));
+
+        return retailerRepository.findAllByBooksContaining(book)
+                .stream()
+                .map(Retailer::getName)
+                .collect(Collectors.toList());
     }
 }
