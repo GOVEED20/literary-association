@@ -5,6 +5,7 @@ import { Button, Col, Row, Spinner } from 'react-bootstrap'
 import { setBook } from '../reducers/bookReducer'
 import bookService from '../services/bookService'
 import PaymentModal from './PaymentModal'
+import CurrencyFormat from 'react-currency-format'
 
 const Book = () => {
     const dispatch = useDispatch()
@@ -43,6 +44,7 @@ const Book = () => {
                     <Row>City:</Row>
                     <Row>Year:</Row>
                     <Row>Synopsis:</Row>
+                    <Row>Price:</Row>
                 </Col>
                 <Col/>
                 <Col style={{ whiteSpace: 'nowrap' }}>
@@ -53,6 +55,10 @@ const Book = () => {
                     <Row>{book.place}</Row>
                     <Row>{book.year}</Row>
                     <Row><i>{book.synopsis}</i></Row>
+                    <Row>
+                        <CurrencyFormat value={book.price} displayType={'text'} thousandSeparator={true} prefix={'$'}
+                                        renderText={value => <p>{value}</p>}/>
+                    </Row>
                     <Row><Button onClick={onClick} type='button'>{buttonName}</Button></Row>
                 </Col>
             </Row>

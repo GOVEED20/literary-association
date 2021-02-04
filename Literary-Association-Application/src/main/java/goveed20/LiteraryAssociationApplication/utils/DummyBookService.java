@@ -59,7 +59,7 @@ public class DummyBookService {
                     .publisher("Carobna knjiga")
                     .publicationYear(2014)
                     .pages(317)
-                    .price(1600.0)
+                    .price(16.0)
                     .publicationPlace("Beograd, Srbija")
                     .build();
 

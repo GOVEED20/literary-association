@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 @Service
 public class PaymentService {
     private final RestTemplate restTemplate = new RestTemplate();
+
     @Autowired
     private DiscoveryClient discoveryClient;
     @Autowired
@@ -183,7 +184,6 @@ public class PaymentService {
     @SneakyThrows
     @Async
     public void informClient(String url) {
-        System.out.println(url);
-        //restTemplate.getForEntity(url, Void.class);
+        restTemplate.getForEntity(url, Void.class);
     }
 }

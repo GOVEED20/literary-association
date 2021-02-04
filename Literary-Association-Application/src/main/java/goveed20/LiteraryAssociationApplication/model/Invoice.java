@@ -23,6 +23,6 @@ public class Invoice {
     @ManyToOne
     private Retailer retailer;
 
-    @OneToOne(optional = false)
+    @OneToOne
     private Transaction transaction;
 }

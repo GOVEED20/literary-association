@@ -1,5 +1,6 @@
 package goveed20.LiteraryAssociationApplication.services;
 
+import goveed20.LiteraryAssociationApplication.configs.YAMLConfig;
 import goveed20.LiteraryAssociationApplication.dtos.InvoiceDTO;
 import goveed20.LiteraryAssociationApplication.dtos.InvoiceItemDTO;
 import goveed20.LiteraryAssociationApplication.dtos.OrderDTO;
@@ -9,10 +10,15 @@ import goveed20.LiteraryAssociationApplication.exceptions.PaymentException;
 import goveed20.LiteraryAssociationApplication.model.*;
 import goveed20.LiteraryAssociationApplication.model.enums.TransactionStatus;
 import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
+import goveed20.LiteraryAssociationApplication.repositories.InvoiceRepository;
 import goveed20.LiteraryAssociationApplication.repositories.RetailerRepository;
 import goveed20.LiteraryAssociationApplication.repositories.TransactionRepository;
+import goveed20.LiteraryAssociationApplication.utils.RestTemplateResponseErrorHandler;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -35,15 +41,30 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private InvoiceRepository invoiceRepository;
+
+    private final RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new RestTemplateResponseErrorHandler()).build();
 
     private static final String CALLBACK_URL = "/transaction/%d/%s";
+
+    @Autowired
+    private YAMLConfig myConfig;
+
+    private HttpHeaders getHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", myConfig.getRegistrationToken());
+
+        return headers;
+    }
 
     public String initializeTransaction(InvoiceDTO invoiceDTO) {
         Invoice invoice = Invoice.builder()
                 .retailer(getRetailer(invoiceDTO.getRetailer()))
                 .invoiceItems(invoiceDTO.getInvoiceItems().stream().map(this::createInvoiceItem).collect(Collectors.toSet()))
                 .build();
+
+        invoiceRepository.save(invoice);
 
         Transaction transaction = Transaction.builder()
                 .initializedOn(new Date())
@@ -69,7 +90,7 @@ public class TransactionService {
                 .build();
 
         String url = String.format("http://localhost:8080/api/payment-services/%s/initialize-payment", invoiceDTO.getPaymentMethod());
-        ResponseEntity<String> response = restTemplate.postForEntity(url, orderDTO, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(url, new HttpEntity<>(orderDTO, getHeaders()), String.class);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new PaymentException(response.getStatusCode().getReasonPhrase());

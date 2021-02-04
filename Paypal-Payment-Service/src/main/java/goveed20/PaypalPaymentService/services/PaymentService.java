@@ -46,7 +46,7 @@ public class PaymentService {
     }
 
     public String initializePayment(InitializationPaymentPayload payload) throws PayPalRESTException {
-        if (payload.getPaymentFields().containsKey("subscription")) {
+        if (payload.getPaymentFields().containsKey("subscription") && Boolean.parseBoolean(payload.getPaymentFields().get("subscription"))) {
             return createSubscription(payload);
         } else {
             Payment payment = createPayment(payload);

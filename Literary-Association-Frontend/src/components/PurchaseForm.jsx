@@ -3,8 +3,9 @@ import { Button, Col, Form, Row, Spinner } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import bookService from '../services/bookService'
 import retailerService from '../services/retailerService'
+import transactionService from '../services/transactionService'
 
-const PurchaseForm = () => {
+const PurchaseForm = ({ toggleModal }) => {
     const book = useSelector(state => state.books.shown)
     const [retailers, setRetailers] = useState([])
     const [retailer, setRetailer] = useState('')
@@ -26,8 +27,23 @@ const PurchaseForm = () => {
 
     const onSubmit = (event) => {
         event.preventDefault()
-        console.log(retailer)
-        console.log(paymentService)
+
+        const invoiceItem = {
+            id: book.id,
+            quantity: 1
+        }
+        const invoiceItems = [invoiceItem]
+        const invoice = {
+            retailer,
+            paymentMethod: paymentService,
+            subscription: false,
+            invoiceItems
+        }
+        transactionService.initializeTransaction(invoice).then(result => {
+            window.open(result, '_blank')
+            // add toast
+            toggleModal()
+        })
     }
 
     if (!retailers) {

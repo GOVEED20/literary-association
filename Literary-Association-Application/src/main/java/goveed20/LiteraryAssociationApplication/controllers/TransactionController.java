@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
@@ -23,11 +22,11 @@ public class TransactionController {
     @SneakyThrows
     @PreAuthorize("hasAuthority('READER') or hasAuthority('WRITER')")
     @PostMapping
-    public void initializeTransaction(@RequestBody @Valid InvoiceDTO invoiceDTO, HttpServletResponse response) {
+    public ResponseEntity<?> initializeTransaction(@RequestBody @Valid InvoiceDTO invoiceDTO) {
         try {
-            response.sendRedirect(transactionService.initializeTransaction(invoiceDTO));
+            return new ResponseEntity<>(transactionService.initializeTransaction(invoiceDTO), HttpStatus.CREATED);
         } catch (Exception e) {
-            response.sendError(400, e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
