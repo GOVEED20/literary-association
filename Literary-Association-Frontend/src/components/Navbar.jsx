@@ -51,19 +51,6 @@ const Navbar = ({ role }) => {
             </BootstrapNavbar>
         )
     }
-    case 'READER': {
-        return (
-            <BootstrapNavbar bg="dark" variant="dark">
-                <NavbarLogoLink imgPath='/logo.svg' url='/dashboard/tasks' alt='Literary association logo'/>
-                <Nav className="mr-auto">
-                    <NavbarLink text='Tasks' url='/dashboard/tasks'/>
-                </Nav>
-                <Nav>
-                    <NavbarLink text='Logout' url='/logout'/>
-                </Nav>
-            </BootstrapNavbar>
-        )
-    }
     default: {
         return null
     }

@@ -3,16 +3,12 @@ package goveed20.LiteraryAssociationApplication.services;
 import goveed20.LiteraryAssociationApplication.dtos.AdditionalContentDTO;
 import goveed20.LiteraryAssociationApplication.dtos.ButtonDTO;
 import goveed20.LiteraryAssociationApplication.dtos.WorkingPaperDTO;
+import goveed20.LiteraryAssociationApplication.model.Book;
 import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
-import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
-import goveed20.LiteraryAssociationApplication.repositories.BaseUserRepository;
-import goveed20.LiteraryAssociationApplication.repositories.BetaReaderStatusRepository;
-import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
-import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
 import goveed20.LiteraryAssociationApplication.model.Writer;
 import goveed20.LiteraryAssociationApplication.model.enums.CommentType;
+import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import goveed20.LiteraryAssociationApplication.repositories.*;
-import goveed20.LiteraryAssociationApplication.utils.CustomFormField;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
 import org.camunda.bpm.engine.FormService;
 import org.camunda.bpm.engine.RuntimeService;
@@ -23,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FormFieldsService {
@@ -50,6 +47,9 @@ public class FormFieldsService {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
 
     public void setSelectFormFields(Task task) {
         TaskFormData tfd = formService.getTaskFormData(task.getId());
@@ -101,8 +101,8 @@ public class FormFieldsService {
                     String title = (String) runtimeService.getVariable(task.getProcessInstanceId(), "working_paper");
                     WorkingPaper workingPaper = workingPaperRepository.findByTitle(title);
                     p.getProperties().put("options", UtilService
-                        .serializeBetaReaders(new HashSet<>(betaReaderStatusRepository
-                                .findByBetaGenresContaining(workingPaper.getGenre()))));
+                            .serializeBetaReaders(new HashSet<>(betaReaderStatusRepository
+                                    .findByBetaGenresContaining(workingPaper.getGenre()))));
                     break;
                 case "editors":
                     p.getProperties().put("options", UtilService.serializeEditors(new HashSet<>(
@@ -119,7 +119,7 @@ public class FormFieldsService {
                     )));
                     break;
                 default:
-                	return;
+                    return;
             }
         });
     }
@@ -165,37 +165,56 @@ public class FormFieldsService {
 
     public void setAdditionalContent(Task task, String additionalType) {
         TaskFormData tfd = formService.getTaskFormData(task.getId());
-        String workingPaperTitle = (String) runtimeService.getVariable(task.getProcessInstanceId(), "working_paper");
-        WorkingPaper workingPaper = workingPaperRepository.findByTitle(workingPaperTitle);
+        List<WorkingPaper> workingPapers = new ArrayList<>();
+        Writer writer = null;
+
+        if (task.getFormKey().equals("choose_editor_form") || task.getFormKey().equals("comparison_note_form")
+                || task.getFormKey().equals("vote_form")) {
+            String myBookTitle = (String) runtimeService.getVariable(task.getProcessInstanceId(), "my_book");
+            String plagiarismBookTitle = (String) runtimeService
+                    .getVariable(task.getProcessInstanceId(), "plagiarism_book");
+
+            workingPapers.add(bookRepository.findByTitle(myBookTitle).get());
+            workingPapers.add(bookRepository.findByTitle(plagiarismBookTitle).get());
+        } else {
+            String workingPaperTitle = (String) runtimeService
+                    .getVariable(task.getProcessInstanceId(), "working_paper");
+            workingPapers.add(workingPaperRepository.findByTitle(workingPaperTitle));
+            writer = writerRepository
+                    .findByUsername((String) runtimeService.getVariable(task.getProcessInstanceId(), "writer")).get();
+        }
+
         List<AdditionalContentDTO> additionalContent = new ArrayList<>();
-        Writer writer = writerRepository.findByUsername((String) runtimeService.getVariable(task.getProcessInstanceId(), "writer")).get();
         switch (additionalType) {
             case "1":
-                additionalContent.add(createAdditionalContent(false, workingPaper, writer, task));
+                additionalContent.add(createAdditionalContent(false, workingPapers, writer, task));
                 break;
             case "2":
-                additionalContent.add(createAdditionalContent(true, workingPaper, writer, task));
+                additionalContent.add(createAdditionalContent(true, workingPapers, writer, task));
                 break;
             case "3":
-                additionalContent.add(createAdditionalContent(false, workingPaper, writer, task));
-                additionalContent.add(createAdditionalContent(true, workingPaper, writer, task));
+                additionalContent.add(createAdditionalContent(false, workingPapers, writer, task));
+                additionalContent.add(createAdditionalContent(true, workingPapers, writer, task));
                 break;
         }
 
-        tfd.getFormFields().get(0).getProperties().put("additional", UtilService.serializeAdditionalContent(additionalContent));
+        tfd.getFormFields().get(0).getProperties()
+                .put("additional", UtilService.serializeAdditionalContent(additionalContent));
     }
 
-    private AdditionalContentDTO createAdditionalContent(boolean isComment, WorkingPaper workingPaper, Writer writer, Task task) {
+    private AdditionalContentDTO createAdditionalContent(boolean isComment, List<WorkingPaper> workingPapersList, Writer writer, Task task) {
         AdditionalContentDTO additionalContentDTO;
         if (!isComment) {
-            List<WorkingPaperDTO> workingPapers = new ArrayList<>();
-            WorkingPaperDTO workingPaperDTO = WorkingPaperDTO.builder()
-                    .title(workingPaper.getTitle())
-                    .synopsis(workingPaper.getSynopsis())
-                    .genre(workingPaper.getGenre().getGenre().name())
-                    .author(writer.getName() + " " + writer.getSurname())
-                    .build();
-            workingPapers.add(workingPaperDTO);
+            List<WorkingPaperDTO> workingPapers = workingPapersList.stream().map(wp ->
+                    WorkingPaperDTO.builder()
+                            .title(wp.getTitle())
+                            .synopsis(wp.getSynopsis())
+                            .author(writer != null ? writer.getName() + " " + writer.getSurname() : ((Book) wp)
+                                    .getWriter().getName() + " " + ((Book) wp).getWriter().getSurname())
+                            .genre(wp.getGenre().getGenre().name())
+                            .build()).collect(Collectors.toList());
+
+
             additionalContentDTO = AdditionalContentDTO.builder()
                     .isComment(false)
                     .content(workingPapers)
@@ -204,17 +223,26 @@ public class FormFieldsService {
             List<String> comments = new ArrayList<>();
             switch (task.getFormKey()) {
                 case "paper_change_form":
-                    commentRepository.findAllByTypeAndApplicationPapersContaining(CommentType.BETA_READER_COMMENT, workingPaper).forEach(comment -> {
-                        comments.add(comment.getContent());
-                    });
+                    commentRepository
+                            .findAllByTypeAndApplicationPapersContaining(CommentType.BETA_READER_COMMENT, workingPapersList
+                                    .get(0))
+                            .forEach(comment -> comments.add(comment.getContent()));
                     break;
                 case "correct_mistakes_form":
-                    String lectorComment = (String) runtimeService.getVariable(task.getProcessInstanceId(), "lector_comment");
+                    String lectorComment = (String) runtimeService
+                            .getVariable(task.getProcessInstanceId(), "lector_comment");
                     comments.add(lectorComment);
                     break;
                 case "correct_suggestions_form":
-                    String editorComment = (String) runtimeService.getVariable(task.getProcessInstanceId(), "editor_suggestion_comment");
+                    String editorComment = (String) runtimeService
+                            .getVariable(task.getProcessInstanceId(), "editor_suggestion_comment");
                     comments.add(editorComment);
+                    break;
+                case "vote_form":
+                    commentRepository
+                            .findAllByTypeAndApplicationPapersContaining(CommentType.EDITOR_COMMENT, workingPapersList
+                                    .get(0))
+                            .forEach(comment -> comments.add(comment.getContent()));
                     break;
             }
             additionalContentDTO = AdditionalContentDTO.builder()

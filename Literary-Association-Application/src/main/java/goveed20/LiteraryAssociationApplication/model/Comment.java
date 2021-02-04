@@ -28,6 +28,6 @@ public class Comment {
     @ManyToOne(optional = false)
     private BaseUser user;
 
-    @OneToMany
+    @ManyToMany
     private Set<ApplicationPaper> applicationPapers = new HashSet<>();
 }

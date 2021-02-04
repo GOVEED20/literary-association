@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1hh23sp" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="editor_comparison_notes" isExecutable="true">
+    <bpmn:startEvent id="Event_01hdqpl">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="goveed20.LiteraryAssociationApplication.listeners.EditorSubProcessListener" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0digalj</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Activity_1th7mhi" name="Input comparison note" camunda:formKey="comparison_note_form" camunda:assignee="${temp_editor}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="note" label="Notes" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="textarea" />
+              <camunda:property id="required" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="download_file" value="2" />
+          <camunda:property name="additional_content" value="1" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0digalj</bpmn:incoming>
+      <bpmn:incoming>Flow_1gh0zq6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0i86cdb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_1opv1yv" name="Comparison note submission" camunda:class="goveed20.LiteraryAssociationApplication.delegates.plagiarism.InputComparisonNoteDelegate">
+      <bpmn:incoming>Flow_0i86cdb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wfpkk1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_1jl3piz" name="Chose current editor replacement" camunda:formKey="editor_replacement_form" camunda:assignee="${editor}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="editor_replacement" label="Choose editor replacement" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="select" />
+              <camunda:property id="required" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="editor_select" value="true" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0y77or5</bpmn:incoming>
+      <bpmn:outgoing>Flow_14yyprc</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_0vfast3" name="Editor replacement submission" camunda:class="goveed20.LiteraryAssociationApplication.delegates.plagiarism.EditorReplacementDelegate">
+      <bpmn:incoming>Flow_14yyprc</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gh0zq6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0be1ggm">
+      <bpmn:incoming>Flow_1wfpkk1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Event_1vu8dpv" attachedToRef="Activity_1th7mhi">
+      <bpmn:outgoing>Flow_0y77or5</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0r2ks71">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P7D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0digalj" sourceRef="Event_01hdqpl" targetRef="Activity_1th7mhi" />
+    <bpmn:sequenceFlow id="Flow_1gh0zq6" sourceRef="Activity_0vfast3" targetRef="Activity_1th7mhi" />
+    <bpmn:sequenceFlow id="Flow_0i86cdb" sourceRef="Activity_1th7mhi" targetRef="Activity_1opv1yv" />
+    <bpmn:sequenceFlow id="Flow_1wfpkk1" sourceRef="Activity_1opv1yv" targetRef="Event_0be1ggm" />
+    <bpmn:sequenceFlow id="Flow_0y77or5" sourceRef="Event_1vu8dpv" targetRef="Activity_1jl3piz" />
+    <bpmn:sequenceFlow id="Flow_14yyprc" sourceRef="Activity_1jl3piz" targetRef="Activity_0vfast3" />
+    <bpmn:textAnnotation id="TextAnnotation_0lycyp6">
+      <bpmn:text>Update chosen_editors map process variable</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_08mhijh">
+      <bpmn:text>Set temp_editor process variable on editor replacement and update chosen_editors map</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1hoc7q5" sourceRef="Activity_1opv1yv" targetRef="TextAnnotation_0lycyp6" />
+    <bpmn:association id="Association_0uba0nl" sourceRef="Activity_0vfast3" targetRef="TextAnnotation_08mhijh" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="editor_comparison_notes">
+      <bpmndi:BPMNShape id="TextAnnotation_0lycyp6_di" bpmnElement="TextAnnotation_0lycyp6">
+        <dc:Bounds x="502" y="80" width="100" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_08mhijh_di" bpmnElement="TextAnnotation_08mhijh">
+        <dc:Bounds x="622" y="325" width="100" height="123" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0digalj_di" bpmnElement="Flow_0digalj">
+        <di:waypoint x="178" y="220" />
+        <di:waypoint x="252" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gh0zq6_di" bpmnElement="Flow_1gh0zq6">
+        <di:waypoint x="522" y="380" />
+        <di:waypoint x="522" y="400" />
+        <di:waypoint x="282" y="400" />
+        <di:waypoint x="282" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i86cdb_di" bpmnElement="Flow_0i86cdb">
+        <di:waypoint x="352" y="220" />
+        <di:waypoint x="502" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wfpkk1_di" bpmnElement="Flow_1wfpkk1">
+        <di:waypoint x="602" y="220" />
+        <di:waypoint x="694" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0y77or5_di" bpmnElement="Flow_0y77or5">
+        <di:waypoint x="322" y="278" />
+        <di:waypoint x="322" y="340" />
+        <di:waypoint x="342" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14yyprc_di" bpmnElement="Flow_14yyprc">
+        <di:waypoint x="442" y="340" />
+        <di:waypoint x="472" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_01hdqpl_di" bpmnElement="Event_01hdqpl">
+        <dc:Bounds x="142" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1th7mhi_di" bpmnElement="Activity_1th7mhi">
+        <dc:Bounds x="252" y="180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1opv1yv_di" bpmnElement="Activity_1opv1yv">
+        <dc:Bounds x="502" y="180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jl3piz_di" bpmnElement="Activity_1jl3piz">
+        <dc:Bounds x="342" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vfast3_di" bpmnElement="Activity_0vfast3">
+        <dc:Bounds x="472" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0be1ggm_di" bpmnElement="Event_0be1ggm">
+        <dc:Bounds x="694" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1hoc7q5_di" bpmnElement="Association_1hoc7q5">
+        <di:waypoint x="552" y="180" />
+        <di:waypoint x="552" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0uba0nl_di" bpmnElement="Association_0uba0nl">
+        <di:waypoint x="572" y="340" />
+        <di:waypoint x="622" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1vu8dpv_di" bpmnElement="Event_1vu8dpv">
+        <dc:Bounds x="304" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

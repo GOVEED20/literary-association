@@ -23,10 +23,7 @@ public class ChooseEditorsDelegate implements JavaDelegate {
         if (editorsSet.size() < 2) {
             throw new BpmnError("You must chose at least 2 editors");
         }
-        Map<String, String> chosenEditors = new HashMap<>();
-        editorsSet.forEach(e -> chosenEditors.put(e, ""));
-
-        delegateExecution.setVariable("chosen_editors", chosenEditors);
-        delegateExecution.setVariable("chosen_editors_list", new ArrayList<>(chosenEditors.keySet()));
+        ArrayList<String> chosenEditors = new ArrayList<>(editorsSet);
+        delegateExecution.setVariable("chosen_editors_list", chosenEditors);
     }
 }

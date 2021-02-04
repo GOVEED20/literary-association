@@ -24,10 +24,9 @@ public class PlagiarismStartListener implements ExecutionListener {
         BaseUser writer = (BaseUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         delegateExecution.setVariable("writer", writer.getUsername());
         delegateExecution.setVariable("bpmnFile", "plagiarism");
+
         Map<String, String> boardMembers = new HashMap<>();
-        baseUserRepository.findAllByRole(UserRole.BOARD_MEMBER).forEach(member -> {
-            boardMembers.put(member.getUsername(), "");
-        });
+        baseUserRepository.findAllByRole(UserRole.BOARD_MEMBER).forEach(member -> boardMembers.put(member.getUsername(), ""));
         delegateExecution.setVariable("board_members", boardMembers);
         delegateExecution.setVariable("board_members_list", new ArrayList<>(boardMembers.keySet()));
     }

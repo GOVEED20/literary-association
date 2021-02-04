@@ -14,9 +14,5 @@ public class EditorReplacementDelegate implements JavaDelegate {
     public void execute(DelegateExecution delegateExecution) {
         Map<String, Object> data = (Map<String, Object>) delegateExecution.getVariable("data");
         delegateExecution.setVariable("temp_editor", data.get("editor_replacement"));
-        Map<String, String> chosenEditors = (Map<String, String>) delegateExecution.getVariable("chosen_editors");
-        chosenEditors.remove((String) delegateExecution.getVariable("current_editor"));
-        chosenEditors.put((String) data.get("editor_replacement"), "");
-        delegateExecution.setVariable("chosen_editors", chosenEditors);
     }
 }
