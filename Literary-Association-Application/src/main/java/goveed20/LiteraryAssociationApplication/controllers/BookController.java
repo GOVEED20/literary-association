@@ -36,7 +36,7 @@ public class BookController {
     }
 
     @GetMapping("/{bookTitle}/download")
-    @PreAuthorize("hasAuthority('EDITOR')")
+    @PreAuthorize("hasAuthority('EDITOR') or hasAuthority('READER') or hasAuthority('LECTOR')")
     public ResponseEntity downloadBook(@PathVariable String bookTitle) {
         try {
             return bookService.downloadBook(bookTitle);

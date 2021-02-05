@@ -2,9 +2,11 @@ package goveed20.LiteraryAssociationApplication.delegates.bookPublishing;
 
 import goveed20.LiteraryAssociationApplication.model.Book;
 import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
+import goveed20.LiteraryAssociationApplication.model.Writer;
 import goveed20.LiteraryAssociationApplication.model.enums.WorkingPaperStatus;
 import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
+import goveed20.LiteraryAssociationApplication.repositories.WriterRepository;
 import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -23,6 +25,9 @@ public class PublishBookDelegate implements JavaDelegate {
     private BookRepository bookRepository;
 
     @Autowired
+    private WriterRepository writerRepository;
+
+    @Autowired
     private NotificationService notificationService;
 
     @SuppressWarnings("unchecked")
@@ -32,6 +37,12 @@ public class PublishBookDelegate implements JavaDelegate {
 
         WorkingPaper workingPaper = workingPaperRepository.findByTitle(
                 (String) delegateExecution.getVariable("working_paper"));
+
+        Writer writer = writerRepository.findByUsername((String) delegateExecution.getVariable("writer")).get();
+
+        if (bookRepository.findByISBN((String) data.get("isbn")).isPresent()) {
+            throw notificationService.sendErrorNotification("Book with given ISBN already exists");
+        }
 
         Book book = Book.bookBuilder()
                 .title(workingPaper.getTitle())
@@ -48,6 +59,7 @@ public class PublishBookDelegate implements JavaDelegate {
                 .status(WorkingPaperStatus.APPROVED)
                 .build();
 
+        book.setWriter(writer);
         bookRepository.save(book);
 
         notificationService.sendSuccessNotification("Book successfully published");

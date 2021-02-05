@@ -180,8 +180,9 @@ public class FormFieldsService {
             String workingPaperTitle = (String) runtimeService
                     .getVariable(task.getProcessInstanceId(), "working_paper");
             workingPapers.add(workingPaperRepository.findByTitle(workingPaperTitle));
+            String writer1 = (String) runtimeService.getVariable(task.getProcessInstanceId(), "writer");
             writer = writerRepository
-                    .findByUsername((String) runtimeService.getVariable(task.getProcessInstanceId(), "writer")).get();
+                    .findByUsername(writer1).get();
         }
 
         List<AdditionalContentDTO> additionalContent = new ArrayList<>();

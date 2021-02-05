@@ -3,14 +3,15 @@ import WorkingPaper from './WorkingPaper'
 import Comment from './Comment'
 
 const Additional = ({ isComment, content }) => {
+    let i = 0
     return (
         <>
             {
                 content.map(contentObject => {
                     return !isComment ?
-                        <WorkingPaper content={contentObject}/>
+                        <WorkingPaper key={++i} content={contentObject}/>
                         :
-                        <Comment content={contentObject}/>
+                        <Comment key={++i} content={contentObject}/>
                 })
             }
         </>

@@ -48,8 +48,8 @@ public class CreateReaderDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution delegateExecution) {
         Map<String, Object> data = (Map<String, Object>) delegateExecution.getVariable("data");
-
-        if (readerRepository.findByUsername(String.valueOf(data.get("username"))) == null) {
+        Reader reader1 = readerRepository.findByUsername(String.valueOf(data.get("username")));
+        if (readerRepository.findByUsername(String.valueOf(data.get("username"))) != null) {
             throw notificationService.sendErrorNotification("User with given username already exists");
         }
         if (readerRepository.findByEmail(String.valueOf(data.get("email"))) != null) {
@@ -79,7 +79,7 @@ public class CreateReaderDelegate implements JavaDelegate {
                 .comments(new HashSet<>())
                 .transactions(new HashSet<>())
                 .genres(new HashSet<>())
-                .betaReader((Boolean) data.get("beta_reader"))
+                .betaReader(Boolean.valueOf((String) data.get("beta_reader")))
                 .location(locationService.createLocation((String) data.get("country"), (String) data.get("city")))
                 .verified(false)
                 .build();
