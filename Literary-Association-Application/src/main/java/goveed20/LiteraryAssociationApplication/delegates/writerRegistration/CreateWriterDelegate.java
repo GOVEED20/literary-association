@@ -10,7 +10,6 @@ import goveed20.LiteraryAssociationApplication.services.CamundaUserService;
 import goveed20.LiteraryAssociationApplication.services.LocationService;
 import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
-import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +64,7 @@ public class CreateWriterDelegate implements JavaDelegate {
                 .disposableHash(String.valueOf(UUID.randomUUID().toString().hashCode())).build();
         verificationTokenRepository.save(vt);
 
-        notificationService.sendSuccessNotification("User successfully registered");
+        notificationService.sendSuccessNotification("Check email for verification");
     }
 
     private Writer createWriter(Map<String, Object> data) {

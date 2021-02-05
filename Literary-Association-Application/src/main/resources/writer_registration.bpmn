@@ -332,15 +332,20 @@ execution.setVariable("i", i);
     <bpmn:sequenceFlow id="Flow_1qxo2i7" sourceRef="Gateway_0h1nu6p" targetRef="Activity_0wlpdko" />
     <bpmn:subProcess id="Activity_1vhm0lu" name="Terminate process in 2 months" triggeredByEvent="true">
       <bpmn:startEvent id="Event_07wjv5x" name="2 months">
-        <bpmn:outgoing>Flow_1e5pjza</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0bq51np</bpmn:outgoing>
         <bpmn:timerEventDefinition id="TimerEventDefinition_1tft406">
           <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P2M</bpmn:timeDuration>
         </bpmn:timerEventDefinition>
       </bpmn:startEvent>
-      <bpmn:endEvent id="Event_09wddru">
-        <bpmn:incoming>Flow_1e5pjza</bpmn:incoming>
+      <bpmn:sequenceFlow id="Flow_0bq51np" sourceRef="Event_07wjv5x" targetRef="Activity_0nqfer8" />
+      <bpmn:endEvent id="Event_0d0fxy2">
+        <bpmn:incoming>Flow_03ecrxn</bpmn:incoming>
       </bpmn:endEvent>
-      <bpmn:sequenceFlow id="Flow_1e5pjza" sourceRef="Event_07wjv5x" targetRef="Event_09wddru" />
+      <bpmn:sequenceFlow id="Flow_03ecrxn" sourceRef="Activity_0nqfer8" targetRef="Event_0d0fxy2" />
+      <bpmn:serviceTask id="Activity_0nqfer8" name="Remove unregistered user" camunda:class="goveed20.LiteraryAssociationApplication.delegates.RemoveUnregisteredUserDelegate">
+        <bpmn:incoming>Flow_0bq51np</bpmn:incoming>
+        <bpmn:outgoing>Flow_03ecrxn</bpmn:outgoing>
+      </bpmn:serviceTask>
     </bpmn:subProcess>
   </bpmn:process>
   <bpmn:signal id="Signal_0rwpehp" name="Confirmation_link_signal" />
@@ -579,11 +584,15 @@ execution.setVariable("i", i);
         <dc:Bounds x="1880" y="540" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0tochxc_di" bpmnElement="Activity_1vhm0lu" isExpanded="true">
-        <dc:Bounds x="590" y="590" width="350" height="290" />
+        <dc:Bounds x="590" y="590" width="350" height="360" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1e5pjza_di" bpmnElement="Flow_1e5pjza">
+      <bpmndi:BPMNEdge id="Flow_0bq51np_di" bpmnElement="Flow_0bq51np">
         <di:waypoint x="668" y="740" />
-        <di:waypoint x="722" y="740" />
+        <di:waypoint x="720" y="740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03ecrxn_di" bpmnElement="Flow_03ecrxn">
+        <di:waypoint x="820" y="740" />
+        <di:waypoint x="872" y="740" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_0zodlzv_di" bpmnElement="Event_07wjv5x">
         <dc:Bounds x="632" y="722" width="36" height="36" />
@@ -591,8 +600,11 @@ execution.setVariable("i", i);
           <dc:Bounds x="628" y="765" width="46" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_09wddru_di" bpmnElement="Event_09wddru">
-        <dc:Bounds x="722" y="722" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_0d0fxy2_di" bpmnElement="Event_0d0fxy2">
+        <dc:Bounds x="872" y="722" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0brj30l_di" bpmnElement="Activity_0nqfer8">
+        <dc:Bounds x="720" y="700" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0xs1zaq_di" bpmnElement="Event_0zza7h6">
         <dc:Bounds x="2122" y="272" width="36" height="36" />

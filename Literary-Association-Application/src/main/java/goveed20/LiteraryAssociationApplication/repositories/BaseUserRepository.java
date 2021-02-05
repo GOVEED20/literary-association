@@ -17,4 +17,6 @@ public interface BaseUserRepository extends JpaRepository<BaseUser, Long> {
     List<BaseUser> findAllByRoleEqualsAndUsernameNot(UserRole role, String username);
 
     List<BaseUser> findAllByRoleEqualsAndUsernameNotIn(UserRole role, List<String> editors);
+
+    void deleteByUsername(String username);
 }

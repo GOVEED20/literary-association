@@ -11,7 +11,6 @@ import goveed20.LiteraryAssociationApplication.services.CamundaUserService;
 import goveed20.LiteraryAssociationApplication.services.LocationService;
 import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
-import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,13 +58,14 @@ public class CreateReaderDelegate implements JavaDelegate {
 
         Reader reader = createReader(data);
         readerRepository.save(reader);
+        delegateExecution.setVariable("user", reader.getUsername());
 
         camundaUserService.createCamundaUser(reader);
         VerificationToken vt = VerificationToken.builder().user(reader)
                 .disposableHash(String.valueOf(UUID.randomUUID().toString().hashCode())).build();
         verificationTokenRepository.save(vt);
 
-        notificationService.sendSuccessNotification("User successfully registered");
+        notificationService.sendSuccessNotification("Check email for verification");
     }
 
     private Reader createReader(Map<String, Object> data) {
