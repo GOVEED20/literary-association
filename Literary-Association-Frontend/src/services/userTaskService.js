@@ -24,7 +24,6 @@ const submitTask = async (taskId, state) => {
     const payload = {
         id: taskId,
         formFields: Object.entries(state).map((value) => {
-            console.log(value)
             return {
                 fieldId: value[0],
                 fieldValue: value[1]

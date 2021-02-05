@@ -12,7 +12,14 @@ const Toaster = () => {
     const type = notification.notificationType === 'error' ? 'danger' : 'success'
 
     return (
-        <Alert variant={type}>
+        <Alert variant={type} style={{
+            position: 'absolute',
+            bottom: 0,
+            right: '25%',
+            left: '50%',
+            marginLeft: '-150px',
+            width: '350px'
+        }}>
             {notification.notification}
         </Alert>
     )

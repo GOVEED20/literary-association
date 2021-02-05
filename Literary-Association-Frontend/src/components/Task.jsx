@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useRouteMatch } from 'react-router-dom'
+import { useRouteMatch, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { setTask } from '../reducers/userTaskReducer'
 import userTaskService from '../services/userTaskService'
@@ -11,24 +11,21 @@ import { setNotification } from '../reducers/notificationReducer'
 const Task = () => {
     const dispatch = useDispatch()
     const task = useSelector(state => state.userTasks.active)
-    //const history = useHistory()
+    const history = useHistory()
 
     const idMatch = useRouteMatch('/dashboard/tasks/:id')
 
     useEffect(() => {
-        if (!task) {
-            idMatch && dispatch(setTask(idMatch.params.id))
-        }
+        idMatch && dispatch(setTask(idMatch.params.id))
     }, [])
 
     const onSubmit = async (state) => {
         try {
             await userTaskService.submitTask(task.id, state)
-            //history.push('/dashboard/tasks')
+            history.push('/dashboard/tasks')
         } catch (e) {
-            console.log(e)
-            dispatch(setNotification(e, 'danger', 3500))
-            //history.push('/dashboard/tasks')
+            dispatch(setNotification(e.response.data, 'error', 3500))
+            history.push('/dashboard/tasks')
         }
     }
 

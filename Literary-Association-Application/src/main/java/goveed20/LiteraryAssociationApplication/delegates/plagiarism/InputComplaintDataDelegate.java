@@ -1,5 +1,6 @@
 package goveed20.LiteraryAssociationApplication.delegates.plagiarism;
 
+import goveed20.LiteraryAssociationApplication.dtos.NotificationDTO;
 import goveed20.LiteraryAssociationApplication.model.BaseUser;
 import goveed20.LiteraryAssociationApplication.model.Book;
 import goveed20.LiteraryAssociationApplication.model.Writer;
@@ -7,10 +8,12 @@ import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import goveed20.LiteraryAssociationApplication.repositories.BaseUserRepository;
 import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
 import goveed20.LiteraryAssociationApplication.services.EmailService;
+import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,9 @@ public class InputComplaintDataDelegate implements JavaDelegate {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Autowired
     private BookRepository bookRepository;
@@ -36,15 +42,15 @@ public class InputComplaintDataDelegate implements JavaDelegate {
         Map<String, Object> data = (Map<String, Object>) delegateExecution.getVariable("data");
 
         if (writer.getBooks().stream().noneMatch(book -> book.getTitle().equals(data.get("my_book")))) {
-            throw new BpmnError("Your chosen book does not exist.");
+            throw notificationService.sendErrorNotification("Your chosen book does not exist.");
         }
 
         Book plagiarismBook = bookRepository.findByTitle((String) data.get("plagiarism_book"))
-                .orElseThrow(() -> new BpmnError("Chosen plagiarism book does not exist"));
+                .orElseThrow(() -> notificationService.sendErrorNotification("Chosen plagiarism book does not exist"));
 
         if (plagiarismBook.getWriter().getName().equals(data.get("writer_name")) &&
                 plagiarismBook.getWriter().getName().equals(data.get("writer_surname"))) {
-            throw new BpmnError("Chosen plagiarism book and writer do not match.");
+            throw notificationService.sendErrorNotification("Chosen plagiarism book and writer do not match.");
         }
 
         ArrayList<BaseUser> editors = (ArrayList<BaseUser>) baseUserRepository.findAllByRole(UserRole.EDITOR);
@@ -58,5 +64,6 @@ public class InputComplaintDataDelegate implements JavaDelegate {
                 editor.getSurname(), delegateExecution.getVariable("writer"), plagiarismBook.getTitle());
         emailService.sendEmail(editor.getEmail(), "Plagiarism complaint", text);
 
+        notificationService.sendSuccessNotification("Plagiarism complaint request successfully sent");
     }
 }

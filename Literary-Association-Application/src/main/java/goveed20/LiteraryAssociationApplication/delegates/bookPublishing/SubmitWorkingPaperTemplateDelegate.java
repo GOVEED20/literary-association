@@ -5,6 +5,7 @@ import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
 import goveed20.LiteraryAssociationApplication.model.enums.GenreEnum;
 import goveed20.LiteraryAssociationApplication.repositories.GenreRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
+import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -22,13 +23,16 @@ public class SubmitWorkingPaperTemplateDelegate implements JavaDelegate {
     @Autowired
     private GenreRepository genreRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @SuppressWarnings("unchecked")
     @Override
     public void execute(DelegateExecution delegateExecution) {
         Map<String, Object> data = (Map<String, Object>) delegateExecution.getVariable("data");
         String title = (String) data.get("title");
         if (workingPaperRepository.findByTitle(title) != null) {
-            throw new BpmnError("Book with given title already exists");
+            throw notificationService.sendErrorNotification("Book with given title already exists");
         }
 
         delegateExecution.setVariable("working_paper", title);
@@ -38,5 +42,7 @@ public class SubmitWorkingPaperTemplateDelegate implements JavaDelegate {
                 .synopsis((String) data.get("synopsis")).genre(genre).build();
 
         workingPaperRepository.save(workingPaper);
+
+        notificationService.sendSuccessNotification("Working paper template successfully submitted");
     }
 }

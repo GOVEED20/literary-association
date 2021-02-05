@@ -7,6 +7,7 @@ import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
 import goveed20.LiteraryAssociationApplication.model.enums.CommentType;
 import goveed20.LiteraryAssociationApplication.repositories.CommentRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
+import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class InputComparisonNoteDelegate implements JavaDelegate {
     @Autowired
     private WorkingPaperRepository workingPaperRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @SuppressWarnings("unchecked")
     @Override
     public void execute(DelegateExecution delegateExecution) {
@@ -42,5 +46,7 @@ public class InputComparisonNoteDelegate implements JavaDelegate {
                 .user(((Book) workingPaper).getWriter())
                 .build();
         commentRepository.save(comment);
+
+        notificationService.sendSuccessNotification("Plagiarism note has been successfully sent");
     }
 }

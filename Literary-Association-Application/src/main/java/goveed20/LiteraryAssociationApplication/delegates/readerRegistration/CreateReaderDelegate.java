@@ -9,6 +9,7 @@ import goveed20.LiteraryAssociationApplication.repositories.ReaderRepository;
 import goveed20.LiteraryAssociationApplication.repositories.VerificationTokenRepository;
 import goveed20.LiteraryAssociationApplication.services.CamundaUserService;
 import goveed20.LiteraryAssociationApplication.services.LocationService;
+import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -39,6 +40,9 @@ public class CreateReaderDelegate implements JavaDelegate {
     private LocationService locationService;
 
     @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
     private GenreRepository genreRepository;
 
     @SuppressWarnings("unchecked")
@@ -47,10 +51,10 @@ public class CreateReaderDelegate implements JavaDelegate {
         Map<String, Object> data = (Map<String, Object>) delegateExecution.getVariable("data");
 
         if (readerRepository.findByUsername(String.valueOf(data.get("username"))) == null) {
-            throw new BpmnError("User with given username already exists");
+            throw notificationService.sendErrorNotification("User with given username already exists");
         }
         if (readerRepository.findByEmail(String.valueOf(data.get("email"))) != null) {
-            throw new BpmnError("User with given email address already exists");
+            throw notificationService.sendErrorNotification("User with given email address already exists");
         }
 
         Reader reader = createReader(data);
@@ -60,6 +64,8 @@ public class CreateReaderDelegate implements JavaDelegate {
         VerificationToken vt = VerificationToken.builder().user(reader)
                 .disposableHash(String.valueOf(UUID.randomUUID().toString().hashCode())).build();
         verificationTokenRepository.save(vt);
+
+        notificationService.sendSuccessNotification("User successfully registered");
     }
 
     private Reader createReader(Map<String, Object> data) {

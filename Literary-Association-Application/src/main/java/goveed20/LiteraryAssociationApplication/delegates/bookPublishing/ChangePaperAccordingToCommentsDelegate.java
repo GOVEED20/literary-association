@@ -4,6 +4,7 @@ import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessExcepti
 import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
 import goveed20.LiteraryAssociationApplication.services.BookService;
+import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -23,6 +24,9 @@ public class ChangePaperAccordingToCommentsDelegate implements JavaDelegate {
     @Autowired
     private BookService bookService;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @SuppressWarnings("unchecked")
     @Override
     public void execute(DelegateExecution delegateExecution) {
@@ -31,11 +35,13 @@ public class ChangePaperAccordingToCommentsDelegate implements JavaDelegate {
         try {
             paper = bookService.submitPaper(delegateExecution.getProcessInstanceId(), (String) data.get("changed_paper"));
         } catch (BusinessProcessException | EntityNotFoundException e) {
-            throw new BpmnError(e.getMessage());
+            throw notificationService.sendErrorNotification(e.getMessage());
         } catch (IOException e) {
-            throw new BpmnError("Working paper not found");
+            throw notificationService.sendErrorNotification("Working paper not found");
         }
 
         workingPaperRepository.save(paper);
+
+        notificationService.sendSuccessNotification("File successfully uploaded");
     }
 }

@@ -8,6 +8,7 @@ import goveed20.LiteraryAssociationApplication.model.enums.CommentType;
 import goveed20.LiteraryAssociationApplication.repositories.CommentRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WriterRepository;
+import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class InputBetaReaderCommentDelegate implements JavaDelegate {
     @Autowired
     private WriterRepository writerRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @SuppressWarnings("unchecked")
     @Override
     public void execute(DelegateExecution delegateExecution) {
@@ -48,5 +52,7 @@ public class InputBetaReaderCommentDelegate implements JavaDelegate {
                 .user(writer)
                 .build();
         commentRepository.save(comment);
+
+        notificationService.sendSuccessNotification("Comment successfully submitted");
     }
 }

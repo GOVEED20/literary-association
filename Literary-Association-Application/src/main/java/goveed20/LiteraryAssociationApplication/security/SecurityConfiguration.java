@@ -83,7 +83,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .clearAuthentication(true)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/process/start", "/register/**", "/h2/**", "/transaction/*/*")
+                .antMatchers("/login", "/process/start", "/register/**", "/h2/**", "/transaction/*/*",
+                        "/notificationEndpoint/**")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/task")
                 .permitAll()

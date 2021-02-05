@@ -8,6 +8,7 @@ import goveed20.LiteraryAssociationApplication.repositories.VerificationTokenRep
 import goveed20.LiteraryAssociationApplication.repositories.WriterRepository;
 import goveed20.LiteraryAssociationApplication.services.CamundaUserService;
 import goveed20.LiteraryAssociationApplication.services.LocationService;
+import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import goveed20.LiteraryAssociationApplication.utils.UtilService;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -38,18 +39,21 @@ public class CreateWriterDelegate implements JavaDelegate {
     private LocationService locationService;
 
     @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
     private GenreRepository genreRepository;
 
     @SuppressWarnings("unchecked")
     @Override
-    public void execute(DelegateExecution delegateExecution) throws Exception {
+    public void execute(DelegateExecution delegateExecution) {
         Map<String, Object> data = (Map<String, Object>) delegateExecution.getVariable("data");
 
         if (writerRepository.findByUsername(String.valueOf(data.get("username"))).isPresent()) {
-            throw new BpmnError("User with given username already exists");
+            throw notificationService.sendErrorNotification("User with given username already exists");
         }
         if (writerRepository.findByEmail(String.valueOf(data.get("email"))) != null) {
-            throw new BpmnError("User with given email address already exists");
+            throw notificationService.sendErrorNotification("User with given email address already exists");
         }
 
         Writer writer = createWriter(data);
@@ -60,6 +64,8 @@ public class CreateWriterDelegate implements JavaDelegate {
         VerificationToken vt = VerificationToken.builder().user(writer)
                 .disposableHash(String.valueOf(UUID.randomUUID().toString().hashCode())).build();
         verificationTokenRepository.save(vt);
+
+        notificationService.sendSuccessNotification("User successfully registered");
     }
 
     private Writer createWriter(Map<String, Object> data) {

@@ -3,6 +3,7 @@ package goveed20.LiteraryAssociationApplication.delegates.bookPublishing;
 import goveed20.LiteraryAssociationApplication.model.Writer;
 import goveed20.LiteraryAssociationApplication.repositories.WriterRepository;
 import goveed20.LiteraryAssociationApplication.services.EmailService;
+import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class RejectionOfFullPaperCommentInputDelegate implements JavaDelegate {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @SuppressWarnings("unchecked")
     @Override
     public void execute(DelegateExecution delegateExecution) {
@@ -32,5 +36,7 @@ public class RejectionOfFullPaperCommentInputDelegate implements JavaDelegate {
                 data.get("full_paper_rejection_comment"));
 
         emailService.sendEmail(writer.getEmail(), "Working paper rejection", text);
+
+        notificationService.sendSuccessNotification("Comments successfully submitted");
     }
 }

@@ -5,6 +5,7 @@ import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
 import goveed20.LiteraryAssociationApplication.model.enums.WorkingPaperStatus;
 import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WorkingPaperRepository;
+import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class PublishBookDelegate implements JavaDelegate {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -45,5 +49,7 @@ public class PublishBookDelegate implements JavaDelegate {
                 .build();
 
         bookRepository.save(book);
+
+        notificationService.sendSuccessNotification("Book successfully published");
     }
 }

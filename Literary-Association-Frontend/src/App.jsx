@@ -8,6 +8,7 @@ import RetailerRegister from './components/RetailerRegister'
 import Logout from './components/Logout'
 import axios from 'axios'
 import store from './store'
+import SocketComponent from './components/SocketComponent'
 import Toaster from './components/Toaster'
 
 axios.interceptors.request.use(
@@ -26,6 +27,7 @@ axios.interceptors.request.use(
 const App = () => {
     return (
         <div className='container'>
+            <SocketComponent/>
             <Toaster/>
             <Switch>
                 <Route path='/login'>

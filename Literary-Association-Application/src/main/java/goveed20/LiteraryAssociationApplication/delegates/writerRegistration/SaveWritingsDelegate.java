@@ -2,6 +2,7 @@ package goveed20.LiteraryAssociationApplication.delegates.writerRegistration;
 
 import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessException;
 import goveed20.LiteraryAssociationApplication.services.PdfService;
+import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import org.apache.commons.io.FileUtils;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -15,8 +16,12 @@ import java.util.Map;
 
 @Service
 public class SaveWritingsDelegate implements JavaDelegate {
+
     @Autowired
     private PdfService pdfService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -30,14 +35,16 @@ public class SaveWritingsDelegate implements JavaDelegate {
         String[] writings = writingsString.split(" ");
 
         if (writings.length < 2) {
-            throw new BpmnError("At least 2 writings should be submitted");
+            throw notificationService.sendErrorNotification("At least 2 writings should be submitted");
         }
 
         try {
             List<String> writingsPaths = pdfService.saveBase64ToPdf(writings);
             delegateExecution.setVariable("documents", writingsPaths);
         } catch (BusinessProcessException e) {
-            throw new BpmnError(e.getMessage());
+            throw notificationService.sendErrorNotification(e.getMessage());
         }
+
+        notificationService.sendSuccessNotification("Writings successfully uploaded");
     }
 }

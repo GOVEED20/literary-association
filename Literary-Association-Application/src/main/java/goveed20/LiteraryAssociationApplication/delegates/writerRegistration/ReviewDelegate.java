@@ -17,7 +17,7 @@ public class ReviewDelegate implements JavaDelegate {
     private BaseUserRepository baseUserRepository;
 
     @Override
-    public void execute(DelegateExecution delegateExecution) throws Exception {
+    public void execute(DelegateExecution delegateExecution) {
         List<String> boardMembers = baseUserRepository.findAllByRole(UserRole.BOARD_MEMBER).stream()
                 .map(BaseUser::getUsername)
                 .collect(Collectors.toList());

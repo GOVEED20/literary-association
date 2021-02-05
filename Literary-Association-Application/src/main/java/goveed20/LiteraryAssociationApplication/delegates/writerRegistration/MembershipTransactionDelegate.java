@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MembershipTransactionDelegate implements JavaDelegate {
     @Override
-    public void execute(DelegateExecution delegateExecution) throws Exception {
+    public void execute(DelegateExecution delegateExecution) {
         System.out.println("CREATE MEMBERSHIP");
     }
 }

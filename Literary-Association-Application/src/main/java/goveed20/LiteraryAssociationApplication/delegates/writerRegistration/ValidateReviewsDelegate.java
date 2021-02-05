@@ -1,10 +1,11 @@
 package goveed20.LiteraryAssociationApplication.delegates.writerRegistration;
 
-import goveed20.LiteraryAssociationApplication.model.enums.MembershipApplicationStatus;
+import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import goveed20.LiteraryAssociationApplication.utils.ReviewResult;
 import goveed20.LiteraryAssociationApplication.utils.ReviewStatus;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,9 +14,13 @@ import java.util.Map;
 
 @Service
 public class ValidateReviewsDelegate implements JavaDelegate {
+
+    @Autowired
+    private NotificationService notificationService;
+
     @SuppressWarnings("unchecked")
     @Override
-    public void execute(DelegateExecution delegateExecution) throws Exception {
+    public void execute(DelegateExecution delegateExecution) {
         Map<String, Object> data = (Map<String, Object>) delegateExecution.getVariable("data");
         List<ReviewResult> reviewResults = getOrCreateReviewResultList(delegateExecution);
 
@@ -26,6 +31,8 @@ public class ValidateReviewsDelegate implements JavaDelegate {
 
         reviewResults.add(reviewResult);
         delegateExecution.setVariable("review_results", reviewResults);
+
+        notificationService.sendSuccessNotification("Review successfully sent");
     }
 
     @SuppressWarnings("unchecked")
