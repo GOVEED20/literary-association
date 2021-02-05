@@ -173,6 +173,18 @@
       <bpmn:multiInstanceLoopCharacteristics camunda:collection="${chosen_editors_list}" camunda:elementVariable="current_editor" />
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="Flow_10tnnru" sourceRef="Activity_0qxc3e1" targetRef="Activity_162y9bt" />
+    <bpmn:subProcess id="Activity_1qqmqkn" name="Terminate process in a month" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_0t80cqz" name="1 month">
+        <bpmn:outgoing>Flow_0bwb08u</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_1xmz060">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P1M</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_160fith">
+        <bpmn:incoming>Flow_0bwb08u</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0bwb08u" sourceRef="Event_0t80cqz" targetRef="Event_160fith" />
+    </bpmn:subProcess>
     <bpmn:textAnnotation id="TextAnnotation_02o64l0">
       <bpmn:text>Set writer and bpmn_file and  process variables
 
@@ -201,9 +213,10 @@ Set chosen_editors_list</bpmn:text>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Plagiarism_process">
-      <bpmndi:BPMNShape id="TextAnnotation_1my9n0g_di" bpmnElement="TextAnnotation_1my9n0g">
-        <dc:Bounds x="1830" y="180" width="150" height="41" />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_10tnnru_di" bpmnElement="Flow_10tnnru">
+        <di:waypoint x="1050" y="340" />
+        <di:waypoint x="1140" y="340" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1aixkqo_di" bpmnElement="Flow_1aixkqo">
         <di:waypoint x="840" y="398" />
         <di:waypoint x="840" y="418" />
@@ -254,10 +267,6 @@ Set chosen_editors_list</bpmn:text>
         <di:waypoint x="258" y="340" />
         <di:waypoint x="310" y="340" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_10tnnru_di" bpmnElement="Flow_10tnnru">
-        <di:waypoint x="1050" y="340" />
-        <di:waypoint x="1140" y="340" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="222" y="322" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -273,32 +282,8 @@ Set chosen_editors_list</bpmn:text>
       <bpmndi:BPMNShape id="Activity_0d5rczg_di" bpmnElement="Activity_0a9y6du">
         <dc:Bounds x="760" y="300" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0q0sv8z_di" bpmnElement="Activity_0qxc3e1">
-        <dc:Bounds x="950" y="300" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_02o64l0_di" bpmnElement="TextAnnotation_02o64l0">
-        <dc:Bounds x="190" y="140" width="130" height="142" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_18mokb4_di" bpmnElement="TextAnnotation_18mokb4">
-        <dc:Bounds x="460" y="197" width="100" height="55" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1rjpm8k_di" bpmnElement="TextAnnotation_1rjpm8k">
-        <dc:Bounds x="760" y="80" width="120" height="180" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1g8x4it_di" bpmnElement="Activity_0huf0rb">
-        <dc:Bounds x="1830" y="260" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0jmnd7c_di" bpmnElement="Gateway_0jmnd7c" isMarkerVisible="true">
-        <dc:Bounds x="2005" y="275" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0usydfn_di" bpmnElement="Event_0usydfn">
-        <dc:Bounds x="2122" y="282" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_162y9bt_di" bpmnElement="Activity_162y9bt" isExpanded="true">
         <dc:Bounds x="1140" y="190" width="590" height="280" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0btvb4e_di" bpmnElement="TextAnnotation_0btvb4e">
-        <dc:Bounds x="1430" y="230" width="110" height="70" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0fb4bav_di" bpmnElement="Flow_0fb4bav">
         <di:waypoint x="1530" y="370" />
@@ -324,14 +309,53 @@ Set chosen_editors_list</bpmn:text>
       <bpmndi:BPMNShape id="Event_0qwlich_di" bpmnElement="Event_0qwlich">
         <dc:Bounds x="1592" y="352" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0btvb4e_di" bpmnElement="TextAnnotation_0btvb4e">
+        <dc:Bounds x="1430" y="230" width="110" height="70" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0fodnud_di" bpmnElement="Association_0fodnud">
         <di:waypoint x="1480" y="330" />
         <di:waypoint x="1480" y="300" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0cj4j9f_di" bpmnElement="Association_0cj4j9f">
-        <di:waypoint x="1880" y="260" />
-        <di:waypoint x="1880" y="221" />
+      <bpmndi:BPMNShape id="Activity_1g8x4it_di" bpmnElement="Activity_0huf0rb">
+        <dc:Bounds x="1830" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0jmnd7c_di" bpmnElement="Gateway_0jmnd7c" isMarkerVisible="true">
+        <dc:Bounds x="2005" y="275" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0usydfn_di" bpmnElement="Event_0usydfn">
+        <dc:Bounds x="2122" y="282" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0q0sv8z_di" bpmnElement="Activity_0qxc3e1">
+        <dc:Bounds x="950" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_02o64l0_di" bpmnElement="TextAnnotation_02o64l0">
+        <dc:Bounds x="190" y="140" width="130" height="142" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_18mokb4_di" bpmnElement="TextAnnotation_18mokb4">
+        <dc:Bounds x="460" y="197" width="100" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1rjpm8k_di" bpmnElement="TextAnnotation_1rjpm8k">
+        <dc:Bounds x="760" y="80" width="120" height="180" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1my9n0g_di" bpmnElement="TextAnnotation_1my9n0g">
+        <dc:Bounds x="1830" y="180" width="150" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qqmqkn_di" bpmnElement="Activity_1qqmqkn" isExpanded="true">
+        <dc:Bounds x="170" y="530" width="350" height="290" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0bwb08u_di" bpmnElement="Flow_0bwb08u">
+        <di:waypoint x="248" y="680" />
+        <di:waypoint x="302" y="680" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0t80cqz_di" bpmnElement="Event_0t80cqz">
+        <dc:Bounds x="212" y="662" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="214" y="705" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_160fith_di" bpmnElement="Event_160fith">
+        <dc:Bounds x="302" y="662" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0dr3u6f_di" bpmnElement="Event_1vd1erv">
         <dc:Bounds x="822" y="362" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -352,6 +376,10 @@ Set chosen_editors_list</bpmn:text>
       <bpmndi:BPMNEdge id="Association_0dnfz6i_di" bpmnElement="Association_0dnfz6i">
         <di:waypoint x="810" y="300" />
         <di:waypoint x="810" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0cj4j9f_di" bpmnElement="Association_0cj4j9f">
+        <di:waypoint x="1880" y="260" />
+        <di:waypoint x="1880" y="221" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

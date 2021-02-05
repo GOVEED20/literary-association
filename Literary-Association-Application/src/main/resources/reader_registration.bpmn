@@ -136,6 +136,18 @@
     <bpmn:sequenceFlow id="Flow_1615jkv" sourceRef="InvalidDataError" targetRef="Reg_form_reader" />
     <bpmn:sequenceFlow id="Flow_0tt70i1" sourceRef="StartEvent_1" targetRef="Reg_form_reader" />
     <bpmn:sequenceFlow id="Flow_17cnwuu" sourceRef="Reg_form_reader" targetRef="Create_user" />
+    <bpmn:subProcess id="Activity_1dm9kf3" name="Terminate process in 2 weeks" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_0hknfma" name="2 weeks">
+        <bpmn:outgoing>Flow_0ubtco7</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_0lpze6p">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P2W</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_0noopka">
+        <bpmn:incoming>Flow_0ubtco7</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0ubtco7" sourceRef="Event_0hknfma" targetRef="Event_0noopka" />
+    </bpmn:subProcess>
   </bpmn:process>
   <bpmn:message id="Message_0aj0kve" name="Message_2lrbfa6" />
   <bpmn:signal id="Signal_189vto0" name="Confirmation_link_signal" />
@@ -187,6 +199,22 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1gbr2p2_di" bpmnElement="Event_1gbr2p2">
         <dc:Bounds x="952" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dm9kf3_di" bpmnElement="Activity_1dm9kf3" isExpanded="true">
+        <dc:Bounds x="500" y="300" width="350" height="290" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0ubtco7_di" bpmnElement="Flow_0ubtco7">
+        <di:waypoint x="578" y="450" />
+        <di:waypoint x="632" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0hknfma_di" bpmnElement="Event_0hknfma">
+        <dc:Bounds x="542" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="543" y="475" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0noopka_di" bpmnElement="Event_0noopka">
+        <dc:Bounds x="632" y="432" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1dub3v4_di" bpmnElement="InvalidDataError">
         <dc:Bounds x="542" y="139" width="36" height="36" />
