@@ -4,7 +4,6 @@ import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessExcepti
 import goveed20.LiteraryAssociationApplication.services.PdfService;
 import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import org.apache.commons.io.FileUtils;
-import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -22,6 +22,9 @@ public class InvoiceDTO {
     @NotNull
     private Boolean subscription;
 
+    @NotBlank
+    private String user;
+
     @NotNull
     @NotEmpty
     private List<InvoiceItemDTO> invoiceItems;

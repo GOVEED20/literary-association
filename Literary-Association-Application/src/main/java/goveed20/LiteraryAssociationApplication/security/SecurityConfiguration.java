@@ -88,13 +88,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/task")
                 .permitAll()
+                .antMatchers("/membership/**")
+                .hasRole("ROLE_WRITER")
                 .anyRequest()
                 .authenticated()
                 .and()
                 .httpBasic()
                 .and()
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
-                
+
         httpSecurity.headers().frameOptions().disable();
     }
 }

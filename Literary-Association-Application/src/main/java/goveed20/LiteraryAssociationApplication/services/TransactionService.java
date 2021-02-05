@@ -9,12 +9,10 @@ import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
 import goveed20.LiteraryAssociationApplication.exceptions.PaymentException;
 import goveed20.LiteraryAssociationApplication.model.*;
 import goveed20.LiteraryAssociationApplication.model.enums.TransactionStatus;
-import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
-import goveed20.LiteraryAssociationApplication.repositories.InvoiceRepository;
-import goveed20.LiteraryAssociationApplication.repositories.RetailerRepository;
-import goveed20.LiteraryAssociationApplication.repositories.TransactionRepository;
+import goveed20.LiteraryAssociationApplication.repositories.*;
 import goveed20.LiteraryAssociationApplication.utils.RestTemplateResponseErrorHandler;
 import lombok.SneakyThrows;
+import org.camunda.bpm.engine.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -44,6 +42,12 @@ public class TransactionService {
     @Autowired
     private InvoiceRepository invoiceRepository;
 
+    @Autowired
+    private BaseUserRepository baseUserRepository;
+
+    @Autowired
+    private RuntimeService runtimeService;
+
     private final RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new RestTemplateResponseErrorHandler()).build();
 
     private static final String CALLBACK_URL = "/transaction/%d/%s";
@@ -67,6 +71,7 @@ public class TransactionService {
         invoiceRepository.save(invoice);
 
         Transaction transaction = Transaction.builder()
+                .createdOn(new Date())
                 .initializedOn(new Date())
                 .invoice(invoice)
                 .done(false)
@@ -78,6 +83,12 @@ public class TransactionService {
         invoice.setTransaction(transaction);
 
         transaction = transactionRepository.save(transaction);
+
+        BaseUser user = baseUserRepository.findByEmail(invoiceDTO.getUser())
+                .orElseThrow(() -> new PaymentException(String.format("User with username '%s' not found", invoiceDTO.getUser())));
+
+        user.getTransactions().add(transaction);
+        baseUserRepository.save(user);
 
         OrderDTO orderDTO = OrderDTO.builder()
                 .amount(transaction.getTotal())
@@ -114,6 +125,10 @@ public class TransactionService {
                 .build();
 
         transactionRepository.save(transaction);
+
+        if (transaction instanceof MembershipTransaction) {
+            runtimeService.createSignalEvent("Membership_paid_signal").send();
+        }
     }
 
     public TransactionStatus determineStatus(String status) {

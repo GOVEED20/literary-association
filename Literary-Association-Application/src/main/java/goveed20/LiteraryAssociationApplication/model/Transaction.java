@@ -29,6 +29,10 @@ public class Transaction {
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    private Date createdOn;
+
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
     private Date initializedOn;
 
     @Column

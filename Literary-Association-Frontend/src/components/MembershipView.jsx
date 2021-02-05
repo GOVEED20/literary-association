@@ -1,41 +1,33 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Form, Row, Spinner } from 'react-bootstrap'
+import membershipService from '../services/membershipService'
 import { useSelector } from 'react-redux'
-import bookService from '../services/bookService'
-import retailerService from '../services/retailerService'
+import { Button, Col, Form, Row } from 'react-bootstrap'
 import transactionService from '../services/transactionService'
 
-const PurchaseForm = ({ toggleModal }) => {
-    const book = useSelector(state => state.books.shown)
+const Membership = () => {
     const username = useSelector(state => state.user.subject)
-    const [retailers, setRetailers] = useState([])
-    const [retailer, setRetailer] = useState('')
-    const [paymentServices, setPaymentServices] = useState([])
-    const [paymentService, setPaymentService] = useState('')
+    const [membership, setMembership] = useState(null)
 
     useEffect(() => {
-        bookService.getRetailersForBook(book.id).then(result => setRetailers(result))
+        membershipService.getActiveMembership(username).then(result => setMembership(result))
     }, [])
 
-    useEffect(() => {
-        if (retailer !== '') {
-            retailerService.getPaymentServicesForRetailer(retailer).then(result => setPaymentServices(result))
-        }
-    }, [retailer])
-
-    const onRetailerChange = ({ target }) => setRetailer(target.value)
-    const onPaymentServiceChange = ({ target }) => setPaymentService(target.value)
+    if (!membership) {
+        return (
+            <h2>No pending membership transactions</h2>
+        )
+    }
 
     const onSubmit = (event) => {
         event.preventDefault()
 
         const invoiceItem = {
-            id: book.id,
+            id: null,
             quantity: 1
         }
         const invoiceItems = [invoiceItem]
         const invoice = {
-            retailer,
+            retailer: null,
             paymentMethod: paymentService,
             subscription: false,
             invoiceItems,
@@ -45,14 +37,6 @@ const PurchaseForm = ({ toggleModal }) => {
             window.open(result, '_blank')
             toggleModal()
         })
-    }
-
-    if (!retailers) {
-        return (
-            <Spinner animation="border" role="status">
-                <span className="sr-only">Loading...</span>
-            </Spinner>
-        )
     }
 
     return (
@@ -92,4 +76,4 @@ const PurchaseForm = ({ toggleModal }) => {
     )
 }
 
-export default PurchaseForm
+export default Membership
