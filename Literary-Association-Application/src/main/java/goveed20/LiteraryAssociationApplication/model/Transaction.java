@@ -12,6 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

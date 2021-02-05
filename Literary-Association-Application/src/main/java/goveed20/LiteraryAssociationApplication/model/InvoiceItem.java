@@ -15,7 +15,7 @@ public class InvoiceItem {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private Integer quantity;
 
     @Column(nullable = false)

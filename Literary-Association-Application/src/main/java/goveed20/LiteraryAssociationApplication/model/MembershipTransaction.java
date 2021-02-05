@@ -13,8 +13,8 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 public class MembershipTransaction extends Transaction {
-    @Column(nullable = false)
-    private Long months;
+    @Column
+    private Long months; // set months to zero for subscription
 
     @Builder(builderMethodName = "membershipBuilder")
     public MembershipTransaction(Long id, Double total, Boolean done, TransactionStatus status, Date createdOn, Date initializedOn, Date completedOn, String paidWith, Invoice invoice, Long months) {

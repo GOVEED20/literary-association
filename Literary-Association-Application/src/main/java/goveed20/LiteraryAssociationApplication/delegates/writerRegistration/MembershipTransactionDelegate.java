@@ -7,7 +7,6 @@ import goveed20.LiteraryAssociationApplication.repositories.InvoiceRepository;
 import goveed20.LiteraryAssociationApplication.repositories.RetailerRepository;
 import goveed20.LiteraryAssociationApplication.repositories.TransactionRepository;
 import goveed20.LiteraryAssociationApplication.repositories.WriterRepository;
-import goveed20.LiteraryAssociationApplication.utils.NotificationService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +33,6 @@ public class MembershipTransactionDelegate implements JavaDelegate {
     @Autowired
     private InvoiceRepository invoiceRepository;
 
-    @Autowired
-    private NotificationService notificationService;
-
     @Override
     public void execute(DelegateExecution delegateExecution) {
         String username = String.valueOf(delegateExecution.getVariable("user"));
@@ -47,7 +43,6 @@ public class MembershipTransactionDelegate implements JavaDelegate {
         InvoiceItem membership = InvoiceItem.builder()
                 .price(10.0)
                 .name("Membership")
-                .quantity(1)
                 .build();
 
         invoiceItems.add(membership);
@@ -61,23 +56,15 @@ public class MembershipTransactionDelegate implements JavaDelegate {
 
         MembershipTransaction transaction = MembershipTransaction.membershipBuilder()
                 .createdOn(new Date())
-                .months(1L)
                 .status(TransactionStatus.CREATED)
                 .done(false)
                 .invoice(invoice)
-                .total(getTotal(invoice))
+                .total(10.0)
                 .build();
 
         transactionRepository.save(transaction);
 
         writer.getTransactions().add(transaction);
         writerRepository.save(writer);
-
-        notificationService.sendSuccessNotification("Membership transaction created. Check payments");
-    }
-
-    private Double getTotal(Invoice invoice) {
-        return invoice.getInvoiceItems().stream()
-                .reduce(0.0, (partialTotal, invoiceItem) -> partialTotal + (invoiceItem.getPrice() * invoiceItem.getQuantity()), Double::sum);
     }
 }

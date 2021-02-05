@@ -88,8 +88,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/task")
                 .permitAll()
-                .antMatchers("/membership/**")
-                .hasRole("ROLE_WRITER")
                 .anyRequest()
                 .authenticated()
                 .and()

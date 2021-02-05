@@ -1,9 +1,8 @@
 package goveed20.LiteraryAssociationApplication.controllers;
 
-import goveed20.LiteraryAssociationApplication.dtos.InvoiceDTO;
+import goveed20.LiteraryAssociationApplication.dtos.MembershipInvoiceDTO;
 import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
 import goveed20.LiteraryAssociationApplication.services.MembershipService;
-import goveed20.LiteraryAssociationApplication.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +17,6 @@ public class MembershipController {
     @Autowired
     private MembershipService membershipService;
 
-    @Autowired
-    private TransactionService transactionService;
-
     @GetMapping
     public ResponseEntity<?> getActiveMembership(@RequestParam("username") String username) {
         try {
@@ -31,9 +27,9 @@ public class MembershipController {
     }
 
     @PostMapping
-    public ResponseEntity<?> initializeMembershipTransaction(@Valid @RequestBody InvoiceDTO invoiceDTO) {
+    public ResponseEntity<?> initializeMembershipTransaction(@Valid @RequestBody MembershipInvoiceDTO invoice) {
         try {
-            return new ResponseEntity<>(transactionService.initializeTransaction(invoiceDTO), HttpStatus.OK);
+            return new ResponseEntity<>(membershipService.initializeMembershipTransaction(invoice), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
