@@ -13,6 +13,21 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
+  mail:
+    host: smtp.gmail.com
+    password: ENC(ADCd7T3iSrmU4tUdsL9RYu4ALBP8A20D)
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          starttls:
+            enable: false
+            required: false
+          timeout: 5000
+          writetimeout: 5000
+    username: goveed20@gmail.com
 
 feign:
   client:

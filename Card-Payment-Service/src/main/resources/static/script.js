@@ -23,8 +23,8 @@ $(document).ready(function(){
             success: function (response) {
                 toastr["success"](response);
             },
-            error: function (xhr) {
-                toastr["error"](JSON.parse(xhr.responseText)["message"]);
+            error: function (response) {
+                toastr["error"](response.responseText);
             }
         });
     });

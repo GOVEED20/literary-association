@@ -36,7 +36,12 @@ public class PaymentController implements PluginController {
         Map pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         Long transactionId = Long.parseLong(String.valueOf(pathVariables.get("transactionId")));
 
-        return new ResponseEntity<>(paymentService.completePayment(transactionId, request), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(paymentService.completePayment(transactionId, request), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @Override

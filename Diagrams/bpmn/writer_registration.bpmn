@@ -96,17 +96,16 @@
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_12th27c" sourceRef="Event_1fgy1c6" targetRef="Reg_form_writer" />
     <bpmn:serviceTask id="Create_user" name="Create user" camunda:class="goveed20.LiteraryAssociationApplication.delegates.RegistrationDelegate">
-      <bpmn:incoming>Flow_0n0d7n8</bpmn:incoming>
+      <bpmn:incoming>Flow_1s3wu6d</bpmn:incoming>
       <bpmn:outgoing>Flow_0esf2ku</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Send_email_with_activation_link" name="Send email with activation link" camunda:class="goveed20.LiteraryAssociationApplication.delegates.EmailDelegate">
       <bpmn:incoming>Flow_0esf2ku</bpmn:incoming>
-      <bpmn:outgoing>Flow_0uzn2ta</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1d8s9zr</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0esf2ku" sourceRef="Create_user" targetRef="Send_email_with_activation_link" />
-    <bpmn:sequenceFlow id="Flow_0n0d7n8" sourceRef="Reg_form_writer" targetRef="Create_user" />
-    <bpmn:sequenceFlow id="Flow_0uzn2ta" sourceRef="Send_email_with_activation_link" targetRef="Confirmation_link_event" />
-    <bpmn:userTask id="Activity_1msg0et" name="Submit writings" camunda:formKey="submit_writings_form">
+    <bpmn:sequenceFlow id="Flow_0n0d7n8" sourceRef="Reg_form_writer" targetRef="Set_user_role" />
+    <bpmn:userTask id="Activity_1msg0et" name="Submit writings" camunda:formKey="submit_writings_form" camunda:assignee="${user}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="writing1" label="First writing" type="string">
@@ -123,9 +122,13 @@
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="javascript">execution.setVariable("i", 0);</camunda:script>
         </camunda:executionListener>
+        <camunda:properties>
+          <camunda:property name="blocking" value="true" />
+        </camunda:properties>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0hbqi83</bpmn:incoming>
-      <bpmn:outgoing>Flow_1y2kg5b</bpmn:outgoing>
+      <bpmn:incoming>Flow_1yx68fj</bpmn:incoming>
+      <bpmn:incoming>Flow_0qfe1cs</bpmn:incoming>
+      <bpmn:outgoing>Flow_13uw9l5</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:userTask id="Activity_135oed2" name="Review writings" camunda:formKey="review_writings_form" camunda:candidateUsers="${board_members}">
       <bpmn:extensionElements>
@@ -173,14 +176,15 @@ for(var result of results) {
 execution.setVariable("suitable", suitable &gt;= total/2);
 execution.setVariable("further_review", further_review &gt; 0)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="Flow_1y2kg5b" sourceRef="Activity_1msg0et" targetRef="Activity_1nd5m05" />
     <bpmn:serviceTask id="Activity_1nd5m05" name="Prepare review data" camunda:class="ReviewDelegate">
-      <bpmn:incoming>Flow_1y2kg5b</bpmn:incoming>
       <bpmn:incoming>Flow_1jjk1vb</bpmn:incoming>
+      <bpmn:incoming>Flow_13uw9l5</bpmn:incoming>
       <bpmn:outgoing>Flow_1cpt5bg</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1cpt5bg" sourceRef="Activity_1nd5m05" targetRef="Activity_135oed2" />
-    <bpmn:sequenceFlow id="Flow_0bt3qlv" name="Writer is suitable" sourceRef="Gateway_0h1nu6p" targetRef="Activity_0tp2u2y" />
+    <bpmn:sequenceFlow id="Flow_0bt3qlv" name="Writer is suitable" sourceRef="Gateway_0h1nu6p" targetRef="Activity_0tp2u2y">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${suitable == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="Gateway_0h1nu6p">
       <bpmn:incoming>Flow_1bejw6x</bpmn:incoming>
       <bpmn:outgoing>Flow_0bt3qlv</bpmn:outgoing>
@@ -193,7 +197,7 @@ execution.setVariable("further_review", further_review &gt; 0)</bpmn:script>
       <bpmn:outgoing>Flow_1bejw6x</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1bejw6x" sourceRef="Activity_0n8zl7e" targetRef="Gateway_0h1nu6p" />
-    <bpmn:userTask id="Activity_0tp2u2y" name="Pay membership">
+    <bpmn:userTask id="Activity_0tp2u2y" name="Pay membership" camunda:assignee="${writer}">
       <bpmn:extensionElements>
         <camunda:executionListener class="MembershipDelegate" event="start" />
       </bpmn:extensionElements>
@@ -209,9 +213,9 @@ execution.setVariable("further_review", further_review &gt; 0)</bpmn:script>
     <bpmn:sequenceFlow id="Flow_0ewnskb" sourceRef="Event_0bgvvef" targetRef="Activity_0wlpdko" />
     <bpmn:serviceTask id="Activity_0wlpdko" name="Notify writer" camunda:class="NotificationDelegate">
       <bpmn:incoming>Flow_0ewnskb</bpmn:incoming>
-      <bpmn:incoming>Flow_06rwfaz</bpmn:incoming>
       <bpmn:incoming>Flow_0hjieci</bpmn:incoming>
       <bpmn:incoming>Flow_147nc8h</bpmn:incoming>
+      <bpmn:incoming>Flow_1pl9941</bpmn:incoming>
       <bpmn:outgoing>Flow_0rx8woe</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:endEvent id="Event_1t0obmw" name="Writer is not registered">
@@ -225,7 +229,7 @@ execution.setVariable("further_review", further_review &gt; 0)</bpmn:script>
     <bpmn:sequenceFlow id="Flow_147nc8h" name="Writer is unsuitable" sourceRef="Gateway_0h1nu6p" targetRef="Activity_0wlpdko">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${suitable == false &amp;&amp; further_review == false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="Activity_1flwtkz" name="Submit more writings">
+    <bpmn:userTask id="Activity_1flwtkz" name="Submit more writings" camunda:assignee="${writer}">
       <bpmn:extensionElements>
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="javascript">var i = execution.getVariable("i");
@@ -235,15 +239,17 @@ execution.setVariable("i", i);
         </camunda:executionListener>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0cx4isb</bpmn:incoming>
+      <bpmn:incoming>Flow_1qk69lh</bpmn:incoming>
+      <bpmn:incoming>Flow_0yq4isp</bpmn:incoming>
+      <bpmn:incoming>Flow_0mtyfuq</bpmn:incoming>
       <bpmn:outgoing>Flow_1jjk1vb</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:boundaryEvent id="Event_1ta7som" name="New writings not submitted" attachedToRef="Activity_1flwtkz">
-      <bpmn:outgoing>Flow_06rwfaz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1pl9941</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_1nv2xqb">
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${review_duration}</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_06rwfaz" sourceRef="Event_1ta7som" targetRef="Activity_0wlpdko" />
     <bpmn:sequenceFlow id="Flow_1jjk1vb" sourceRef="Activity_1flwtkz" targetRef="Activity_1nd5m05" />
     <bpmn:exclusiveGateway id="Gateway_1alw232">
       <bpmn:incoming>Flow_1281tdc</bpmn:incoming>
@@ -260,16 +266,45 @@ execution.setVariable("i", i);
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${i &lt; 3}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:intermediateCatchEvent id="Confirmation_link_event" name="Confirmation link event">
-      <bpmn:incoming>Flow_0uzn2ta</bpmn:incoming>
-      <bpmn:outgoing>Flow_0hbqi83</bpmn:outgoing>
+      <bpmn:incoming>Flow_1d8s9zr</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yx68fj</bpmn:outgoing>
       <bpmn:signalEventDefinition id="SignalEventDefinition_0ee6rrc" signalRef="Signal_0rwpehp" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="Flow_0hbqi83" sourceRef="Confirmation_link_event" targetRef="Activity_1msg0et" />
     <bpmn:boundaryEvent id="InvalidDataError" name="InvalidDataError" attachedToRef="Reg_form_writer">
       <bpmn:outgoing>Flow_17c9hpi</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0llsx9l" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_17c9hpi" sourceRef="InvalidDataError" targetRef="Reg_form_writer" />
+    <bpmn:scriptTask id="Set_user_role" name="Set user role" scriptFormat="javascript">
+      <bpmn:incoming>Flow_0n0d7n8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s3wu6d</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("bpmnFile", "src/main/resources/writer_registration.bpmn");</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1s3wu6d" sourceRef="Set_user_role" targetRef="Create_user" />
+    <bpmn:sequenceFlow id="Flow_1d8s9zr" sourceRef="Send_email_with_activation_link" targetRef="Confirmation_link_event" />
+    <bpmn:sequenceFlow id="Flow_1yx68fj" sourceRef="Confirmation_link_event" targetRef="Activity_1msg0et" />
+    <bpmn:sequenceFlow id="Flow_13uw9l5" sourceRef="Activity_1msg0et" targetRef="Activity_1nd5m05" />
+    <bpmn:boundaryEvent id="Invalid_writings_event" name="Invalid writings event" attachedToRef="Activity_1msg0et">
+      <bpmn:outgoing>Flow_0qfe1cs</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0qyrrml" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0qfe1cs" sourceRef="Invalid_writings_event" targetRef="Activity_1msg0et" />
+    <bpmn:boundaryEvent id="Event_0ugj8j4" name="InvalidDataError" attachedToRef="Reg_form_writer">
+      <bpmn:outgoing>Flow_1qk69lh</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1a32usn" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1qk69lh" sourceRef="Event_0ugj8j4" targetRef="Activity_1flwtkz" />
+    <bpmn:boundaryEvent id="Invalid_writings_event2" name="Invalid writings event" attachedToRef="Activity_1flwtkz">
+      <bpmn:outgoing>Flow_0yq4isp</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1rqjwjc" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0yq4isp" sourceRef="Invalid_writings_event2" targetRef="Activity_1flwtkz" />
+    <bpmn:boundaryEvent id="Invalid_writings_2" name="Invalid writings" attachedToRef="Activity_1flwtkz">
+      <bpmn:outgoing>Flow_0mtyfuq</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0za4fg0" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0mtyfuq" sourceRef="Invalid_writings_2" targetRef="Activity_1flwtkz" />
+    <bpmn:sequenceFlow id="Flow_1pl9941" sourceRef="Event_1ta7som" targetRef="Activity_0wlpdko" />
     <bpmn:textAnnotation id="TextAnnotation_0bbqlfm">
       <bpmn:text>Prepare map/list ${board_members}:
 {
@@ -281,30 +316,59 @@ execution.setVariable("i", i);
 }</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1tozv98" sourceRef="Activity_1nd5m05" targetRef="TextAnnotation_0bbqlfm" />
-    <bpmn:textAnnotation id="TextAnnotation_1sxv5tp">
-      <bpmn:text>Ko zadaje rok?</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_178i5u6" sourceRef="Event_1ta7som" targetRef="TextAnnotation_1sxv5tp" />
   </bpmn:process>
   <bpmn:signal id="Signal_0rwpehp" name="Confirmation_link_signal" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Writer_registration">
+      <bpmndi:BPMNEdge id="Flow_1pl9941_di" bpmnElement="Flow_1pl9941">
+        <di:waypoint x="1802" y="788" />
+        <di:waypoint x="1802" y="808" />
+        <di:waypoint x="2170" y="808" />
+        <di:waypoint x="2170" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mtyfuq_di" bpmnElement="Flow_0mtyfuq">
+        <di:waypoint x="1812" y="672" />
+        <di:waypoint x="1812" y="652" />
+        <di:waypoint x="1730" y="652" />
+        <di:waypoint x="1730" y="720" />
+        <di:waypoint x="1750" y="720" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qfe1cs_di" bpmnElement="Flow_0qfe1cs">
+        <di:waypoint x="1070" y="398" />
+        <di:waypoint x="1070" y="450" />
+        <di:waypoint x="1010" y="450" />
+        <di:waypoint x="1010" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13uw9l5_di" bpmnElement="Flow_13uw9l5">
+        <di:waypoint x="1090" y="340" />
+        <di:waypoint x="1120" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yx68fj_di" bpmnElement="Flow_1yx68fj">
+        <di:waypoint x="928" y="320" />
+        <di:waypoint x="959" y="320" />
+        <di:waypoint x="959" y="340" />
+        <di:waypoint x="990" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1d8s9zr_di" bpmnElement="Flow_1d8s9zr">
+        <di:waypoint x="810" y="320" />
+        <di:waypoint x="892" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s3wu6d_di" bpmnElement="Flow_1s3wu6d">
+        <di:waypoint x="540" y="320" />
+        <di:waypoint x="580" y="320" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_17c9hpi_di" bpmnElement="Flow_17c9hpi">
         <di:waypoint x="370" y="378" />
         <di:waypoint x="370" y="460" />
         <di:waypoint x="310" y="460" />
         <di:waypoint x="310" y="360" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0hbqi83_di" bpmnElement="Flow_0hbqi83">
-        <di:waypoint x="818" y="320" />
-        <di:waypoint x="890" y="320" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0cx4isb_di" bpmnElement="Flow_0cx4isb">
         <di:waypoint x="1910" y="425" />
-        <di:waypoint x="1910" y="660" />
-        <di:waypoint x="1860" y="660" />
+        <di:waypoint x="1910" y="730" />
+        <di:waypoint x="1850" y="730" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1884" y="540" width="83" height="27" />
+          <dc:Bounds x="1884" y="578" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0hjieci_di" bpmnElement="Flow_0hjieci">
@@ -324,15 +388,9 @@ execution.setVariable("i", i);
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jjk1vb_di" bpmnElement="Flow_1jjk1vb">
-        <di:waypoint x="1760" y="670" />
-        <di:waypoint x="1110" y="670" />
-        <di:waypoint x="1110" y="360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_06rwfaz_di" bpmnElement="Flow_06rwfaz">
-        <di:waypoint x="1830" y="718" />
-        <di:waypoint x="1830" y="739" />
-        <di:waypoint x="2140" y="740" />
-        <di:waypoint x="2140" y="340" />
+        <di:waypoint x="1750" y="740" />
+        <di:waypoint x="1170" y="740" />
+        <di:waypoint x="1170" y="380" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_147nc8h_di" bpmnElement="Flow_147nc8h">
         <di:waypoint x="1788" y="365" />
@@ -359,14 +417,14 @@ execution.setVariable("i", i);
         <di:waypoint x="2090" y="300" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1bejw6x_di" bpmnElement="Flow_1bejw6x">
-        <di:waypoint x="1660" y="320" />
-        <di:waypoint x="1712" y="320" />
-        <di:waypoint x="1712" y="340" />
+        <di:waypoint x="1700" y="350" />
+        <di:waypoint x="1732" y="350" />
+        <di:waypoint x="1732" y="340" />
         <di:waypoint x="1763" y="340" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1iney65_di" bpmnElement="Flow_1iney65">
-        <di:waypoint x="1490" y="320" />
-        <di:waypoint x="1560" y="320" />
+        <di:waypoint x="1550" y="340" />
+        <di:waypoint x="1600" y="340" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0bt3qlv_di" bpmnElement="Flow_0bt3qlv">
         <di:waypoint x="1788" y="315" />
@@ -377,28 +435,20 @@ execution.setVariable("i", i);
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1cpt5bg_di" bpmnElement="Flow_1cpt5bg">
-        <di:waypoint x="1160" y="320" />
-        <di:waypoint x="1240" y="320" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1y2kg5b_di" bpmnElement="Flow_1y2kg5b">
-        <di:waypoint x="990" y="320" />
-        <di:waypoint x="1060" y="320" />
+        <di:waypoint x="1220" y="340" />
+        <di:waypoint x="1280" y="340" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1lwznmo_di" bpmnElement="Flow_1lwznmo">
-        <di:waypoint x="1340" y="320" />
-        <di:waypoint x="1390" y="320" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0uzn2ta_di" bpmnElement="Flow_0uzn2ta">
-        <di:waypoint x="720" y="320" />
-        <di:waypoint x="782" y="320" />
+        <di:waypoint x="1380" y="340" />
+        <di:waypoint x="1450" y="340" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0n0d7n8_di" bpmnElement="Flow_0n0d7n8">
         <di:waypoint x="393" y="320" />
-        <di:waypoint x="460" y="320" />
+        <di:waypoint x="440" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0esf2ku_di" bpmnElement="Flow_0esf2ku">
-        <di:waypoint x="560" y="320" />
-        <di:waypoint x="620" y="320" />
+        <di:waypoint x="680" y="320" />
+        <di:waypoint x="710" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_12th27c_di" bpmnElement="Flow_12th27c">
         <di:waypoint x="198" y="320" />
@@ -411,28 +461,28 @@ execution.setVariable("i", i);
         <dc:Bounds x="293" y="280" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_04hl6b0_di" bpmnElement="Create_user">
-        <dc:Bounds x="460" y="280" width="100" height="80" />
+        <dc:Bounds x="580" y="280" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0do2vc8_di" bpmnElement="Send_email_with_activation_link">
-        <dc:Bounds x="620" y="280" width="100" height="80" />
+        <dc:Bounds x="710" y="280" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_00gxjnm_di" bpmnElement="Activity_1msg0et">
-        <dc:Bounds x="890" y="280" width="100" height="80" />
+        <dc:Bounds x="990" y="300" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0hi0a0h_di" bpmnElement="Activity_135oed2">
-        <dc:Bounds x="1240" y="280" width="100" height="80" />
+        <dc:Bounds x="1280" y="300" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_09vps2p_di" bpmnElement="evaluate_reviews_script_task">
-        <dc:Bounds x="1390" y="280" width="100" height="80" />
+        <dc:Bounds x="1450" y="300" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_12j1urq_di" bpmnElement="Activity_1nd5m05">
-        <dc:Bounds x="1060" y="280" width="100" height="80" />
+        <dc:Bounds x="1120" y="300" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_15hk2iw_di" bpmnElement="Gateway_0h1nu6p" isMarkerVisible="true">
         <dc:Bounds x="1763" y="315" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1thb5u6_di" bpmnElement="Activity_0n8zl7e">
-        <dc:Bounds x="1560" y="280" width="100" height="80" />
+        <dc:Bounds x="1600" y="300" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0bk7nw1_di" bpmnElement="Activity_0tp2u2y">
         <dc:Bounds x="1930" y="150" width="100" height="80" />
@@ -453,22 +503,34 @@ execution.setVariable("i", i);
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0oxwzd4_di" bpmnElement="Activity_1flwtkz">
-        <dc:Bounds x="1760" y="620" width="100" height="80" />
+        <dc:Bounds x="1750" y="690" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1alw232_di" bpmnElement="Gateway_1alw232" isMarkerVisible="true">
         <dc:Bounds x="1885" y="375" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_05mx4ns_di" bpmnElement="Confirmation_link_event">
-        <dc:Bounds x="782" y="302" width="36" height="36" />
+        <dc:Bounds x="892" y="302" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="760" y="345" width="83" height="27" />
+          <dc:Bounds x="870" y="345" width="83" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dck42m_di" bpmnElement="Set_user_role">
+        <dc:Bounds x="440" y="280" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0bbqlfm_di" bpmnElement="TextAnnotation_0bbqlfm">
         <dc:Bounds x="1130" y="85" width="100" height="180" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1sxv5tp_di" bpmnElement="TextAnnotation_1sxv5tp">
-        <dc:Bounds x="1460" y="820" width="99.99510188087774" height="29.976489028213166" />
+      <bpmndi:BPMNShape id="Event_0e66qlt_di" bpmnElement="Invalid_writings_2">
+        <dc:Bounds x="1794" y="672" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1725" y="653" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fcbex6_di" bpmnElement="Invalid_writings_event">
+        <dc:Bounds x="1052" y="362" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1044" y="406" width="73" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1o3kobf_di" bpmnElement="InvalidDataError">
         <dc:Bounds x="352" y="342" width="36" height="36" />
@@ -477,9 +539,9 @@ execution.setVariable("i", i);
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1gmtgzj_di" bpmnElement="Event_1ta7som">
-        <dc:Bounds x="1812" y="682" width="36" height="36" />
+        <dc:Bounds x="1784" y="752" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1790" y="725" width="82" height="27" />
+          <dc:Bounds x="1781" y="795" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0yf182p_di" bpmnElement="Event_0bgvvef">
@@ -489,12 +551,8 @@ execution.setVariable("i", i);
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1tozv98_di" bpmnElement="Association_1tozv98">
-        <di:waypoint x="1123" y="280" />
-        <di:waypoint x="1130" y="257" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_178i5u6_di" bpmnElement="Association_178i5u6">
-        <di:waypoint x="1810" y="700" />
-        <di:waypoint x="1543" y="820" />
+        <di:waypoint x="1167" y="300" />
+        <di:waypoint x="1164" y="265" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

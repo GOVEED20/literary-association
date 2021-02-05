@@ -41,7 +41,7 @@ public class PaymentService {
         BitcoinOrder bitcoinOrder = BitcoinOrder.builder()
                 .order_id(payload.getTransactionId().toString())
                 .price_amount(payload.getAmount())
-                .price_currency("BTC")
+                .price_currency("USD")
                 .receive_currency("BTC")
                 .title("")
                 .description("")

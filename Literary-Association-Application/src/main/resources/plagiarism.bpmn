@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1k12t4i" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="Plagiarism_process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="goveed20.LiteraryAssociationApplication.listeners.PlagiarismStartListener" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1didmr0</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1didmr0" sourceRef="StartEvent_1" targetRef="Activity_0n4v5jw" />
+    <bpmn:userTask id="Activity_0n4v5jw" name="Input complaint data" camunda:formKey="complaint_data_form" camunda:assignee="${writer}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="my_book" label="My book" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="plagiarism_book" label="Plagiarism book" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="writer_name" label="Writer name" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="writer_surname" label="Writer surname" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="text" />
+              <camunda:property id="required" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1didmr0</bpmn:incoming>
+      <bpmn:incoming>Flow_0g2sdr9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0v7cxvs</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0v7cxvs" sourceRef="Activity_0n4v5jw" targetRef="Activity_0cpe6d4" />
+    <bpmn:serviceTask id="Activity_0cpe6d4" name="Complaint data submission" camunda:class="goveed20.LiteraryAssociationApplication.delegates.plagiarism.InputComplaintDataDelegate">
+      <bpmn:incoming>Flow_0v7cxvs</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lan02t</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0lan02t" sourceRef="Activity_0cpe6d4" targetRef="Activity_1wk3cxb" />
+    <bpmn:userTask id="Activity_1wk3cxb" name="Choose editors" camunda:formKey="choose_editor_form" camunda:assignee="${editor}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="editors" label="Choose editors" type="string">
+            <camunda:properties>
+              <camunda:property id="type" value="select" />
+              <camunda:property id="required" value="true" />
+              <camunda:property id="multiple" value="multiple" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:properties>
+          <camunda:property name="editor_select" value="true" />
+          <camunda:property name="additional_content" value="1" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0lan02t</bpmn:incoming>
+      <bpmn:incoming>Flow_1qxpqhu</bpmn:incoming>
+      <bpmn:incoming>Flow_1aixkqo</bpmn:incoming>
+      <bpmn:outgoing>Flow_0s5td8v</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0s5td8v" sourceRef="Activity_1wk3cxb" targetRef="Activity_0a9y6du" />
+    <bpmn:serviceTask id="Activity_0a9y6du" name="Choose editors submission" camunda:class="goveed20.LiteraryAssociationApplication.delegates.plagiarism.ChooseEditorsDelegate">
+      <bpmn:incoming>Flow_0s5td8v</bpmn:incoming>
+      <bpmn:outgoing>Flow_0f9tyl1</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0f9tyl1" sourceRef="Activity_0a9y6du" targetRef="Activity_0qxc3e1" />
+    <bpmn:subProcess id="Activity_162y9bt">
+      <bpmn:incoming>Flow_10tnnru</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ga9wfv</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${board_members_list}" camunda:elementVariable="current_board_member" />
+      <bpmn:startEvent id="Event_1ti0f92">
+        <bpmn:outgoing>Flow_07zs5po</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_07zs5po" sourceRef="Event_1ti0f92" targetRef="Activity_1ckgiqo" />
+      <bpmn:sequenceFlow id="Flow_0izdlj0" sourceRef="Activity_1ckgiqo" targetRef="Activity_03wvtn5" />
+      <bpmn:userTask id="Activity_1ckgiqo" name="Vote" camunda:formKey="vote_form" camunda:assignee="${current_board_member}">
+        <bpmn:extensionElements>
+          <camunda:formData>
+            <camunda:formField id="vote_option" label="Vote" type="string">
+              <camunda:properties>
+                <camunda:property id="type" value="select" />
+                <camunda:property id="required" value="true" />
+              </camunda:properties>
+              <camunda:validation>
+                <camunda:constraint name="required" />
+              </camunda:validation>
+            </camunda:formField>
+          </camunda:formData>
+          <camunda:properties>
+            <camunda:property name="basic_select" value="true" />
+            <camunda:property name="additional_content" value="3" />
+          </camunda:properties>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_07zs5po</bpmn:incoming>
+        <bpmn:outgoing>Flow_0izdlj0</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:serviceTask id="Activity_03wvtn5" name="Vote submission" camunda:class="goveed20.LiteraryAssociationApplication.delegates.plagiarism.VoteDelegate">
+        <bpmn:incoming>Flow_0izdlj0</bpmn:incoming>
+        <bpmn:outgoing>Flow_0fb4bav</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:endEvent id="Event_0qwlich">
+        <bpmn:incoming>Flow_0fb4bav</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0fb4bav" sourceRef="Activity_03wvtn5" targetRef="Event_0qwlich" />
+      <bpmn:textAnnotation id="TextAnnotation_0btvb4e">
+        <bpmn:text>Update board_members map process variable</bpmn:text>
+      </bpmn:textAnnotation>
+      <bpmn:association id="Association_0fodnud" sourceRef="Activity_03wvtn5" targetRef="TextAnnotation_0btvb4e" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_1ga9wfv" sourceRef="Activity_162y9bt" targetRef="Activity_0huf0rb" />
+    <bpmn:serviceTask id="Activity_0huf0rb" name="Check votes" camunda:class="goveed20.LiteraryAssociationApplication.delegates.plagiarism.CheckVotesDelegate">
+      <bpmn:incoming>Flow_1ga9wfv</bpmn:incoming>
+      <bpmn:outgoing>Flow_08ug5fj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0jmnd7c">
+      <bpmn:incoming>Flow_08ug5fj</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cx0iq0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1qxpqhu</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_08ug5fj" sourceRef="Activity_0huf0rb" targetRef="Gateway_0jmnd7c" />
+    <bpmn:endEvent id="Event_0usydfn">
+      <bpmn:incoming>Flow_1cx0iq0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1cx0iq0" sourceRef="Gateway_0jmnd7c" targetRef="Event_0usydfn">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${unanimous_decision == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1qxpqhu" sourceRef="Gateway_0jmnd7c" targetRef="Activity_1wk3cxb">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${unanimous_decision == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:boundaryEvent id="Event_0ybagm2" name="Input data error" attachedToRef="Activity_0cpe6d4">
+      <bpmn:outgoing>Flow_0g2sdr9</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1sof4ds" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0g2sdr9" sourceRef="Event_0ybagm2" targetRef="Activity_0n4v5jw" />
+    <bpmn:boundaryEvent id="Event_1vd1erv" attachedToRef="Activity_0a9y6du">
+      <bpmn:outgoing>Flow_1aixkqo</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0i5mxlw" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1aixkqo" sourceRef="Event_1vd1erv" targetRef="Activity_1wk3cxb" />
+    <bpmn:callActivity id="Activity_0qxc3e1" name="Editor comparison notes" calledElement="editor_comparison_notes">
+      <bpmn:extensionElements>
+        <camunda:in source="current_editor" target="current_editor" />
+        <camunda:in source="my_book" target="my_book" />
+        <camunda:in source="plagiarism_book" target="plagiarism_book" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0f9tyl1</bpmn:incoming>
+      <bpmn:outgoing>Flow_10tnnru</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${chosen_editors_list}" camunda:elementVariable="current_editor" />
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_10tnnru" sourceRef="Activity_0qxc3e1" targetRef="Activity_162y9bt" />
+    <bpmn:subProcess id="Activity_1qqmqkn" name="Terminate process in a month" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_0t80cqz" name="1 month">
+        <bpmn:outgoing>Flow_0bwb08u</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_1xmz060">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P1M</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_160fith">
+        <bpmn:incoming>Flow_0bwb08u</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0bwb08u" sourceRef="Event_0t80cqz" targetRef="Event_160fith" />
+    </bpmn:subProcess>
+    <bpmn:textAnnotation id="TextAnnotation_02o64l0">
+      <bpmn:text>Set writer and bpmn_file and  process variables
+
+Set board_members map process variable
+key - board member username
+value - vote</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1tpxuac" sourceRef="StartEvent_1" targetRef="TextAnnotation_02o64l0" />
+    <bpmn:textAnnotation id="TextAnnotation_18mokb4">
+      <bpmn:text>Set editor process variable</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0kawvql" sourceRef="Activity_0cpe6d4" targetRef="TextAnnotation_18mokb4" />
+    <bpmn:textAnnotation id="TextAnnotation_1rjpm8k">
+      <bpmn:text>Set chosen_editors map process variable
+
+key - editor username
+value - editor note
+
+Set chosen_editors_list</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0dnfz6i" sourceRef="Activity_0a9y6du" targetRef="TextAnnotation_1rjpm8k" />
+    <bpmn:textAnnotation id="TextAnnotation_1my9n0g">
+      <bpmn:text>Set unanimous_decision process variable</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0cj4j9f" sourceRef="Activity_0huf0rb" targetRef="TextAnnotation_1my9n0g" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Plagiarism_process">
+      <bpmndi:BPMNEdge id="Flow_10tnnru_di" bpmnElement="Flow_10tnnru">
+        <di:waypoint x="1050" y="340" />
+        <di:waypoint x="1140" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aixkqo_di" bpmnElement="Flow_1aixkqo">
+        <di:waypoint x="840" y="398" />
+        <di:waypoint x="840" y="418" />
+        <di:waypoint x="680" y="418" />
+        <di:waypoint x="680" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g2sdr9_di" bpmnElement="Flow_0g2sdr9">
+        <di:waypoint x="540" y="398" />
+        <di:waypoint x="540" y="418" />
+        <di:waypoint x="360" y="418" />
+        <di:waypoint x="360" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qxpqhu_di" bpmnElement="Flow_1qxpqhu">
+        <di:waypoint x="2030" y="325" />
+        <di:waypoint x="2030" y="770" />
+        <di:waypoint x="630" y="770" />
+        <di:waypoint x="630" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cx0iq0_di" bpmnElement="Flow_1cx0iq0">
+        <di:waypoint x="2055" y="300" />
+        <di:waypoint x="2122" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08ug5fj_di" bpmnElement="Flow_08ug5fj">
+        <di:waypoint x="1930" y="300" />
+        <di:waypoint x="2005" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ga9wfv_di" bpmnElement="Flow_1ga9wfv">
+        <di:waypoint x="1730" y="300" />
+        <di:waypoint x="1830" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f9tyl1_di" bpmnElement="Flow_0f9tyl1">
+        <di:waypoint x="860" y="340" />
+        <di:waypoint x="950" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s5td8v_di" bpmnElement="Flow_0s5td8v">
+        <di:waypoint x="710" y="340" />
+        <di:waypoint x="760" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lan02t_di" bpmnElement="Flow_0lan02t">
+        <di:waypoint x="560" y="340" />
+        <di:waypoint x="610" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v7cxvs_di" bpmnElement="Flow_0v7cxvs">
+        <di:waypoint x="410" y="340" />
+        <di:waypoint x="460" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1didmr0_di" bpmnElement="Flow_1didmr0">
+        <di:waypoint x="258" y="340" />
+        <di:waypoint x="310" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="222" y="322" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1byl1w6_di" bpmnElement="Activity_0n4v5jw">
+        <dc:Bounds x="310" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_155hv8x_di" bpmnElement="Activity_0cpe6d4">
+        <dc:Bounds x="460" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dmfs8r_di" bpmnElement="Activity_1wk3cxb">
+        <dc:Bounds x="610" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0d5rczg_di" bpmnElement="Activity_0a9y6du">
+        <dc:Bounds x="760" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_162y9bt_di" bpmnElement="Activity_162y9bt" isExpanded="true">
+        <dc:Bounds x="1140" y="190" width="590" height="280" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0fb4bav_di" bpmnElement="Flow_0fb4bav">
+        <di:waypoint x="1530" y="370" />
+        <di:waypoint x="1592" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0izdlj0_di" bpmnElement="Flow_0izdlj0">
+        <di:waypoint x="1370" y="370" />
+        <di:waypoint x="1430" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07zs5po_di" bpmnElement="Flow_07zs5po">
+        <di:waypoint x="1216" y="370" />
+        <di:waypoint x="1270" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1ti0f92_di" bpmnElement="Event_1ti0f92">
+        <dc:Bounds x="1180" y="352" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0w6e9hz_di" bpmnElement="Activity_1ckgiqo">
+        <dc:Bounds x="1270" y="330" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zye7an_di" bpmnElement="Activity_03wvtn5">
+        <dc:Bounds x="1430" y="330" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0qwlich_di" bpmnElement="Event_0qwlich">
+        <dc:Bounds x="1592" y="352" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0btvb4e_di" bpmnElement="TextAnnotation_0btvb4e">
+        <dc:Bounds x="1430" y="230" width="110" height="70" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0fodnud_di" bpmnElement="Association_0fodnud">
+        <di:waypoint x="1480" y="330" />
+        <di:waypoint x="1480" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1g8x4it_di" bpmnElement="Activity_0huf0rb">
+        <dc:Bounds x="1830" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0jmnd7c_di" bpmnElement="Gateway_0jmnd7c" isMarkerVisible="true">
+        <dc:Bounds x="2005" y="275" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0usydfn_di" bpmnElement="Event_0usydfn">
+        <dc:Bounds x="2122" y="282" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0q0sv8z_di" bpmnElement="Activity_0qxc3e1">
+        <dc:Bounds x="950" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_02o64l0_di" bpmnElement="TextAnnotation_02o64l0">
+        <dc:Bounds x="190" y="140" width="130" height="142" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_18mokb4_di" bpmnElement="TextAnnotation_18mokb4">
+        <dc:Bounds x="460" y="197" width="100" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1rjpm8k_di" bpmnElement="TextAnnotation_1rjpm8k">
+        <dc:Bounds x="760" y="80" width="120" height="180" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1my9n0g_di" bpmnElement="TextAnnotation_1my9n0g">
+        <dc:Bounds x="1830" y="180" width="150" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qqmqkn_di" bpmnElement="Activity_1qqmqkn" isExpanded="true">
+        <dc:Bounds x="170" y="530" width="350" height="290" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0bwb08u_di" bpmnElement="Flow_0bwb08u">
+        <di:waypoint x="248" y="680" />
+        <di:waypoint x="302" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0t80cqz_di" bpmnElement="Event_0t80cqz">
+        <dc:Bounds x="212" y="662" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="214" y="705" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_160fith_di" bpmnElement="Event_160fith">
+        <dc:Bounds x="302" y="662" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0dr3u6f_di" bpmnElement="Event_1vd1erv">
+        <dc:Bounds x="822" y="362" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ulvy1l_di" bpmnElement="Event_0ybagm2">
+        <dc:Bounds x="522" y="362" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="502" y="405" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1tpxuac_di" bpmnElement="Association_1tpxuac">
+        <di:waypoint x="240" y="322" />
+        <di:waypoint x="240" y="282" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0kawvql_di" bpmnElement="Association_0kawvql">
+        <di:waypoint x="510" y="300" />
+        <di:waypoint x="510" y="252" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0dnfz6i_di" bpmnElement="Association_0dnfz6i">
+        <di:waypoint x="810" y="300" />
+        <di:waypoint x="810" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0cj4j9f_di" bpmnElement="Association_0cj4j9f">
+        <di:waypoint x="1880" y="260" />
+        <di:waypoint x="1880" y="221" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

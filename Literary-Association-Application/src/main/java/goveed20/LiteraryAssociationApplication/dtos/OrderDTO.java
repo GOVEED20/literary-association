@@ -6,8 +6,13 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
+@Builder
 public class OrderDTO {
+    private Long transactionId;
     private Double amount;
-    private String paymentService;
+    private String successURL;
+    private String failedURL;
+    private String errorURL;
+    private String retailer;
+    private PaymentFieldsDTO paymentFields;
 }

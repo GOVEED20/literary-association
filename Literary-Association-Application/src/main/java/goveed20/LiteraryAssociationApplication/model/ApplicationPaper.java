@@ -16,6 +16,6 @@ public class ApplicationPaper {
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
 
-    @Column(nullable = false)
+    @Column
     protected String file;
 }

@@ -1,6 +1,7 @@
 package goveed20.CardPaymentService.services;
 
 import goveed20.CardPaymentService.dtos.CustomersBankResponseDTO;
+import goveed20.CardPaymentService.exceptions.BadRequestException;
 import goveed20.CardPaymentService.exceptions.InvalidBankClientDataException;
 import goveed20.CardPaymentService.model.Bank;
 import goveed20.CardPaymentService.model.Client;
@@ -137,12 +138,13 @@ public class BankService {
                 sendTransactionResponse(transactionID, TransactionStatus.SUCCESS, paymentData);
             } catch (InvalidBankClientDataException e) {
                 sendTransactionResponse(transactionID, TransactionStatus.FAILED, paymentData);
+                throw new BadRequestException(e.getMessage());
             }
 
             return transaction;
         } else if (customersBankResponse.getErrorMessage() != null) {
             sendTransactionResponse(transactionID, TransactionStatus.FAILED, paymentData);
-            return transaction;
+            throw new BadRequestException(customersBankResponse.getErrorMessage());
         }
 
         Client merchant = bank.getClients().stream().filter(c -> c.getOnlinePaymentData().getMerchantID()

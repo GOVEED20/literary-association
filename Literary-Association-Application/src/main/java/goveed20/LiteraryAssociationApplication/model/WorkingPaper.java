@@ -11,17 +11,17 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 public class WorkingPaper extends ApplicationPaper {
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     protected String title;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "genre", referencedColumnName = "id")
     protected Genre genre;
 
-    @Column(unique = false)
+    @Column
     protected String synopsis;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private WorkingPaperStatus status;
 

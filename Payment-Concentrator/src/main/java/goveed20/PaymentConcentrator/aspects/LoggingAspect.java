@@ -128,11 +128,11 @@ public class LoggingAspect {
                         "Successfully got registration fields for payment service with name " + serviceName;
                 break;
             case "getRetailerPaymentServices":
-                Long retailerId = (Long) arguments[0];
+                String retailerName = (String) arguments[0];
                 message = isBefore ?
-                        "Started getting payment services of retailer with id " + retailerId
+                        "Started getting payment services of retailer with id " + retailerName
                         :
-                        "Successfully got payment services of retailer with id " + retailerId;
+                        "Successfully got payment services of retailer with id " + retailerName;
                 break;
             case "getGlobalPaymentServices":
                 message = isBefore ?
@@ -183,11 +183,11 @@ public class LoggingAspect {
                         "Got registration fields for payment service with name " + serviceName;
                 break;
             case "getRetailerPaymentServices":
-                Long retailerId = (Long) arguments[0];
+                String retailerName = (String) arguments[0];
                 message = isBefore ?
-                        "Getting payment services of retailer with id " + retailerId
+                        "Getting payment services of retailer with id " + retailerName
                         :
-                        "Got payment services of retailer with id " + retailerId;
+                        "Got payment services of retailer with id " + retailerName;
                 break;
             case "getGlobalPaymentServices":
                 message = isBefore ?

@@ -19,6 +19,9 @@ public class Retailer {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
     @OneToMany
     private Set<Book> books;
 }

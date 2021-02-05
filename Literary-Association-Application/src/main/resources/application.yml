@@ -4,7 +4,7 @@ spring:
   datasource:
     driver-class-name: org.h2.Driver
     password: ENC(DJV5MsDLF/6adraw4pj3ZQ==)
-    url: jdbc:h2:~/database
+    url: jdbc:h2:file:./la-db
     username: dzabic
   h2:
     console:
@@ -14,9 +14,13 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+
   mail:
     host: smtp.gmail.com
-    password: 'LDDmuumuu2020'
+    password: ENC(ADCd7T3iSrmU4tUdsL9RYu4ALBP8A20D)
     port: 587
     properties:
       mail:
@@ -30,6 +34,10 @@ spring:
           writetimeout: 5000
     username: goveed20@gmail.com
 
+paymentconcentrator:
+  name: Laguna
+  registrationToken: 2565a484-e734-4477-bbb0-18e0a0d1afbe
+
 server:
   servlet:
     context-path: /api
@@ -38,3 +46,8 @@ server:
 jasypt:
   encryptor:
     password: goveed20
+
+camunda:
+  bpm:
+    database:
+      schema-update: drop-create

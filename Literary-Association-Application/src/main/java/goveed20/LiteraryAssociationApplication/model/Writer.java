@@ -20,13 +20,13 @@ public class Writer extends BaseUser {
     @Column(nullable = false)
     private Boolean membershipApproved;
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private MembershipApplication membershipApplication;
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<WorkingPaper> workingPapers;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "writer", fetch = FetchType.EAGER)
     private Set<Book> books;
 
     @Builder(builderMethodName = "writerBuilder")

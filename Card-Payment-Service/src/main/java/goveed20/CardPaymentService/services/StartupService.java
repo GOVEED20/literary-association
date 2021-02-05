@@ -31,8 +31,10 @@ public class StartupService {
                     .clients(new ArrayList<>()).build();
 
             // merchant
+            OnlinePaymentData oyp = OnlinePaymentData.builder().merchantID("123456789")
+                    .merchantPassword("$2a$10$NqK3gW9/ZYzWvQID0GEbzuOcyglZg3jZtju.StvmetohqpMj9o09O").build();
             Client merchant = Client.builder().balance(100.00).PAN(encoder
-                    .encode("1234-5611-1111-1111")).build();
+                    .encode("1234-5611-1111-1111")).onlinePaymentData(oyp).build();
             unicredit.getClients().add(merchant);
 
             // customer unicredit

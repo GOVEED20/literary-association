@@ -2,8 +2,12 @@ package goveed20.LiteraryAssociationApplication.model;
 
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 
 @Getter
@@ -13,7 +17,7 @@ import java.util.Set;
 @Builder(toBuilder = true)
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class BaseUser {
+public class BaseUser implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -48,4 +52,32 @@ public class BaseUser {
 
     @OneToMany(cascade = CascadeType.PERSIST)
     private Set<Transaction> transactions;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<UserRole> authorities = new ArrayList<>();
+        authorities.add(this.role);
+
+        return authorities;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.verified;
+    }
 }
