@@ -64,7 +64,7 @@ public class PaymentController {
     public ResponseEntity<?> sendTransactionResponse(@RequestBody ResponsePayload responsePayload) {
         try {
             paymentService.sendTransactionResponse(responsePayload);
-            return new ResponseEntity<>("Transaction completed", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (StatusCodeException e) {

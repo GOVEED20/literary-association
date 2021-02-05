@@ -7,6 +7,7 @@ import transactionService from '../services/transactionService'
 
 const PurchaseForm = ({ toggleModal }) => {
     const book = useSelector(state => state.books.shown)
+    const username = useSelector(state => state.user.subject)
     const [retailers, setRetailers] = useState([])
     const [retailer, setRetailer] = useState('')
     const [paymentServices, setPaymentServices] = useState([])
@@ -37,11 +38,11 @@ const PurchaseForm = ({ toggleModal }) => {
             retailer,
             paymentMethod: paymentService,
             subscription: false,
-            invoiceItems
+            invoiceItems,
+            user: username
         }
         transactionService.initializeTransaction(invoice).then(result => {
             window.open(result, '_blank')
-            // add toast
             toggleModal()
         })
     }

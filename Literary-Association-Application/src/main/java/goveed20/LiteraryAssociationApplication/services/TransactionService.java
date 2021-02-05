@@ -9,12 +9,10 @@ import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
 import goveed20.LiteraryAssociationApplication.exceptions.PaymentException;
 import goveed20.LiteraryAssociationApplication.model.*;
 import goveed20.LiteraryAssociationApplication.model.enums.TransactionStatus;
-import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
-import goveed20.LiteraryAssociationApplication.repositories.InvoiceRepository;
-import goveed20.LiteraryAssociationApplication.repositories.RetailerRepository;
-import goveed20.LiteraryAssociationApplication.repositories.TransactionRepository;
+import goveed20.LiteraryAssociationApplication.repositories.*;
 import goveed20.LiteraryAssociationApplication.utils.RestTemplateResponseErrorHandler;
 import lombok.SneakyThrows;
+import org.camunda.bpm.engine.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -44,9 +42,18 @@ public class TransactionService {
     @Autowired
     private InvoiceRepository invoiceRepository;
 
+    @Autowired
+    private BaseUserRepository baseUserRepository;
+
+    @Autowired
+    private MembershipTransactionRepository membershipTransactionRepository;
+
+    @Autowired
+    private RuntimeService runtimeService;
+
     private final RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new RestTemplateResponseErrorHandler()).build();
 
-    private static final String CALLBACK_URL = "/transaction/%d/%s";
+    private static final String CALLBACK_URL = "/api/transaction/%d/%s";
 
     @Autowired
     private YAMLConfig myConfig;
@@ -67,6 +74,7 @@ public class TransactionService {
         invoiceRepository.save(invoice);
 
         Transaction transaction = Transaction.builder()
+                .createdOn(new Date())
                 .initializedOn(new Date())
                 .invoice(invoice)
                 .done(false)
@@ -79,6 +87,12 @@ public class TransactionService {
 
         transaction = transactionRepository.save(transaction);
 
+        BaseUser user = baseUserRepository.findByEmail(invoiceDTO.getUser())
+                .orElseThrow(() -> new PaymentException(String.format("User with username '%s' not found", invoiceDTO.getUser())));
+
+        user.getTransactions().add(transaction);
+        baseUserRepository.save(user);
+
         OrderDTO orderDTO = OrderDTO.builder()
                 .amount(transaction.getTotal())
                 .errorURL(buildCallbackUrl(transaction.getId(), "error"))
@@ -86,7 +100,7 @@ public class TransactionService {
                 .successURL(buildCallbackUrl(transaction.getId(), "success"))
                 .retailer(invoice.getRetailer().getName())
                 .transactionId(transaction.getId())
-                .paymentFields(PaymentFieldsDTO.builder().subscription(invoiceDTO.getSubscription()).name(invoiceDTO.getSubscription() ? "LA Membership Subscription" : null).build())
+                .paymentFields(PaymentFieldsDTO.builder().subscription(false).name(null).build())
                 .build();
 
         String url = String.format("http://localhost:8080/api/payment-services/%s/initialize-payment", invoiceDTO.getPaymentMethod());
@@ -100,20 +114,32 @@ public class TransactionService {
     }
 
     public void completeTransaction(Long id, String status) {
-        Optional<Transaction> transactionOptional = transactionRepository.findById(id);
+        Optional<MembershipTransaction> membershipTransaction = membershipTransactionRepository.findById(id);
 
-        if (transactionOptional.isEmpty()) {
-            throw new NotFoundException(String.format("Transaction with id '%d' not found", id));
+        if (membershipTransaction.isEmpty()) {
+            Optional<Transaction> transactionOptional = transactionRepository.findById(id);
+
+            if (transactionOptional.isEmpty()) {
+                throw new NotFoundException(String.format("Transaction with id '%d' not found", id));
+            }
+
+            Transaction transaction = transactionOptional.get()
+                    .toBuilder()
+                    .completedOn(new Date())
+                    .done(true)
+                    .status(determineStatus(status))
+                    .build();
+
+            transactionRepository.save(transaction);
+            return;
         }
+        MembershipTransaction transaction = membershipTransaction.get();
+        transaction.setCompletedOn(new Date());
+        transaction.setDone(true);
+        transaction.setStatus(determineStatus(status));
 
-        Transaction transaction = transactionOptional.get()
-                .toBuilder()
-                .completedOn(new Date())
-                .done(true)
-                .status(determineStatus(status))
-                .build();
-
-        transactionRepository.save(transaction);
+        membershipTransactionRepository.save(transaction);
+        runtimeService.createSignalEvent("Membership_paid_signal").send();
     }
 
     public TransactionStatus determineStatus(String status) {

@@ -12,6 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,6 +29,10 @@ public class Transaction {
     private TransactionStatus status;
 
     @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdOn;
+
+    @Column
     @Temporal(TemporalType.TIMESTAMP)
     private Date initializedOn;
 

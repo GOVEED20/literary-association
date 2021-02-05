@@ -10,6 +10,7 @@ import BookList from './BookList'
 import { GuardProvider, GuardedRoute } from 'react-router-guards'
 import Book from './Book'
 import MyBooks from './MyBooks'
+import Membership from './MembershipView'
 
 const Dashboard = () => {
     const history = useHistory()
@@ -65,6 +66,9 @@ const Dashboard = () => {
                 </GuardedRoute>
                 <GuardedRoute exact path='/dashboard/books' meta={{ roles: ['READER'] }}>
                     <BookList/>
+                </GuardedRoute>
+                <GuardedRoute path='/dashboard/membership' meta={{ roles: ['WRITER'] }}>
+                    <Membership/>
                 </GuardedRoute>
                 <GuardedRoute exact path='/dashboard'>
                     <Redirect to='/dashboard/tasks'/>
