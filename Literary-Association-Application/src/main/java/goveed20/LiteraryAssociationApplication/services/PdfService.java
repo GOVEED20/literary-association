@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class PdfService {
-    private static final String booksFolder = "Literary-Association-Application/src/main/resources/books/";
+    private static final String writingsFolder = "Literary-Association-Application/src/main/resources/writings/";
 
     public List<String> pdfToBase64(List<String> paths) {
         return paths.stream().sequential().map(p -> {
@@ -36,7 +36,7 @@ public class PdfService {
             s = s.replace("data:application/pdf;base64,", "");
             byte[] decoded = Base64.getMimeDecoder().decode(s.getBytes(StandardCharsets.UTF_8));
             String title = String.format("pdf-%s", UUID.randomUUID().toString().replace("-", ""));
-            String path = String.format("%s%s.pdf", booksFolder, title);
+            String path = String.format("%s%s.pdf", writingsFolder, title);
             try {
                 FileUtils.writeByteArrayToFile(new File(path), decoded);
             } catch (IOException e) {

@@ -23,10 +23,8 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,7 +45,7 @@ public class BookService {
     private RetailerRepository retailerRepository;
 
     public List<BookListItemDTO> getBooks() {
-        List<String> bookTitles = new ArrayList<>();
+        Set<String> bookTitles = new HashSet<>();
 
         if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(UserRole.READER)) {
             goveed20.LiteraryAssociationApplication.model.Reader reader = (goveed20.LiteraryAssociationApplication.model.Reader)
@@ -140,9 +138,9 @@ public class BookService {
             goveed20.LiteraryAssociationApplication.model.Reader reader = (goveed20.LiteraryAssociationApplication.model.Reader)
                     SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-            List<String> bookTitles = getBookTitles(reader);
+            Set<String> bookTitles = getBookTitles(reader);
 
-            return bookRepository.findDistinctByTitleIn(bookTitles).stream()
+            return bookRepository.findByTitleIn(bookTitles).stream()
                     .map(b -> new BookListItemDTO(b.getId(), b.getTitle(), b.getPublisher(), b.getISBN(),
                             b.getPublicationYear())).collect(Collectors.toList());
         }
@@ -158,17 +156,13 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
-    private List<String> getBookTitles(BaseUser reader) {
-        List<String> bookTitles = new ArrayList<>();
-
+    private Set<String> getBookTitles(BaseUser reader) {
         if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(UserRole.READER)) {
-            reader.getTransactions().forEach(t -> {
-                if (t.getStatus().equals(TransactionStatus.COMPLETED) && !(t instanceof MembershipTransaction)) {
-                    t.getInvoice().getInvoiceItems().forEach(it -> bookTitles.add(it.getName()));
-                }
-            });
+            return reader.getTransactions().stream().filter(t -> t.getStatus().equals(TransactionStatus.COMPLETED)
+                    && !(t instanceof MembershipTransaction)).map(t -> t.getInvoice().getInvoiceItems().stream()
+                    .map(InvoiceItem::getName)).flatMap(Function.identity()).collect(Collectors.toSet());
         }
 
-        return bookTitles;
+        return new HashSet<>();
     }
 }

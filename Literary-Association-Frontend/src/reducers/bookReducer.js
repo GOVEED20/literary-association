@@ -27,7 +27,7 @@ export const setBook = (id) => {
     }
 }
 
-const reducer = (state = {list: [], shown: null}, action) => {
+const reducer = (state = { list: [], shown: null, myBooks: false }, action) => {
     switch (action.type) {
         case 'GET_BOOKS': {
             return {

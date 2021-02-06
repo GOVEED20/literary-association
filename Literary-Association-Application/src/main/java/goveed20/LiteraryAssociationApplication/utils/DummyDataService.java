@@ -118,7 +118,7 @@ public class DummyDataService {
                 .genre(genreRepository.findByGenre(GenreEnum.COOKBOOKS))
                 .synopsis("Sinobsis")
                 .price(302.00)
-                .file("Literary-Association-Application/src/main/resources/writings/Kljiga.pdf")
+                .file("Literary-Association-Application/src/main/resources/books/Kljiga.pdf")
                 .build();
         book.setWriter(writer);
         bookRepository.save(book);
@@ -152,7 +152,7 @@ public class DummyDataService {
                 .genre(genreRepository.findByGenre(GenreEnum.COOKBOOKS))
                 .synopsis("Sinobsis")
                 .price(203.00)
-                .file("Literary-Association-Application/src/main/resources/writings/Tajtl.pdf")
+                .file("Literary-Association-Application/src/main/resources/books/Tajtl.pdf")
                 .build();
         book2.setWriter(writer2);
         bookRepository.save(book2);

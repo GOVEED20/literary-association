@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
 
@@ -12,8 +13,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     Optional<Book> findByISBN(String ISBN);
 
-    List<Book> findDistinctByTitleIn(List<String> bookTitles);
+    List<Book> findByTitleIn(Set<String> bookTitles);
 
-    List<Book> findByTitleNotIn(List<String> bookTitles);
+    List<Book> findByTitleNotIn(Set<String> bookTitles);
 
 }
