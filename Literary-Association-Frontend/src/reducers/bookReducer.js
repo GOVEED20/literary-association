@@ -8,6 +8,11 @@ export const getBooks = (myBooks) => {
             type: 'GET_BOOKS',
             books
         })
+
+        dispatch({
+            type: 'SET_MY_BOOKS',
+            myBooks
+        })
     }
 }
 
@@ -22,22 +27,28 @@ export const setBook = (id) => {
     }
 }
 
-const reducer = (state = { list: [], shown: null }, action) => {
+const reducer = (state = { list: [], shown: null, myBooks: false }, action) => {
     switch (action.type) {
-    case 'GET_BOOKS': {
-        return {
-            ...state,
-            list: action.books
+        case 'GET_BOOKS': {
+            return {
+                ...state,
+                list: action.books
+            }
         }
-    }
-    case 'SET_BOOK': {
-        return {
-            ...state,
-            shown: action.book
+        case 'SET_BOOK': {
+            return {
+                ...state,
+                shown: action.book
+            }
         }
-    }
-    default:
-        return state
+        case 'SET_MY_BOOKS': {
+            return {
+                ...state,
+                myBooks: action.myBooks
+            }
+        }
+        default:
+            return state
     }
 }
 
