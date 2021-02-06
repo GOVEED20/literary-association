@@ -10,6 +10,7 @@ import CurrencyFormat from 'react-currency-format'
 const Book = () => {
     const dispatch = useDispatch()
     const book = useSelector(state => state.books.shown)
+    const myBook = useSelector(state => state.books.myBooks)
     const [modalShown, setModalShown] = useState(false)
 
     const idMatch = useRouteMatch('/dashboard/books/:id')
@@ -28,9 +29,9 @@ const Book = () => {
         )
     }
 
-    const buttonName = book.price === 0 ? 'Download' : 'Purchase'
+    const buttonName = book.price === 0 || myBook ? 'Download' : 'Purchase'
     const toggleModal = () => setModalShown(!modalShown)
-    const onClick = () => book.price === 0 ? bookService.downloadBook(book.title, null) : toggleModal()
+    const onClick = () => book.price === 0 || myBook ? bookService.downloadBook(book.title, null) : toggleModal()
 
     return (
         <>

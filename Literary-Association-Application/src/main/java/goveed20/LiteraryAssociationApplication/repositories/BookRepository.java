@@ -12,5 +12,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     Optional<Book> findByISBN(String ISBN);
 
-    List<Book> findByIdIn(List<Long> bookIDs);
+    List<Book> findDistinctByTitleIn(List<String> bookTitles);
+
+    List<Book> findByTitleNotIn(List<String> bookTitles);
+
 }

@@ -23,7 +23,4 @@ public class InvoiceItem {
 
     @Column(nullable = false)
     private Double price;
-
-    @Column
-    private Long itemID;
 }

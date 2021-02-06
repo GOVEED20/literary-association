@@ -123,7 +123,7 @@ public class DummyBookService {
                     .build();
 
             InvoiceItem item = InvoiceItem.builder().name(b3.getTitle())
-                    .price(b3.getPrice()).quantity(1).itemID(b3.getId()).build();
+                    .price(b3.getPrice()).quantity(1).build();
             Set<InvoiceItem> items = new HashSet<>();
             items.add(item);
 

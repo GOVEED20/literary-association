@@ -4,10 +4,7 @@ import goveed20.LiteraryAssociationApplication.dtos.BookDTO;
 import goveed20.LiteraryAssociationApplication.dtos.BookListItemDTO;
 import goveed20.LiteraryAssociationApplication.exceptions.BusinessProcessException;
 import goveed20.LiteraryAssociationApplication.exceptions.NotFoundException;
-import goveed20.LiteraryAssociationApplication.model.Book;
-import goveed20.LiteraryAssociationApplication.model.MembershipTransaction;
-import goveed20.LiteraryAssociationApplication.model.Retailer;
-import goveed20.LiteraryAssociationApplication.model.WorkingPaper;
+import goveed20.LiteraryAssociationApplication.model.*;
 import goveed20.LiteraryAssociationApplication.model.enums.TransactionStatus;
 import goveed20.LiteraryAssociationApplication.model.enums.UserRole;
 import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
@@ -35,7 +32,7 @@ import java.util.stream.Collectors;
 @Service
 public class BookService {
 
-    private static final String booksFolder = "Literary-Association-Application/src/main/resources/writings/";
+    private static final String booksFolder = "Literary-Association-Application/src/main/resources/books/";
 
     @Autowired
     private RuntimeService runtimeService;
@@ -50,7 +47,15 @@ public class BookService {
     private RetailerRepository retailerRepository;
 
     public List<BookListItemDTO> getBooks() {
-        return bookRepository.findAll()
+        List<String> bookTitles = new ArrayList<>();
+
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(UserRole.READER)) {
+            goveed20.LiteraryAssociationApplication.model.Reader reader = (goveed20.LiteraryAssociationApplication.model.Reader)
+                    SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            bookTitles = getBookTitles(reader);
+        }
+
+        return bookRepository.findByTitleNotIn(bookTitles)
                 .stream()
                 .map(b -> new BookListItemDTO(b.getId(), b.getTitle(), b.getPublisher(), b.getISBN(), b
                         .getPublicationYear()))
@@ -135,14 +140,9 @@ public class BookService {
             goveed20.LiteraryAssociationApplication.model.Reader reader = (goveed20.LiteraryAssociationApplication.model.Reader)
                     SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-            List<Long> bookIDs = new ArrayList<>();
-            reader.getTransactions().forEach(t -> {
-                if (t.getStatus().equals(TransactionStatus.COMPLETED) && !(t instanceof MembershipTransaction)) {
-                    t.getInvoice().getInvoiceItems().forEach(it -> bookIDs.add(it.getItemID()));
-                }
-            });
+            List<String> bookTitles = getBookTitles(reader);
 
-            return bookRepository.findByIdIn(bookIDs).stream()
+            return bookRepository.findDistinctByTitleIn(bookTitles).stream()
                     .map(b -> new BookListItemDTO(b.getId(), b.getTitle(), b.getPublisher(), b.getISBN(),
                             b.getPublicationYear())).collect(Collectors.toList());
         }
@@ -156,5 +156,19 @@ public class BookService {
                 .stream()
                 .map(Retailer::getName)
                 .collect(Collectors.toList());
+    }
+
+    private List<String> getBookTitles(BaseUser reader) {
+        List<String> bookTitles = new ArrayList<>();
+
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(UserRole.READER)) {
+            reader.getTransactions().forEach(t -> {
+                if (t.getStatus().equals(TransactionStatus.COMPLETED) && !(t instanceof MembershipTransaction)) {
+                    t.getInvoice().getInvoiceItems().forEach(it -> bookTitles.add(it.getName()));
+                }
+            });
+        }
+
+        return bookTitles;
     }
 }
