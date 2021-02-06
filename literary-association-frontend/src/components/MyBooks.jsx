@@ -3,9 +3,11 @@ import { startProcess } from '../services/processService'
 import { Button, Col, Form, Row } from 'react-bootstrap'
 import BookList from './BookList'
 import { useHistory } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 const MyBooks = () => {
     const history = useHistory()
+    const role = useSelector(state => state.user.role)
 
     const startBookPublishingProcess = async () => {
         await startProcess('Book_publishing')
@@ -20,7 +22,7 @@ const MyBooks = () => {
     return (
         <div>
             <BookList myBooks={true}/>
-            <Form.Group as={Row}>
+            {role !== 'READER' ? <><Form.Group as={Row}>
                 <Col sm={3}>
                     <Button variant="primary" type="submit" onClick={startBookPublishingProcess}>Add new book</Button>
                 </Col>
@@ -29,7 +31,7 @@ const MyBooks = () => {
                 <Col sm={3}>
                     <Button variant="primary" type="submit" onClick={startPlagiarismProcess}>Report plagiarism</Button>
                 </Col>
-            </Form.Group>
+            </Form.Group></> : null}
         </div>
     )
 }

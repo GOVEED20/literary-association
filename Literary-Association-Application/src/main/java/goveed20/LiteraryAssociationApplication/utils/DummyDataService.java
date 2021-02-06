@@ -13,8 +13,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
 import java.util.HashSet;
 
 @Service
@@ -74,11 +72,11 @@ public class DummyDataService {
         if (baseUserRepository.findAllByRole(UserRole.READER).isEmpty()) {
             Reader reader = Reader.readerBuilder()
                     .role(UserRole.READER)
-                    .username("reader1")
-                    .password(passwordEncoder.encode("password1"))
-                    .name("reader1")
-                    .surname("reader1")
-                    .email("reader@reader.com")
+                    .username("reader2")
+                    .password(passwordEncoder.encode("password2"))
+                    .name("reader2")
+                    .surname("reader2")
+                    .email("reader2@maildrop.cc")
                     .comments(new HashSet<>())
                     .transactions(new HashSet<>())
                     .genres(new HashSet<>())
@@ -88,11 +86,7 @@ public class DummyDataService {
                     .build();
 
             baseUserRepository.save(reader);
-            System.out.println("Create dummy reader 'reader1' with password 'password1'!");
-        }
-
-        if (genreRepository.findAll().isEmpty()) {
-            Arrays.stream(GenreEnum.values()).forEach(e -> genreRepository.save(new Genre(null, e)));
+            System.out.println("Create dummy reader 'reader2' with password 'password2'!");
         }
 
         Writer writer = Writer.writerBuilder()

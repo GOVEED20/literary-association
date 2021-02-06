@@ -46,7 +46,7 @@ public class BookController {
     }
 
     @GetMapping("/my-books")
-    @PreAuthorize("hasAuthority('WRITER')")
+    @PreAuthorize("hasAuthority('WRITER') or hasAuthority('READER')")
     public ResponseEntity<Object> getMyBooks() {
         try {
             return new ResponseEntity<>(bookService.getMyBooks(), HttpStatus.OK);
