@@ -192,6 +192,7 @@ public class TransactionService {
                 .name(book.getTitle())
                 .quantity(invoiceItemDTO.getQuantity())
                 .price(book.getPrice())
+                .itemID(book.getId())
                 .build();
     }
 }
