@@ -56,10 +56,12 @@ const Dashboard = () => {
         <div>
             <Navbar role={role}/>
             <GuardProvider guards={[requireRole]}>
-                <GuardedRoute path='/dashboard/tasks/:id'>
+                <GuardedRoute path='/dashboard/tasks/:id'
+                              meta={{ roles: ['WRITER', 'READER', 'BOARD_MEMBER', 'EDITOR', 'LECTOR'] }}>
                     <Task/>
                 </GuardedRoute>
-                <GuardedRoute exact path='/dashboard/tasks'>
+                <GuardedRoute exact path='/dashboard/tasks'
+                              meta={{ roles: ['WRITER', 'READER', 'BOARD_MEMBER', 'EDITOR', 'LECTOR'] }}>
                     <TaskList username={username}/>
                 </GuardedRoute>
                 <GuardedRoute path='/dashboard/books/:id' meta={{ roles: ['READER'] }}>
@@ -74,11 +76,12 @@ const Dashboard = () => {
                 <GuardedRoute path='/dashboard/register-retailer' meta={{ roles: ['BOARD_MEMBER'] }}>
                     <RetailerRegister/>
                 </GuardedRoute>
-                <GuardedRoute exact path='/dashboard'>
-                    <Redirect to='/dashboard/tasks'/>
-                </GuardedRoute>
-                <GuardedRoute exact path='/dashboard/my-books'>
+                <GuardedRoute path='/dashboard/my-books' meta={{ roles: ['WRITER', 'READER'] }}>
                     <MyBooks/>
+                </GuardedRoute>
+                <GuardedRoute exact path='/dashboard'
+                              meta={{ roles: ['WRITER', 'READER', 'BOARD_MEMBER', 'EDITOR', 'LECTOR'] }}>
+                    <Redirect to='/dashboard/tasks'/>
                 </GuardedRoute>
             </GuardProvider>
         </div>
