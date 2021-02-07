@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from "react";
-import {getAvailableServices, getPaymentServiceRegistrationFields} from "../services/paymentService";
-import ServiceForm from "./ServiceForm"
-import {Button, Form as BootstrapForm} from "react-bootstrap";
-import {logoutUser, registerRetailer} from "../services/retailerService";
+import React, { useEffect, useState } from 'react'
+import { getAvailableServices, getPaymentServiceRegistrationFields } from '../services/paymentService'
+import ServiceForm from './ServiceForm'
+import { Button, Form as BootstrapForm } from 'react-bootstrap'
+import { logoutUser, registerRetailer } from '../services/retailerService'
 import {
     emailFieldStyle,
     formStyle,
@@ -12,9 +12,9 @@ import {
     mainDivStyle,
     serviceDivStyle,
     submitButtonStyle
-} from "../css/registerStyles";
-import Toaster from "./Toaster";
-import {useHistory} from "react-router-dom";
+} from '../css/registerStyles'
+import Toaster from './Toaster'
+import { useHistory } from 'react-router-dom'
 
 const Register = () => {
 
@@ -25,8 +25,8 @@ const Register = () => {
     const [checkServices, setCheckServices] = useState({})
     const [formFields, setFormFields] = useState(null)
     const [encryptionFields, setEncryptionFields] = useState({})
-    const [retailerName, setRetailerName] = useState("")
-    const [retailerEmail, setRetailerEmail] = useState("")
+    const [retailerName, setRetailerName] = useState('')
+    const [retailerEmail, setRetailerEmail] = useState('')
     const [toastData, setToastData] = useState({
         show: false,
         message: '',
@@ -38,23 +38,23 @@ const Register = () => {
         const getPaymentServices = async () => {
             setAvailableServices(await getAvailableServices())
         }
-        getPaymentServices().then();
+        getPaymentServices().then()
     }, [])
 
     useEffect(() => {
         const createState = () => {
-            let newState = {...state};
-            let newCheckServices = {...checkServices};
-            let newFormFields = {...formFields};
-            let newEncryptionFields = {...encryptionFields}
+            let newState = { ...state }
+            let newCheckServices = { ...checkServices }
+            let newFormFields = { ...formFields }
+            let newEncryptionFields = { ...encryptionFields }
             availableServices.forEach(service => {
-                newState = {...newState}
-                newState[service] = null;
-                newCheckServices = {...newCheckServices}
-                newCheckServices[service] = false;
-                newFormFields = {...newFormFields}
-                formFields[service] = null;
-                newEncryptionFields[service] = {...newEncryptionFields}
+                newState = { ...newState }
+                newState[service] = null
+                newCheckServices = { ...newCheckServices }
+                newCheckServices[service] = false
+                newFormFields = { ...newFormFields }
+                formFields[service] = null
+                newEncryptionFields[service] = { ...newEncryptionFields }
                 newEncryptionFields[service] = []
             })
             setState(newState)
@@ -63,8 +63,8 @@ const Register = () => {
             setEncryptionFields(newEncryptionFields)
         }
 
-        createState();
-
+        createState()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [availableServices])
 
     const createServiceFormState = (formFields) => {
@@ -72,20 +72,20 @@ const Register = () => {
             const field = currentValue.name
             let value = null
             switch (currentValue.validationConstraints['type']) {
-                case "select":
-                    if (currentValue.validationConstraints['multiple']) {
-                        value = []
-                    } else {
-                        value = ""
-                    }
-                    break
-                case "checkbox":
-                    value = false
-                    break
-                default:
-                    value = ""
+            case 'select':
+                if (currentValue.validationConstraints['multiple']) {
+                    value = []
+                } else {
+                    value = ''
+                }
+                break
+            case 'checkbox':
+                value = false
+                break
+            default:
+                value = ''
             }
-            const newAccumulator = {...accumulator}
+            const newAccumulator = { ...accumulator }
             newAccumulator[field] = value
             return newAccumulator
         }
@@ -93,11 +93,11 @@ const Register = () => {
     }
 
     const changeState = (e, serviceName) => {
-        const newState = {...state}
+        const newState = { ...state }
         const fieldName = e.target.id
         const fieldValue = e.target.value
         if (Array.isArray(newState[serviceName][fieldName])) {
-            if (fieldValue === "") {
+            if (fieldValue === '') {
                 return
             }
 
@@ -106,7 +106,7 @@ const Register = () => {
             } else {
                 newState[serviceName][fieldName] = [...newState[serviceName][fieldName], fieldValue]
             }
-        } else if (typeof newState[serviceName][fieldName] === "boolean") {
+        } else if (typeof newState[serviceName][fieldName] === 'boolean') {
             newState[serviceName][fieldName] = !newState[serviceName][fieldName]
         } else {
             newState[serviceName][fieldName] = fieldValue
@@ -115,13 +115,13 @@ const Register = () => {
     }
 
     const checkChanged = (e) => {
-        const serviceName = e.target.id;
-        const newCheckServices = {...checkServices}
+        const serviceName = e.target.id
+        const newCheckServices = { ...checkServices }
         newCheckServices[serviceName] = e.target.checked
         setCheckServices(newCheckServices)
-        const newFormFields = {...formFields}
-        const newState = {...state}
-        const newEncryptionFields = {...encryptionFields}
+        const newFormFields = { ...formFields }
+        const newState = { ...state }
+        const newEncryptionFields = { ...encryptionFields }
         getPaymentServiceRegistrationFields(serviceName).then(res => {
             newFormFields[serviceName] = res
             setFormFields(newFormFields)
@@ -150,7 +150,7 @@ const Register = () => {
 
     const closeToaster = (message, type) => {
         setTimeout(() => {
-            setToastData({show: false, message: message, type: type, color: ''})
+            setToastData({ show: false, message: message, type: type, color: '' })
         }, 3000)
     }
 
@@ -180,11 +180,11 @@ const Register = () => {
         retailerData['paymentServices'] = paymentServiceDataArray
         registerRetailer(retailerData)
             .then(res => {
-                setToastData({show: true, message: res, type: 'success', color: 'green'})
+                setToastData({ show: true, message: res, type: 'success', color: 'green' })
                 closeToaster(res, 'success')
             })
             .catch(error => {
-                setToastData({show: true, message: error.response.data, type: 'error', color: 'red'})
+                setToastData({ show: true, message: error.response.data, type: 'error', color: 'red' })
                 closeToaster(error.response.data, 'error')
             })
     }
@@ -201,11 +201,11 @@ const Register = () => {
         history.push('/login')
     }
 
-    document.body.style.backgroundColor = "#010d3b"
+    document.body.style.backgroundColor = '#010d3b'
 
     return (
         <div>
-            <div className={"container"} style={mainDivStyle}>
+            <div className={'container'} style={mainDivStyle}>
                 <h1 style={h1Style}>Retailer registration</h1>
                 <BootstrapForm onSubmit={(e) => onSubmit(e)} style={formStyle}>
                     <BootstrapForm.Label>Retailer name: </BootstrapForm.Label>
@@ -240,4 +240,4 @@ const Register = () => {
     )
 }
 
-export default Register;
+export default Register
