@@ -44,7 +44,7 @@ public class RetailerService {
 
         retailerRepository.save(retailer);
         emailService.sendEmail(retailer.getEmail(), "Registration successful",
-                String.format("Dear %s, \n You registration on payment concentrator system was successful. \n" +
+                String.format("Dear %s, \n Your registration on payment concentrator system was successful. \n" +
                         "Your registration token is %s. \n Have a nice day!", retailer.getName(), registrationToken));
         return "Registration was successful";
     }

@@ -3,8 +3,13 @@ import { startProcess } from '../services/processService'
 import { getRegistrationFields, sendRegistrationData } from '../services/registrationService'
 import Form from './Form'
 import { Spinner } from 'react-bootstrap'
+import { setNotification } from '../reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
 
 const ReaderRegistration = () => {
+
+    const dispatch = useDispatch()
+
     const [processId, setProcessId] = useState(null)
     const [formFields, setFormFields] = useState(null)
 
@@ -37,7 +42,7 @@ const ReaderRegistration = () => {
             await sendRegistrationData(processId, state)
             window.localStorage.removeItem('reader_registration_process')
         } catch (e) {
-            console.log(e)// add error handling
+            dispatch(setNotification(e.response.data, 'error', 3500))
         }
     }
 

@@ -55,8 +55,6 @@ const Navbar = ({ role }) => {
                 <NavbarLogoLink imgPath='/logo.svg' url='/dashboard/tasks' alt='Literary association logo'/>
                 <Nav className="mr-auto">
                     <NavbarLink text='Tasks' url='/dashboard/tasks'/>
-                </Nav>
-                <Nav className="mr-auto">
                     <NavbarLink text='Register retailer' url='/dashboard/register-retailer'/>
                 </Nav>
                 <Nav>

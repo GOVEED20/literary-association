@@ -20,6 +20,7 @@ $(document).ready(function(){
                 "cardholder": cardholder,
                 "expiryDate": expiryDate
             },
+            dataType: "text",
             success: function (response) {
                 toastr["success"](response);
             },

@@ -3,8 +3,14 @@ import { Button, Form as BootstrapForm } from 'react-bootstrap'
 import { getAvailableServices, getPaymentServiceRegistrationFields } from '../services/retailerService'
 import PaymentServiceForm from './PaymentServiceForm'
 import { registerRetailer } from '../services/retailerService'
+import { setNotification } from '../reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 
 const RetailerRegister = () => {
+
+    const dispatch = useDispatch()
+    const history = useHistory()
 
     const [retailerName, setRetailerName] = useState('')
     const [retailerEmail, setRetailerEmail] = useState('')
@@ -162,10 +168,11 @@ const RetailerRegister = () => {
         retailerData['paymentServices'] = paymentServiceDataArray
         registerRetailer(retailerData)
             .then(res => {
-                console.log(res) //TODO: Add toaster on both success and failure cases
+                dispatch(setNotification(res, 'success', 3500))
+                history.push('/dashboard/tasks')
             })
             .catch(error => {
-                console.log(error.response.data)
+                dispatch(setNotification(error.response.data, 'error', 3500))
             })
     }
 

@@ -4,10 +4,15 @@ import goveed20.LiteraryAssociationApplication.dtos.RetailerData;
 import goveed20.LiteraryAssociationApplication.exceptions.BadRequestException;
 import goveed20.LiteraryAssociationApplication.exceptions.PaymentException;
 import goveed20.LiteraryAssociationApplication.model.Retailer;
+import goveed20.LiteraryAssociationApplication.repositories.BookRepository;
 import goveed20.LiteraryAssociationApplication.repositories.RetailerRepository;
 import goveed20.LiteraryAssociationApplication.utils.PaymentUtilsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 
 @Service
 public class RetailerService {
@@ -17,6 +22,9 @@ public class RetailerService {
 
     @Autowired
     private RetailerRepository retailerRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
 
     public Object getAvailableServices() throws PaymentException {
         return paymentUtilsService.getAvailableServices(null);
@@ -57,6 +65,7 @@ public class RetailerService {
             throw new BadRequestException(msg.substring(msg.indexOf("[") + 1, msg.lastIndexOf("]")));
         }
 
+        retailer.setBooks(new HashSet<>(bookRepository.findAll()));
         retailerRepository.save(retailer);
 
         return "Retailer registered successfully";

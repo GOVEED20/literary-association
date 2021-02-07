@@ -23,7 +23,7 @@ spring:
           auth: true
           connectiontimeout: 5000
           starttls:
-            enable: false
+            enable: true
             required: false
           timeout: 5000
           writetimeout: 5000

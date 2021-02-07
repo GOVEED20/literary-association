@@ -3,8 +3,13 @@ import { startProcess } from '../services/processService'
 import { getRegistrationFields, sendRegistrationData } from '../services/registrationService'
 import { Spinner } from 'react-bootstrap'
 import Form from './Form'
+import { setNotification } from '../reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
 
 const WriterRegistration = () => {
+
+    const dispatch = useDispatch()
+
     const [processId, setProcessId] = useState(null)
     const [formFields, setFormFields] = useState(null)
 
@@ -38,7 +43,7 @@ const WriterRegistration = () => {
             window.localStorage.removeItem('writer_registration_process')
             // eslint-disable-next-line no-empty
         } catch (e) {
-            console.log(e)
+            dispatch(setNotification(e.response.data, 'error', 3500))
         }
     }
 
