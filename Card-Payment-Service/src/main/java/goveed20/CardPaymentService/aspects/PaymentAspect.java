@@ -6,12 +6,14 @@ import goveed20.PaymentConcentrator.payment.concentrator.plugin.AsyncLogging;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.LogDTO;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.TransactionStatus;
+import lombok.SneakyThrows;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -42,7 +44,7 @@ public class PaymentAspect {
             e.printStackTrace();
         }
 
-        asyncLogging.callLoggingFeignClient(logDTO);
+        sendLog(logDTO);
     }
 
     @AfterReturning("execution(public * goveed20.CardPaymentService.services.PaymentService.*(..)) || " +
@@ -61,7 +63,7 @@ public class PaymentAspect {
             e.printStackTrace();
         }
 
-        asyncLogging.callLoggingFeignClient(logDTO);
+        sendLog(logDTO);
     }
 
     @AfterThrowing(pointcut = "execution(public * goveed20.CardPaymentService.services.PaymentService.*(..)) || " +
@@ -81,7 +83,7 @@ public class PaymentAspect {
             e.printStackTrace();
         }
 
-        asyncLogging.callLoggingFeignClient(logDTO);
+        sendLog(logDTO);
     }
 
     private LogDTO generateLog(String className, String methodName, String logLevel, String message) throws ParseException {
@@ -119,12 +121,10 @@ public class PaymentAspect {
                                 " successfully initialized";
                 break;
             case "completePayment":
-                Long bankTransactionId = (Long) arguments[0];
                 message = isBefore ?
-                        "Complete bank transaction with id " + bankTransactionId
+                        "Completing bank transaction started"
                         :
-                        "Bank transaction with id " + bankTransactionId +
-                                " completed";
+                        "Bank transaction completed";
                 break;
             case "getPaymentServiceRegistrationFields":
                 message = isBefore ?
@@ -233,6 +233,11 @@ public class PaymentAspect {
         }
 
         return message;
+    }
+
+    @SneakyThrows
+    private void sendLog(LogDTO logDTO) {
+        asyncLogging.callLoggingFeignClient(logDTO);
     }
 
 }

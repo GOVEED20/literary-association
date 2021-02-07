@@ -22,6 +22,6 @@ public class Retailer {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToMany
+    @ManyToMany
     private Set<Book> books;
 }

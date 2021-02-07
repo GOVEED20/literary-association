@@ -67,6 +67,7 @@ public class PaymentService {
                 .merchantOrderID(payload.getPaymentFields().get("MERCHANT_ORDER_ID"))
                 .merchantTimestamp(payload.getPaymentFields().get("MERCHANT_TIMESTAMP"))
                 .amount(payload.getAmount())
+                .completed(false)
                 .build();
 
         transactionRepository.save(transaction);

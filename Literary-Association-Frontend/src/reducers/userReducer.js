@@ -1,5 +1,6 @@
 import loginService from '../services/loginService'
 import jwt_decode from 'jwt-decode'
+import { setNotification } from './notificationReducer'
 
 const local_login = (token, role, subject) => {
     window.localStorage.setItem('token', JSON.stringify(token))
@@ -30,7 +31,14 @@ export const restore_login = () => {
 
 export const login = (username, password) => {
     return async dispatch => {
-        const token = await loginService.login(username, password)
+        let token = ''
+        try {
+           token = await loginService.login(username, password)
+        } catch(e) {
+            dispatch(setNotification(e.response.data, 'error', 3500))
+            return
+        }
+
         const role = jwt_decode(token).role[0]
         const subject = jwt_decode(token).sub
 

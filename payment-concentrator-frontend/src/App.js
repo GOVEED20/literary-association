@@ -28,9 +28,6 @@ const App = () => {
                     <GuardedRoute path="/register-retailer" meta={{ roles: ['ADMIN'] }}>
                         <Register/>
                     </GuardedRoute>
-                    <GuardedRoute exact path='*'>
-                        <Redirect to='/login'/>
-                    </GuardedRoute>
                 </GuardProvider>
             </Switch>
         </div>

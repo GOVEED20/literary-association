@@ -1,6 +1,5 @@
 package goveed20.CardPaymentService.controllers;
 
-import goveed20.CardPaymentService.exceptions.BadRequestException;
 import goveed20.CardPaymentService.services.RetailerService;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.PluginRetailerController;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.RegistrationFieldForm;

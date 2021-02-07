@@ -87,7 +87,7 @@ public class TransactionService {
 
         transaction = transactionRepository.save(transaction);
 
-        BaseUser user = baseUserRepository.findByEmail(invoiceDTO.getUser())
+        BaseUser user = baseUserRepository.findByUsername(invoiceDTO.getUser())
                 .orElseThrow(() -> new PaymentException(String.format("User with username '%s' not found", invoiceDTO.getUser())));
 
         user.getTransactions().add(transaction);
