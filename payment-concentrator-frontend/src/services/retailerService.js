@@ -1,4 +1,6 @@
-import axios from 'axios';
+import axios from 'axios'
+
+const GATEWAY_BASE_URL = process.env.REACT_APP_GATEWAY_BASE_URL
 
 const local_logout = () => {
     window.localStorage.removeItem('token')
@@ -7,9 +9,9 @@ const local_logout = () => {
 }
 
 export const registerRetailer = async (retailerData) => {
-    const formData = new FormData();
-    formData.append("retailerData", new Blob([JSON.stringify(retailerData)], {type: "application/json"}));
-    const response = await axios.post(`http://localhost:8080/api/register`, formData, {
+    const formData = new FormData()
+    formData.append('retailerData', new Blob([JSON.stringify(retailerData)], { type: 'application/json' }))
+    const response = await axios.post(`${GATEWAY_BASE_URL}/register`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
@@ -18,6 +20,6 @@ export const registerRetailer = async (retailerData) => {
 }
 
 export const logoutUser = async () => {
-    //await axios.get(`http://localhost:8080/logout`)
+    await axios.get(`${GATEWAY_BASE_URL}/logout`)
     local_logout()
 }
