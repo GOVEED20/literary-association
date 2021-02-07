@@ -51,12 +51,12 @@ public class CheckTransactionsService {
                 cal.setTime(mt.getCreatedOn());
                 cal.add(Calendar.WEEK_OF_MONTH, 2);
 
-                return cal.getTime().compareTo(new Date()) > 0;
+                return new Date().compareTo(cal.getTime()) > 0;
             } else if (mt.getStatus().equals(TransactionStatus.INITIALIZED)) {
                 cal.setTime(mt.getInitializedOn());
                 cal.add(Calendar.MINUTE, 20);
 
-                return cal.getTime().compareTo(new Date()) > 0;
+                return new Date().compareTo(cal.getTime()) > 0;
             }
             return false;
         })) {
