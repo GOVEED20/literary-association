@@ -15,19 +15,21 @@
         <form id="bank">
             <h3 th:text="${bankName} + ' bank form'"/>
             <fieldset>
-                <input placeholder="PAN (XXXX-XXXX-XXXX-XXXX)" id="pan" name="pan" type="text" tabindex="1"
-                       pattern="([0-9]{4}-){3}[0-9]{4}" minlength="19" maxlength="19"
+                <input placeholder="First 12 digits (XXXX-XXXX-XXXX)" id="pan12" name="pan12" type="text" tabindex="1"
+                       pattern="([0-9]{4}-){2}[0-9]{4}" minlength="14" maxlength="14"
                        required autofocus>
+                <input placeholder="Last 4 digits (XXXX)" id="pan4" name="pan4" type="password" tabindex="2"
+                       pattern="[0-9]{4}" minlength="4" maxlength="4" required autofocus>
             </fieldset>
             <fieldset>
-                <input placeholder="Security code" id="secCode" name="secCode" type="password" tabindex="2"
+                <input placeholder="Security code" id="secCode" name="secCode" type="password" tabindex="3"
                        required minlength="3" maxlength="3">
             </fieldset>
             <fieldset>
-                <input placeholder="Cardholder" id="cardholder" name="cardholder" type="text" tabindex="3" required>
+                <input placeholder="Cardholder" id="cardholder" name="cardholder" type="text" tabindex="4" required>
             </fieldset>
             <fieldset>
-                <input placeholder="Expiry date (MM/yyyy)" id="expiryDate" name="expiryDate" type="text" tabindex="4"
+                <input placeholder="Expiry date (MM/yyyy)" id="expiryDate" name="expiryDate" type="text" tabindex="5"
                        required pattern="((0[1-9])|(1[0-2]))/[0-9]{4}">
             </fieldset>
             <input type="hidden" id="bankName" th:value="${bankName}"/>

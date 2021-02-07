@@ -4,7 +4,7 @@ $(document).ready(function(){
         let bankName = $("#bankName").val();
         let baseURL = $("#baseURL").val();
         let transactionID = $("#transactionID").val();
-        let pan = $("#pan").val();
+        let pan = $("#pan12").val() + "-" + $("#pan4").val();
         let secCode = $("#secCode").val();
         let cardholder = $("#cardholder").val();
         let expiryDate = $("#expiryDate").val();
