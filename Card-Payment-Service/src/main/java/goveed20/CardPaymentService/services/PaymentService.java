@@ -94,6 +94,11 @@ public class PaymentService {
 
         Transaction transaction = transactionRepository.findByTransactionID(transactionID.toString())
                 .orElseThrow(() -> new BadRequestException("Transaction does not exist"));
+
+        if (transaction.isCompleted()) {
+            throw new BadRequestException("Pending transaction with given ID does not exist");
+        }
+
         Bank bank = bankRepository.findByName(bankName[0])
                 .orElseThrow(() -> new BadRequestException("Bank does not exist"));
 
@@ -110,6 +115,7 @@ public class PaymentService {
                 .completePaymentInMerchantsBank(transactionID, transaction, bank, pan, securityCode,
                         cardholder, expiryDate, customersBankResponse);
 
+        transaction.setCompleted(true);
         transactionRepository.save(transaction);
 
         return "Transaction is completed successfully";
