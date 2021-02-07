@@ -24,7 +24,9 @@ public class PaymentAspect {
     private AsyncLogging asyncLogging;
 
     @Before("execution(public * goveed20.PaypalPaymentService.services.PaymentService.*(..)) || " +
-            "execution(* goveed20.PaypalPaymentService.controllers.*.*(..))")
+            "execution(* goveed20.PaypalPaymentService.controllers.*.*(..)) || " +
+            "execution(public * goveed20.PaypalPaymentService.services.RetailerService.*(..)) ||" +
+            "execution(public * goveed20.PaypalPaymentService.services.PaypalSubscriptionsService.*(..))")
     public void paymentBefore(JoinPoint joinPoint) {
         LogDTO logDTO = null;
         Object[] arguments = joinPoint.getArgs();
@@ -40,7 +42,9 @@ public class PaymentAspect {
         asyncLogging.callLoggingFeignClient(logDTO);
     }
 
-    @AfterReturning("execution(public * goveed20.PaypalPaymentService.services.PaymentService.*(..))")
+    @AfterReturning("execution(public * goveed20.PaypalPaymentService.services.PaymentService.*(..)) || " +
+            "execution(public * goveed20.PaypalPaymentService.services.RetailerService.*(..)) ||" +
+            "execution(public * goveed20.PaypalPaymentService.services.PaypalSubscriptionsService.*(..))")
     public void paymentServiceAfterSuccess(JoinPoint joinPoint) {
         LogDTO logDTO = null;
         Object[] arguments = joinPoint.getArgs();
@@ -57,7 +61,9 @@ public class PaymentAspect {
     }
 
     @AfterThrowing(pointcut = "execution(public * goveed20.PaypalPaymentService.services.PaymentService.*(..)) || " +
-            "execution(* goveed20.PaypalPaymentService.controllers.*.*(..))", throwing = "error")
+            "execution(* goveed20.PaypalPaymentService.controllers.*.*(..)) ||" +
+            "execution(public * goveed20.PaypalPaymentService.services.RetailerService.*(..)) ||" +
+            "execution(public * goveed20.PaypalPaymentService.services.PaypalSubscriptionsService.*(..))", throwing = "error")
     public void paymentServiceAfterError(JoinPoint joinPoint, Throwable error) {
 
         LogDTO logDTO = null;
@@ -113,6 +119,18 @@ public class PaymentAspect {
                         :
                         "Successfully completed paypal transaction";
                 break;
+            case "getPaymentServiceRegistrationFields":
+                message = isBefore ?
+                        "Starting getting registration fields for paypal service "
+                        :
+                        "Successfully got registration fields for paypal service";
+                break;
+            case "checkPaymentServiceFields":
+                message = isBefore ?
+                        "Starting checking registration fields on paypal service"
+                        :
+                        "Successfully checked registration fields on paypal service";
+                break;
             default:
                 message = "";
         }
@@ -149,6 +167,61 @@ public class PaymentAspect {
                         :
                         "Data of paypal transaction with id " + transactionId + " and status " + status +
                                 " sent to payment concentrator";
+                break;
+            case "getPaymentServiceRegistrationFields":
+                message = isBefore ?
+                        "Started getting registration fields on paypal service"
+                        :
+                        "Paypal service registration fields successfully supplied";
+                break;
+            case "createPayment":
+                InitializationPaymentPayload payload = (InitializationPaymentPayload) arguments[0];
+                message = isBefore ?
+                        "Started creating payment with transaction id " + payload.getTransactionId() +
+                                " and amount " + payload.getAmount()
+                        :
+                        "Payment with transaction id " + payload.getTransactionId() + " and amount " +
+                                payload.getAmount() + " successfully created";
+                break;
+            case "createSubscription":
+                message = isBefore ?
+                        "Started creating subscription payment"
+                        :
+                        "Subscription payment successfully created";
+                break;
+            case "buildCallbackUrl":
+                Long transaction = (Long) arguments[0];
+                message = isBefore ?
+                        "Started building callback url for transaction with id " + transaction
+                        :
+                        "Callback url for transaction with id " + transaction + " successfully built";
+                break;
+            case "checkPaymentServiceFields":
+                message = isBefore ?
+                        "Checking registration fields on paypal service"
+                        :
+                        "Paypal service registration fields successfully checked";
+                break;
+            case "createProduct":
+                String productName = (String) arguments[0];
+                message = isBefore ?
+                        "Started creating product with name " + productName
+                        :
+                        "Product with name " + productName + " successfully created";
+                break;
+            case "createPlan":
+                String productId = (String) arguments[0];
+                message = isBefore ?
+                        "Started creating plan for product with id " + productId
+                        :
+                        "Plan for product with id " + productId + " successfully created";
+                break;
+            case "isSubscriptionActive":
+                String subscriptionId = (String) arguments[0];
+                message = isBefore ?
+                        "Started checking if subscription with id " + subscriptionId + " is active"
+                        :
+                        "Check if subscription with id " + subscriptionId + " successfully finished";
                 break;
             default:
                 message = "";

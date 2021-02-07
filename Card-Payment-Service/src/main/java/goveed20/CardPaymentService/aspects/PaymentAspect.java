@@ -1,5 +1,6 @@
 package goveed20.CardPaymentService.aspects;
 
+import goveed20.CardPaymentService.model.Bank;
 import goveed20.CardPaymentService.model.Transaction;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.AsyncLogging;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.InitializationPaymentPayload;
@@ -125,6 +126,12 @@ public class PaymentAspect {
                         "Bank transaction with id " + bankTransactionId +
                                 " completed";
                 break;
+            case "getPaymentServiceRegistrationFields":
+                message = isBefore ?
+                        "Started getting card payment service registration fields"
+                        :
+                        "Card payment service registration fields successfully supplied";
+                break;
             case "sendTransactionResponse":
                 Long transactionId = (Long) arguments[0];
                 TransactionStatus status = (TransactionStatus) arguments[1];
@@ -144,6 +151,15 @@ public class PaymentAspect {
                         "Data of bank transaction with id " + transaction.getTransactionID() +
                                 " is processed on PCC";
                 break;
+            case "checkClientsAccount":
+                Bank bank = (Bank) arguments[0];
+                String cardholder = (String) arguments[3];
+                message = isBefore ?
+                        "Started checking account of client " + cardholder +
+                                " in bank " + bank.getName()
+                        :
+                        "Successfully checked account of client " + cardholder + " in bank " + bank.getName();
+                break;
             case "completePaymentInCustomersBank":
                 Transaction transactionCustomer = (Transaction) arguments[0];
                 message = isBefore ?
@@ -160,6 +176,12 @@ public class PaymentAspect {
                         :
                         "Bank transaction with id " + merchantTransactionId +
                                 " completed in merchant's bank";
+                break;
+            case "checkPaymentServiceFields":
+                message = isBefore ?
+                        "Started checking registration fields data"
+                        :
+                        "Registration fields data successfully checked";
                 break;
             default:
                 message = "";
@@ -187,6 +209,24 @@ public class PaymentAspect {
                         "Starting completing bank transaction"
                         :
                         "Successfully completed bank transaction";
+                break;
+            case "getPaymentServiceRegistrationFields":
+                message = isBefore ?
+                        "Starting getting card payment service registration fields"
+                        :
+                        "Successfully supplied card payment service registration fields";
+                break;
+            case "checkPaymentServiceFields":
+                message = isBefore ?
+                        "Starting checking card payment service registration fields data"
+                        :
+                        "Successfully checked card payment service registration fields data";
+                break;
+            case "getBankPage":
+                message = isBefore ?
+                        "Starting getting bank page"
+                        :
+                        "Successfully got bank page";
                 break;
             default:
                 message = "";

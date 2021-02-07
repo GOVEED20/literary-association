@@ -42,7 +42,8 @@ public class LoggingAspect {
         asyncLogging.callLoggingFeignClient(logDTO);
     }
 
-    @AfterReturning("execution(public * goveed20.BitcoinPaymentService.services.PaymentService.*(..))")
+    @AfterReturning("execution(public * goveed20.BitcoinPaymentService.services.PaymentService.*(..)) ||" +
+                    "execution(public * goveed20.BitcoinPaymentService.services.RetailerService.*(..))")
     public void paymentServiceAfterSuccess(JoinPoint joinPoint) {
         LogDTO logDTO = null;
         Object[] arguments = joinPoint.getArgs();
@@ -129,6 +130,12 @@ public class LoggingAspect {
                         "Data of bitcoin transaction with id " + transactionId + " and status " + status +
                                 " sent to payment concentrator";
                 break;
+            case "getPaymentServiceRegistrationFields":
+            message = isBefore ?
+                    "Started getting registration fields on bitcoin service"
+                    :
+                    "Bitcoin service registration fields successfully supplied";
+            break;
             case "checkPaymentServiceFields":
                 message = isBefore ?
                         "Checking registration fields on bitcoin service"
