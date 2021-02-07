@@ -47,5 +47,5 @@ public class Transaction {
     private String issuerTimestamp;
 
     @Column
-    private boolean completed;
+    private Boolean completed;
 }

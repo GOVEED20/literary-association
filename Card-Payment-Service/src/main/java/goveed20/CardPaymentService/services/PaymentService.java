@@ -95,7 +95,7 @@ public class PaymentService {
         Transaction transaction = transactionRepository.findByTransactionID(transactionID.toString())
                 .orElseThrow(() -> new BadRequestException("Transaction does not exist"));
 
-        if (transaction.isCompleted()) {
+        if (transaction.getCompleted()) {
             throw new BadRequestException("Pending transaction with given ID does not exist");
         }
 
