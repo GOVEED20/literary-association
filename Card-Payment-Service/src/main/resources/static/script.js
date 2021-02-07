@@ -22,7 +22,6 @@ $(document).ready(function(){
             },
             dataType: "text",
             success: function (response) {
-                console.log(response)
                 toastr["success"](response);
             },
             error: function (response) {
