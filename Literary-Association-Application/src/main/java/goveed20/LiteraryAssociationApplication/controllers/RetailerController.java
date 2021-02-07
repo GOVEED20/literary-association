@@ -27,6 +27,7 @@ public class RetailerController {
         }
     }
 
+    @PreAuthorize("hasAuthority('BOARD_MEMBER')")
     @GetMapping("/payment-services")
     public ResponseEntity<?> getAvailableServices() {
         try {
@@ -36,6 +37,7 @@ public class RetailerController {
         }
     }
 
+    @PreAuthorize("hasAuthority('BOARD_MEMBER')")
     @GetMapping("/{serviceName}/registration-fields")
     public ResponseEntity<?> getServiceRegistrationFields(@PathVariable String serviceName) {
         try {
@@ -45,6 +47,7 @@ public class RetailerController {
         }
     }
 
+    @PreAuthorize("hasAuthority('BOARD_MEMBER')")
     @PostMapping
     public ResponseEntity<?> registerRetailer(@RequestBody RetailerData retailerData) {
         try {

@@ -4,7 +4,6 @@ import WriterRegistration from './components/WriterRegistration'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import Login from './components/Login'
 import Dashboard from './components/Dashboard'
-import RetailerRegister from './components/RetailerRegister'
 import Logout from './components/Logout'
 import axios from 'axios'
 import store from './store'
@@ -41,9 +40,6 @@ const App = () => {
                 </Route>
                 <Route path='/writer-registration'>
                     <WriterRegistration/>
-                </Route>
-                <Route path='/register-retailer'>
-                    <RetailerRegister/>
                 </Route>
                 <Route path='/dashboard'>
                     <Dashboard/>

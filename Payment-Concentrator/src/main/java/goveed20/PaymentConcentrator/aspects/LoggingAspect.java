@@ -1,6 +1,7 @@
 package goveed20.PaymentConcentrator.aspects;
 
 import goveed20.PaymentConcentrator.dtos.InitializePaymentRequest;
+import goveed20.PaymentConcentrator.dtos.LoginData;
 import goveed20.PaymentConcentrator.dtos.RetailerData;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.AsyncLogging;
 import goveed20.PaymentConcentrator.payment.concentrator.plugin.LogDTO;
@@ -23,7 +24,8 @@ public class LoggingAspect {
 
     @Before("execution(public * goveed20.PaymentConcentrator.services.PaymentService.*(..)) || " +
             "execution(* goveed20.PaymentConcentrator.controllers.*.*(..)) ||" +
-            "execution(public * goveed20.PaymentConcentrator.services.RetailerService.*(..))")
+            "execution(public * goveed20.PaymentConcentrator.services.RetailerService.*(..)) ||" +
+            "execution(public * goveed20.PaymentConcentrator.services.LoginService.*(..))")
     public void paymentBefore(JoinPoint joinPoint) {
         LogDTO logDTO = null;
         Object[] arguments = joinPoint.getArgs();
@@ -40,7 +42,8 @@ public class LoggingAspect {
     }
 
     @AfterReturning("execution(public * goveed20.PaymentConcentrator.services.PaymentService.*(..)) ||" +
-            "execution(public * goveed20.PaymentConcentrator.services.RetailerService.*(..))")
+            "execution(public * goveed20.PaymentConcentrator.services.RetailerService.*(..)) ||" +
+            "execution(public * goveed20.PaymentConcentrator.services.LoginService.*(..))")
     public void paymentServiceAfterSuccess(JoinPoint joinPoint) {
         LogDTO logDTO = null;
         Object[] arguments = joinPoint.getArgs();
@@ -58,7 +61,8 @@ public class LoggingAspect {
 
     @AfterThrowing(pointcut = "execution(public * goveed20.PaymentConcentrator.services.PaymentService.*(..)) ||" +
             "execution(* goveed20.PaymentConcentrator.controllers.*.*(..)) ||" +
-            "execution(public * goveed20.PaymentConcentrator.services.RetailerService.*(..))", throwing = "error")
+            "execution(public * goveed20.PaymentConcentrator.services.RetailerService.*(..)) ||" +
+            "execution(public * goveed20.PaymentConcentrator.services.LoginService.*(..))", throwing = "error")
     public void paymentServiceAfterError(JoinPoint joinPoint, Throwable error) {
 
         LogDTO logDTO = null;
@@ -140,12 +144,20 @@ public class LoggingAspect {
                         :
                         "Successfully got all available payment services";
                 break;
-            case "registerRetailer":
+            case "registerRetailerByAdmin":
+            case "registerRetailerExternal":
                 RetailerData retailerData = (RetailerData) arguments[0];
                 message = isBefore ?
                         "Started registering retailer with name " + retailerData.getRetailerName()
                         :
                         "Successfully registered retailer with name " + retailerData.getRetailerName();
+                break;
+            case "login":
+                LoginData loginData = (LoginData) arguments[0];
+                message = isBefore ?
+                        "User with username " + loginData.getUsername() + " trying to log-in to the system"
+                        :
+                        "Successfully logged-in user with name " + loginData.getUsername();
                 break;
             default:
                 message = "";
@@ -195,12 +207,33 @@ public class LoggingAspect {
                         :
                         "Got all available payment services";
                 break;
+            case "registerRetailerByAdmin":
+                RetailerData retailerDataByAdmin = (RetailerData) arguments[0];
+                message = isBefore ?
+                        "Registering retailer with name " + retailerDataByAdmin.getRetailerName() + " by admin"
+                        :
+                        "Registered retailer with name " + retailerDataByAdmin.getRetailerName() + " successfully";
+                break;
+            case "registerRetailerExternally":
+                RetailerData retailerDataExternally = (RetailerData) arguments[0];
+                message = isBefore ?
+                        "Registering retailer with name " + retailerDataExternally.getRetailerName() + " externally"
+                        :
+                        "Registered retailer with name " + retailerDataExternally.getRetailerName() + " successfully";
+                break;
             case "registerRetailer":
                 RetailerData retailerData = (RetailerData) arguments[0];
                 message = isBefore ?
                         "Registering retailer with name " + retailerData.getRetailerName()
                         :
                         "Registered retailer with name " + retailerData.getRetailerName() + " successfully";
+                break;
+            case "login":
+                LoginData loginData = (LoginData) arguments[0];
+                message = isBefore ?
+                        "User with username " + loginData.getUsername() + " tryed to log-in to the system"
+                        :
+                        "User with username " + loginData.getUsername() + " logged-in successfully";
                 break;
             default:
                 message = "";
