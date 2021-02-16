@@ -230,6 +230,7 @@ public class DummyDataService {
                     .pages(240)
                     .publicationPlace("Novi Sad, Srbija")
                     .price(0.0)
+                    .additionalAuthors("Branko Milosavljevic,Dragan Ivanovic")
                     .build();
             b1.setWriter(writer1);
 
@@ -245,6 +246,7 @@ public class DummyDataService {
                     .pages(317)
                     .price(16.0)
                     .publicationPlace("Beograd, Srbija")
+                    .additionalAuthors("Andzej Sapkovski,Branko Milosavljevic")
                     .build();
             b2.setWriter(writer2);
 
@@ -260,6 +262,7 @@ public class DummyDataService {
                     .pages(690)
                     .publicationPlace("Novi Sad, Srbija")
                     .price(30.0)
+                    .additionalAuthors("Zolata Zolka, Radata Rolka")
                     .build();
             b3.setWriter(writer3);
 
@@ -275,6 +278,7 @@ public class DummyDataService {
                     .synopsis("Sinobsis")
                     .price(302.00)
                     .file("Literary-Association-Application/src/main/resources/books/Kljiga.pdf")
+                    .additionalAuthors("Gagata Gagic")
                     .build();
             book.setWriter(writer4);
 
@@ -290,6 +294,7 @@ public class DummyDataService {
                     .synopsis("Sinobsis")
                     .price(203.00)
                     .file("Literary-Association-Application/src/main/resources/books/Tajtl.pdf")
+                    .additionalAuthors("Ivo Andric,Lazo Lazic")
                     .build();
             book2.setWriter(writer5);
 

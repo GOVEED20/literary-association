@@ -20,9 +20,6 @@ public class Writer extends BaseUser {
     @Column(nullable = false)
     private Boolean membershipApproved;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private MembershipApplication membershipApplication;
-
     @OneToMany(cascade = CascadeType.ALL)
     private Set<WorkingPaper> workingPapers;
 
@@ -32,12 +29,11 @@ public class Writer extends BaseUser {
     @Builder(builderMethodName = "writerBuilder")
     public Writer(Long id, String name, String surname, String email, String password, String username,
                   Boolean verified, UserRole role, Location location, Set<Genre> genres,
-                  Boolean membershipApproved, MembershipApplication membershipApplication, Set<Transaction> transactions,
+                  Boolean membershipApproved, Set<Transaction> transactions,
                   Set<Comment> comments, Set<WorkingPaper> workingPapers, Set<Book> books) {
         super(id, name, surname, email, password, username, verified, role, location, comments, transactions);
         this.genres = genres;
         this.membershipApproved = membershipApproved;
-        this.membershipApplication = membershipApplication;
         this.workingPapers = workingPapers;
         this.books = books;
     }

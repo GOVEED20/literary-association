@@ -57,6 +57,7 @@ public class PublishBookDelegate implements JavaDelegate {
                 .pages((Integer.parseInt((String) data.get("pages"))))
                 .price(Double.parseDouble((String) data.get("price")))
                 .status(WorkingPaperStatus.APPROVED)
+                .additionalAuthors((String) data.get("additional_writers"))
                 .build();
 
         book.setWriter(writer);
