@@ -14,7 +14,7 @@ import java.util.Date;
 @Entity
 public class MembershipTransaction extends Transaction {
     @Column
-    private Long months; // set months to zero for subscription
+    private Long months;
 
     @Builder(builderMethodName = "membershipBuilder")
     public MembershipTransaction(Long id, Double total, Boolean done, TransactionStatus status, Date createdOn, Date initializedOn, Date completedOn, String paidWith, Invoice invoice, Long months) {

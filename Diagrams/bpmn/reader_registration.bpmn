@@ -136,6 +136,23 @@
     <bpmn:sequenceFlow id="Flow_1615jkv" sourceRef="InvalidDataError" targetRef="Reg_form_reader" />
     <bpmn:sequenceFlow id="Flow_0tt70i1" sourceRef="StartEvent_1" targetRef="Reg_form_reader" />
     <bpmn:sequenceFlow id="Flow_17cnwuu" sourceRef="Reg_form_reader" targetRef="Create_user" />
+    <bpmn:subProcess id="Activity_1dm9kf3" name="Terminate process in 2 weeks" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_0hknfma" name="2 weeks">
+        <bpmn:outgoing>Flow_10f4re3</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_0lpze6p">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P2W</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:startEvent>
+      <bpmn:serviceTask id="Activity_07olxut" name="Remove unregistered user" camunda:class="goveed20.LiteraryAssociationApplication.delegates.RemoveUnregisteredUserDelegate">
+        <bpmn:incoming>Flow_10f4re3</bpmn:incoming>
+        <bpmn:outgoing>Flow_0sn6nt7</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:endEvent id="Event_0vv9rab">
+        <bpmn:incoming>Flow_0sn6nt7</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0sn6nt7" sourceRef="Activity_07olxut" targetRef="Event_0vv9rab" />
+      <bpmn:sequenceFlow id="Flow_10f4re3" sourceRef="Event_0hknfma" targetRef="Activity_07olxut" />
+    </bpmn:subProcess>
   </bpmn:process>
   <bpmn:message id="Message_0aj0kve" name="Message_2lrbfa6" />
   <bpmn:signal id="Signal_189vto0" name="Confirmation_link_signal" />
@@ -187,6 +204,29 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1gbr2p2_di" bpmnElement="Event_1gbr2p2">
         <dc:Bounds x="952" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dm9kf3_di" bpmnElement="Activity_1dm9kf3" isExpanded="true">
+        <dc:Bounds x="500" y="300" width="350" height="290" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0sn6nt7_di" bpmnElement="Flow_0sn6nt7">
+        <di:waypoint x="740" y="450" />
+        <di:waypoint x="792" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10f4re3_di" bpmnElement="Flow_10f4re3">
+        <di:waypoint x="578" y="450" />
+        <di:waypoint x="640" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0hknfma_di" bpmnElement="Event_0hknfma">
+        <dc:Bounds x="542" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="543" y="475" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07olxut_di" bpmnElement="Activity_07olxut">
+        <dc:Bounds x="640" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0vv9rab_di" bpmnElement="Event_0vv9rab">
+        <dc:Bounds x="792" y="432" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1dub3v4_di" bpmnElement="InvalidDataError">
         <dc:Bounds x="542" y="139" width="36" height="36" />

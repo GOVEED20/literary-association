@@ -35,8 +35,11 @@ public class Book extends WorkingPaper {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Writer writer;
 
+    @Column(nullable = false)
+    private String additionalAuthors;
+
     @Builder(builderMethodName = "bookBuilder")
-    public Book(Long id, String file, String title, Genre genre, String synopsis, WorkingPaperStatus status, String ISBN, String keywords, String publisher, Integer publicationYear, Integer pages, String publicationPlace, Double price) {
+    public Book(Long id, String file, String title, Genre genre, String synopsis, WorkingPaperStatus status, String ISBN, String keywords, String publisher, Integer publicationYear, Integer pages, String publicationPlace, Double price, String additionalAuthors) {
         super(id, file, title, genre, synopsis, status);
         this.ISBN = ISBN;
         this.keywords = keywords;
@@ -45,5 +48,6 @@ public class Book extends WorkingPaper {
         this.pages = pages;
         this.publicationPlace = publicationPlace;
         this.price = price;
+        this.additionalAuthors = additionalAuthors;
     }
 }
